@@ -1,0 +1,18 @@
+<launch>
+<!-- include file="$(find floribot_engines)/launch/interface_kit.launch" / -->
+
+<include file="$(find floribot_robot)/launch/laser.launch" />
+
+<include file="$(find floribot_robot)/launch/base.launch" />
+
+<include file="$(find floribot_robot)/launch/fre2017.launch" />
+
+<include file="$(find floribot_tf2)/launch/tf2.launch" />
+
+<include file="$(find floribot_engines)/launch/engines.launch" />
+
+<include file="$(find floribot_robot)/launch/gmapping.launch" />
+
+<include file="$(find floribot_ballfinder)/launch/ballfinder.launch" />
+
+</launch>

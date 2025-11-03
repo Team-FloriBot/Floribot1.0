@@ -1,0 +1,8 @@
+prefix=/home/user/floribot_ws/devel
+
+Name: ptu46
+Description: Description of ptu46
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

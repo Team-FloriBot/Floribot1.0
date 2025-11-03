@@ -1,0 +1,103 @@
+﻿/*************************************************************************************************
+*	FILE:			row_detection.h
+*	SW-COMPONENT:	row_detection Node
+*	DESCRIPTION:	This header-file contains function and class declarations
+*					of the Node "row_detection"
+*
+*	COPYRIGHT:		(C) 2018 Floribot-Team Hochschule Heilbronn 
+*	AUTHOR:			Lukas Eberle RAB6
+*
+*
+*The reproduction, distribution and utilization of this file as well as the communication of its
+*contents to others without express authorization is prohibited. Offenders will be held liable
+*for the payment of damages. All rights reserved in the event of the grant of a patent,
+*utility model or design.
+*************************************************************************************************/
+
+#include <ros/ros.h>
+#include <sensor_msgs/LaserScan.h>
+#include <sensor_msgs/PointCloud2.h>
+#include <pcl/PCLPointCloud2.h>
+#include <pcl_conversions/pcl_conversions.h>
+#include <tf/transform_listener.h>
+#include <tf/message_filter.h>
+#include <message_filters/subscriber.h>
+#include <geometry_msgs/Pose2D.h>
+#include <visualization_msgs/Marker.h>
+#include <vector>
+
+
+/* -- set all constant parameters -- */
+#define PI 3.14159265359f
+#define TF_FRAME "base_laser_link"			// tf frame of laser scan
+#define ROW_WIDTH 0.75f						// width of a row
+#define MAX_FAILS 3U						// maximal count of tolerated consecutive detection fails. If count of fails > MAX_FAILS, the last valid detection will processed
+
+
+
+/********************************************************
+* Structure including all parameters
+********************************************************/
+struct RowDetection_Params{
+	
+	std::string 	enableDisable_visualization;	// param to enable or disable visu
+	int min_linePointCount;							// minimal amount of points supporting a detected line
+	int relevantScans_cnt;							// amount of relevant scans to compute position values
+	float 			max_AngleDiffBetweenRows;		// maximal tolerated angle difference between right and left row [rad]
+	float			max_AngleDiff_recent2current;	// maximal tolerated angle difference between recent and current angle [rad]
+	float			RANSAC_threshold;				// area around detected line for RANSAC algo in meter
+	/* -- point cloud range at which RANSAC iterates over -- */
+	float			pointCloudRange_Xmin;
+	float			pointCloudRange_Xmax;
+	float			pointCloudRange_Ymin;
+	float			pointCloudRange_Ymax;
+};
+
+
+
+/********************************************************
+* Class for line-feature extraction out of a point cloud
+* an position detection using point cloud library (PCL)
+********************************************************/
+class RowDetection{
+	
+	public:
+		explicit RowDetection(ros::NodeHandle n_, RowDetection_Params param);	// Constructor
+		~RowDetection();	// Destructor
+		
+	protected:
+		void ProcessRecentScanFrame(const sensor_msgs::LaserScan::ConstPtr& recentScanFrame);	// callback function of /scan topic
+		void AdaptPointCloud(pcl::PCLPointCloud2::Ptr pointcloud2_pcl_src, pcl::PCLPointCloud2::Ptr pointcloud2_pcl_adapted,
+							 const float range_x_min, float range_x_max, const float range_y_min, const float range_y_max);	// adapt the point cloud to optimize RANSAC-algo application
+		void FindLine(pcl::PCLPointCloud2::Ptr pointcloud2_pcl, pcl::ModelCoefficients::Ptr coefficients, pcl::PointIndices::Ptr inliers);	// extract the line feature of the given point cloud
+		void DetermineRowCentreLine(pcl::PCLPointCloud2::Ptr pointcloud2_pcl, double line_coefficients[]);	// get the centre line of the row
+		void VisualizeRowLines(double line_coefficients[]);	// publishing of the given line for visualization in e.g. RViz
+		double CalculateAngle(double line_coefficients[]);	// get the in row angle of the robot (measured from row-centre-line to robot x-axis)
+		double CalculateAngle(pcl::ModelCoefficients::Ptr coefficients);
+		double CalculateCentreOffset(double line_coefficients[]);	// get the distance from the row centre
+		int LineValidation(pcl::ModelCoefficients::Ptr coefficients_left, pcl::PointIndices::Ptr inliers_left,
+					  	   pcl::ModelCoefficients::Ptr coefficients_right, pcl::PointIndices::Ptr inliers_right);	// check plausibility of detected line
+	
+	
+	private:
+		ros::NodeHandle n;
+		ros::Publisher pose_pub; 	// publisher for robot position
+		ros::Publisher line_pub;	// publisher for line-marker
+		tf::TransformListener TF_listener;	// necessary for tf-coordinate transforms
+		message_filters::Subscriber<sensor_msgs::LaserScan> Scanner_sub; // subscriber (with filter functionality to avoid scans with wrong tf signature) Hint: this must be declared before declaring tf::MessageFilter<>
+		tf::MessageFilter<sensor_msgs::LaserScan> ScanFrame_Filter;	// filters messages (only frames with valid tf data will be passed)
+		geometry_msgs::Pose2D PoseOfRobot;	// Orientation and position of the robot
+		visualization_msgs::Marker marker;	// marker for visualization
+
+		RowDetection_Params param;	// parameter container
+		double line_coefficients[6];// coefficients of detected row centre line (see @ RowDetection::FindLine())
+		double recentAngle;			// recently detected angle to row-centre-line
+		double recentCentreOffset;	// recently detected centre-line offset
+		bool error_occurred;		// will be setted to true if some error occurres
+		int detectionFail_count;	// counter for consecutive detection fails 
+		std::string error_message;	// output message
+		std::vector< double > lastAngles;	// stores the last angle values
+		std::vector< double > lastOffsets;	// stores the last row centre offsets
+		std::vector< double* > lastCoefficients;	// stores the last centre line coefficients
+	
+};

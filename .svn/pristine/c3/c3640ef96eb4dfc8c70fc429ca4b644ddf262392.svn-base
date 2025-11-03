@@ -1,0 +1,40 @@
+#include <ros/ros.h>
+#include <std_msgs/String.h>
+
+#include "serial/serial.h"
+#include <string>
+
+std::string port = "/dev/ttyUSB0";
+int baud = 9600;
+// port, baudrate, timeout in milliseconds
+serial::Serial *my_serial;
+
+
+void cmdCallback(const std_msgs::String::ConstPtr& cmd_ptr) 
+{
+  my_serial->write(cmd_ptr->data.c_str());
+  my_serial->write("\r");
+  my_serial->flush();
+}
+
+  
+int main(int argc, char **argv)
+{
+  ros::init(argc,argv, "floribot_ball_into_pointcloud");
+  ros::NodeHandle node;
+  
+
+  node.getParam("/ptu46/serial_port", port);
+  node.getParam("/ptu46/serial_baud", baud);
+  
+  my_serial = new serial::Serial(port, baud, serial::Timeout::simpleTimeout(1000));
+  if(my_serial->isOpen()) ROS_INFO( " Yes.");
+  else ROS_INFO(" No.");
+
+  ros::Subscriber cmd_sub = node.subscribe("/ptu46/cmd", 1, &cmdCallback);
+  ros::spin();
+  
+  delete my_serial;
+  return 0;
+}
+

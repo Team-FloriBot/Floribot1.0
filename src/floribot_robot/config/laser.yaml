@@ -1,0 +1,9 @@
+beam_counts: 720
+angle_max: 1.56643295288
+angle_min: -1.57079637051
+angle_increment: 0.00436332309619
+#frame_id: 'base_laser_link'
+position_x: 0.17
+position_y: 0
+position_z: 0
+

@@ -1,0 +1,372 @@
+//
+// Academic License - for use in teaching, academic research, and meeting
+// course requirements at degree granting institutions only.  Not for
+// government, commercial, or other organizational use.
+//
+// File: fre2017.h
+//
+// Code generated for Simulink model 'fre2017'.
+//
+// Model version                  : 1.17
+// Simulink Coder version         : 8.12 (R2017a) 16-Feb-2017
+// C/C++ source code generated on : Wed Jun 14 18:10:58 2017
+//
+// Target selection: ert.tlc
+// Embedded hardware selection: Generic->Unspecified (assume 32-bit Generic)
+// Code generation objectives: Unspecified
+// Validation result: Not run
+//
+#ifndef RTW_HEADER_fre2017_h_
+#define RTW_HEADER_fre2017_h_
+#include <math.h>
+#include <stddef.h>
+#include <string.h>
+#ifndef fre2017_COMMON_INCLUDES_
+# define fre2017_COMMON_INCLUDES_
+#include "rtwtypes.h"
+#include "slros_initialize.h"
+#endif                                 // fre2017_COMMON_INCLUDES_
+
+#include "fre2017_types.h"
+
+// Macros for accessing real-time model data structure
+#ifndef rtmGetErrorStatus
+# define rtmGetErrorStatus(rtm)        ((rtm)->errorStatus)
+#endif
+
+#ifndef rtmSetErrorStatus
+# define rtmSetErrorStatus(rtm, val)   ((rtm)->errorStatus = (val))
+#endif
+
+// Block signals (auto storage)
+typedef struct {
+  SL_Bus_fre2017_sensor_msgs_LaserScan In1;// '<S21>/In1'
+  SL_Bus_fre2017_sensor_msgs_LaserScan varargout_2;
+  real_T DataTypeConversion[720];      // '<S5>/Data Type Conversion'
+  real_T ImpAsg_InsertedFor_scan_y_f[360];// '<S15>/right side of the left box'
+  real_T ImpAsg_InsertedFor_scan_y_o[360];// '<S16>/right side of the right box' 
+  SL_Bus_fre2017_sensor_msgs_Joy In1_k;// '<S24>/In1'
+  SL_Bus_fre2017_sensor_msgs_Joy varargout_2_m;
+  int32_T row[64];
+  int32_T direction[64];
+  SL_Bus_fre2017_geometry_msgs_Twist In1_a;// '<S22>/In1'
+  SL_Bus_fre2017_geometry_msgs_Twist BusAssignment;// '<Root>/Bus Assignment'
+  char_T cv0[26];
+  char_T cv1[23];
+  real_T Merge[2];                     // '<Root>/Merge'
+  real_T Divide;                       // '<S18>/Divide'
+  real_T Preventdiv1_o;                // '<S17>/Prevent div 1'
+  real_T SumofElements1;               // '<S17>/Sum of Elements1'
+  real_T Gain1;
+  real_T Gain;
+  real_T xAcc;
+  SL_Bus_fre2017_std_msgs_Bool In1_e;  // '<S23>/In1'
+  boolean_T inReihe;                   // '<Root>/Chart'
+  boolean_T leftTurn;                  // '<Root>/Chart'
+  boolean_T rightTurn;                 // '<Root>/Chart'
+  boolean_T straightOn;                // '<Root>/Chart'
+  boolean_T manual;                    // '<Root>/Chart'
+} B_fre2017_T;
+
+// Block states (auto storage) for system '<Root>'
+typedef struct {
+  real_T i;                            // '<Root>/Chart'
+  void *SourceBlock_PWORK;             // '<S9>/SourceBlock'
+  void *SourceBlock_PWORK_n;           // '<S8>/SourceBlock'
+  void *SourceBlock_PWORK_a;           // '<S7>/SourceBlock'
+  void *SourceBlock_PWORK_f;           // '<S6>/SourceBlock'
+  void *SinkBlock_PWORK;               // '<S4>/SinkBlock'
+  int32_T FindNonzeroElements_DIMS1;   // '<S18>/Find Nonzero Elements'
+  int32_T Selector_DIMS1;              // '<S18>/Selector'
+  int32_T FindNonzeroElements1_DIMS1;  // '<S17>/Find Nonzero Elements1'
+  int32_T Selector3_DIMS1;             // '<S17>/Selector3'
+  int32_T direction;                   // '<Root>/Chart'
+  uint32_T temporalCounter_i1;         // '<Root>/Chart'
+  robotics_slros_internal_block_T obj; // '<S4>/SinkBlock'
+  robotics_slros_internal_blo_l_T obj_e;// '<S9>/SourceBlock'
+  robotics_slros_internal_blo_l_T obj_n;// '<S8>/SourceBlock'
+  robotics_slros_internal_blo_l_T obj_l;// '<S7>/SourceBlock'
+  robotics_slros_internal_blo_l_T obj_lb;// '<S6>/SourceBlock'
+  uint8_T is_active_c3_fre2017;        // '<Root>/Chart'
+  uint8_T is_c3_fre2017;               // '<Root>/Chart'
+  uint8_T is_Automatic;                // '<Root>/Chart'
+  uint8_T is_TurnLeft;                 // '<Root>/Chart'
+  uint8_T is_TurnRight;                // '<Root>/Chart'
+} DW_fre2017_T;
+
+// Parameters for system: '<S15>/CoreSubsys'
+struct P_CoreSubsys_fre2017_T_ {
+  real_T bottomsideoftheleftbox_Threshol;// Expression: scan_box_width/2+0.3
+                                         //  Referenced by: '<S15>/bottom side of the left box'
+
+  real_T bottomsideoftherightbox1_Thresh;// Expression: 0.1
+                                         //  Referenced by: '<S15>/bottom side of the right box1'
+
+  real_T zero_Value;                   // Expression: 0
+                                       //  Referenced by: '<S15>/zero'
+
+  real_T rightsideoftheleftbox_Threshold;// Expression: scan_box_height
+                                         //  Referenced by: '<S15>/right side of the left box'
+
+};
+
+// Parameters for system: '<S16>/CoreSubsys'
+struct P_CoreSubsys_fre2017_g_T_ {
+  real_T bottomsideoftherightbox_Thresho;// Expression: scan_box_width/2+0.3
+                                         //  Referenced by: '<S16>/bottom side of the right box'
+
+  real_T bottomsideoftherightbox1_Thresh;// Expression: 0.1
+                                         //  Referenced by: '<S16>/bottom side of the right box1'
+
+  real_T zero_Value;                   // Expression: 0
+                                       //  Referenced by: '<S16>/zero'
+
+  real_T rightsideoftherightbox_Threshol;// Expression: scan_box_height
+                                         //  Referenced by: '<S16>/right side of the right box'
+
+};
+
+// Parameters (auto storage)
+struct P_fre2017_T_ {
+  SL_Bus_fre2017_sensor_msgs_LaserScan Out1_Y0;// Computed Parameter: Out1_Y0
+                                               //  Referenced by: '<S21>/Out1'
+
+  SL_Bus_fre2017_sensor_msgs_LaserScan Constant_Value;// Computed Parameter: Constant_Value
+                                                      //  Referenced by: '<S6>/Constant'
+
+  SL_Bus_fre2017_sensor_msgs_Joy Out1_Y0_n;// Computed Parameter: Out1_Y0_n
+                                           //  Referenced by: '<S24>/Out1'
+
+  SL_Bus_fre2017_sensor_msgs_Joy Constant_Value_d;// Computed Parameter: Constant_Value_d
+                                                  //  Referenced by: '<S9>/Constant'
+
+  SL_Bus_fre2017_geometry_msgs_Twist Out1_Y0_k;// Computed Parameter: Out1_Y0_k
+                                               //  Referenced by: '<S22>/Out1'
+
+  SL_Bus_fre2017_geometry_msgs_Twist Constant_Value_c;// Computed Parameter: Constant_Value_c
+                                                      //  Referenced by: '<S7>/Constant'
+
+  SL_Bus_fre2017_geometry_msgs_Twist Constant_Value_cv;// Computed Parameter: Constant_Value_cv
+                                                       //  Referenced by: '<S1>/Constant'
+
+  real_T Const2_Value;                 // Expression: 1
+                                       //  Referenced by: '<S17>/Const2'
+
+  real_T Const1_Value;                 // Expression: 1
+                                       //  Referenced by: '<S18>/Const1'
+
+  real_T const3_Value;                 // Expression: scan_box_width/2+0.1
+                                       //  Referenced by: '<S10>/const3'
+
+  real_T const2_Value;                 // Expression: -scan_box_width/2-0.1
+                                       //  Referenced by: '<S10>/const2'
+
+  real_T Preventdiv1_Threshold;        // Expression: safety_threshold
+                                       //  Referenced by: '<S10>/Prevent div 1'
+
+  real_T Preventdiv2_Threshold;        // Expression: safety_threshold
+                                       //  Referenced by: '<S10>/Prevent div 2'
+
+  real_T gain_Gain;                    // Expression: 1
+                                       //  Referenced by: '<S10>/gain'
+
+  real_T Constant_Value_p;             // Expression: 1
+                                       //  Referenced by: '<S10>/Constant'
+
+  real_T const1_Value;                 // Expression: 2
+                                       //  Referenced by: '<S10>/const1'
+
+  real_T scan_box_height2_Value;       // Expression: scan_box_height/2
+                                       //  Referenced by: '<S10>/scan_box_height//2'
+
+  real_T cmd_vel_x_max_Gain;           // Expression: 1
+                                       //  Referenced by: '<S10>/cmd_vel_x_max'
+
+  real_T secure_slow_Gain;             // Expression: 0.9
+                                       //  Referenced by: '<S10>/secure_slow'
+
+  real_T cmd_vel_yaw_max_Gain;         // Expression: pi
+                                       //  Referenced by: '<S10>/cmd_vel_yaw_max'
+
+  real_T secure_slow1_Gain;            // Expression: 0.9
+                                       //  Referenced by: '<S10>/secure_slow1'
+
+  real_T Rotationsgeschwindigkeit_Value;// Expression: 0
+                                        //  Referenced by: '<S12>/Rotations- geschwindigkeit'
+
+  real_T Translationsgeschwindigkeit_Val;// Expression: 0.75
+                                         //  Referenced by: '<S12>/Translations- geschwindigkeit'
+
+  real_T Drehwinkel_Value;             // Expression: 90
+                                       //  Referenced by: '<S13>/Drehwinkel'
+
+  real_T Gain1_Gain;                   // Expression: pi/180
+                                       //  Referenced by: '<S25>/Gain1'
+
+  real_T Kurvenradius_Value;           // Expression: 0.39
+                                       //  Referenced by: '<S13>/Kurvenradius'
+
+  real_T Drehwinkel_Value_n;           // Expression: 90
+                                       //  Referenced by: '<S14>/Drehwinkel'
+
+  real_T Gain1_Gain_j;                 // Expression: pi/180
+                                       //  Referenced by: '<S26>/Gain1'
+
+  real_T Kurvenradius_Value_o;         // Expression: 0.39
+                                       //  Referenced by: '<S14>/Kurvenradius'
+
+  real_T Gain_Gain;                    // Expression: -1
+                                       //  Referenced by: '<S14>/Gain'
+
+  real_T scan_angles_Value[720];       // Expression: [angle_min:angle_increment:angle_max+angle_increment]
+                                       //  Referenced by: '<S5>/scan_angles'
+
+  real_T maxPoints_Value;              // Expression: (angle_max-angle_min)/(2*angle_increment)-20
+                                       //  Referenced by: '<S18>/max. Points'
+
+  real_T Gain_Gain_i;                  // Expression: 100
+                                       //  Referenced by: '<S18>/Gain'
+
+  real_T maxPoints1_Value;             // Expression: (angle_max-angle_min)/(2*angle_increment)-20
+                                       //  Referenced by: '<S17>/max. Points1'
+
+  real_T Gain1_Gain_o;                 // Expression: 100
+                                       //  Referenced by: '<S17>/Gain1'
+
+  real_T safety_trashhold_Value;       // Expression: 10
+                                       //  Referenced by: '<Root>/safety_trashhold'
+
+  real_T turn_time_Value;              // Expression: 1.5
+                                       //  Referenced by: '<Root>/turn_time'
+
+  real_T row_end_time_Value;           // Expression: 0.5
+                                       //  Referenced by: '<Root>/row_end_time'
+
+  real_T Merge_InitialOutput;          // Computed Parameter: Merge_InitialOutput
+                                       //  Referenced by: '<Root>/Merge'
+
+  SL_Bus_fre2017_std_msgs_Bool Out1_Y0_m;// Computed Parameter: Out1_Y0_m
+                                         //  Referenced by: '<S23>/Out1'
+
+  SL_Bus_fre2017_std_msgs_Bool Constant_Value_a;// Computed Parameter: Constant_Value_a
+                                                //  Referenced by: '<S8>/Constant'
+
+  P_CoreSubsys_fre2017_g_T CoreSubsys_p;// '<S16>/CoreSubsys'
+  P_CoreSubsys_fre2017_T CoreSubsys;   // '<S15>/CoreSubsys'
+};
+
+// Real-time Model Data Structure
+struct tag_RTM_fre2017_T {
+  const char_T *errorStatus;
+};
+
+// Block parameters (auto storage)
+#ifdef __cplusplus
+
+extern "C" {
+
+#endif
+
+  extern P_fre2017_T fre2017_P;
+
+#ifdef __cplusplus
+
+}
+#endif
+
+// Block signals (auto storage)
+extern B_fre2017_T fre2017_B;
+
+// Block states (auto storage)
+extern DW_fre2017_T fre2017_DW;
+
+#ifdef __cplusplus
+
+extern "C" {
+
+#endif
+
+#ifdef __cplusplus
+
+}
+#endif
+
+#ifdef __cplusplus
+
+extern "C" {
+
+#endif
+
+  // Model entry point functions
+  extern void fre2017_initialize(void);
+  extern void fre2017_step(void);
+  extern void fre2017_terminate(void);
+
+#ifdef __cplusplus
+
+}
+#endif
+
+// Real-time Model object
+#ifdef __cplusplus
+
+extern "C" {
+
+#endif
+
+  extern RT_MODEL_fre2017_T *const fre2017_M;
+
+#ifdef __cplusplus
+
+}
+#endif
+
+//-
+//  The generated code includes comments that allow you to trace directly
+//  back to the appropriate location in the model.  The basic format
+//  is <system>/block_name, where system is the system number (uniquely
+//  assigned by Simulink) and block_name is the name of the block.
+//
+//  Use the MATLAB hilite_system command to trace the generated code back
+//  to the model.  For example,
+//
+//  hilite_system('<S3>')    - opens system 3
+//  hilite_system('<S3>/Kp') - opens and selects block Kp which resides in S3
+//
+//  Here is the system hierarchy for this model
+//
+//  '<Root>' : 'fre2017'
+//  '<S1>'   : 'fre2017/Blank Message'
+//  '<S2>'   : 'fre2017/Chart'
+//  '<S3>'   : 'fre2017/MATLAB Function'
+//  '<S4>'   : 'fre2017/Publish'
+//  '<S5>'   : 'fre2017/Rows'
+//  '<S6>'   : 'fre2017/Subscribe'
+//  '<S7>'   : 'fre2017/Subscribe1'
+//  '<S8>'   : 'fre2017/Subscribe2'
+//  '<S9>'   : 'fre2017/Subscribe4'
+//  '<S10>'  : 'fre2017/in_row'
+//  '<S11>'  : 'fre2017/manual drive'
+//  '<S12>'  : 'fre2017/straight on'
+//  '<S13>'  : 'fre2017/turn left'
+//  '<S14>'  : 'fre2017/turn right'
+//  '<S15>'  : 'fre2017/Rows/Box check left side'
+//  '<S16>'  : 'fre2017/Rows/Box check right side'
+//  '<S17>'  : 'fre2017/Rows/Calculate average of left side'
+//  '<S18>'  : 'fre2017/Rows/Calculate average of right side'
+//  '<S19>'  : 'fre2017/Rows/Box check left side/Polar to Cartesian'
+//  '<S20>'  : 'fre2017/Rows/Box check right side/Polar to Cartesian'
+//  '<S21>'  : 'fre2017/Subscribe/Enabled Subsystem'
+//  '<S22>'  : 'fre2017/Subscribe1/Enabled Subsystem'
+//  '<S23>'  : 'fre2017/Subscribe2/Enabled Subsystem'
+//  '<S24>'  : 'fre2017/Subscribe4/Enabled Subsystem'
+//  '<S25>'  : 'fre2017/turn left/Degrees to Radians'
+//  '<S26>'  : 'fre2017/turn right/Degrees to Radians'
+
+#endif                                 // RTW_HEADER_fre2017_h_
+
+//
+// File trailer for generated code.
+//
+// [EOF]
+//

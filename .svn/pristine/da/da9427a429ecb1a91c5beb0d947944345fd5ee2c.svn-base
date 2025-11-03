@@ -1,0 +1,371 @@
+//
+// Academic License - for use in teaching, academic research, and meeting
+// course requirements at degree granting institutions only.  Not for
+// government, commercial, or other organizational use.
+//
+// File: base.h
+//
+// Code generated for Simulink model 'base'.
+//
+// Model version                  : 1.392
+// Simulink Coder version         : 8.12 (R2017a) 16-Feb-2017
+// C/C++ source code generated on : Thu Jun 08 11:06:44 2017
+//
+// Target selection: ert.tlc
+// Embedded hardware selection: Generic->Unspecified (assume 32-bit Generic)
+// Code generation objectives: Unspecified
+// Validation result: Not run
+//
+#ifndef RTW_HEADER_base_h_
+#define RTW_HEADER_base_h_
+#include <math.h>
+#include <stddef.h>
+#include <string.h>
+#ifndef base_COMMON_INCLUDES_
+# define base_COMMON_INCLUDES_
+#include "rtwtypes.h"
+#include "slros_initialize.h"
+#endif                                 // base_COMMON_INCLUDES_
+
+#include "base_types.h"
+#include "rt_nonfinite.h"
+#include "rtGetInf.h"
+
+// Macros for accessing real-time model data structure
+#ifndef rtmGetErrorStatus
+# define rtmGetErrorStatus(rtm)        ((rtm)->errorStatus)
+#endif
+
+#ifndef rtmSetErrorStatus
+# define rtmSetErrorStatus(rtm, val)   ((rtm)->errorStatus = (val))
+#endif
+
+// Block signals (auto storage)
+typedef struct {
+  SL_Bus_base_nav_msgs_Odometry BusAssignment2;// '<Root>/Bus Assignment2'
+  SL_Bus_base_geometry_msgs_Twist In1; // '<S22>/In1'
+  SL_Bus_base_geometry_msgs_Twist varargout_2;
+  char_T cv0[16];
+  char_T cv1[15];
+  real_T IntegralGain_a;               // '<S5>/Integral Gain'
+  real_T Diff_k;                       // '<S20>/Diff'
+  real_T SignDeltaU;                   // '<S18>/SignDeltaU'
+  real_T Diff;                         // '<S21>/Diff'
+  real_T TSamp_m;                      // '<S20>/TSamp'
+  real_T TSamp;                        // '<S21>/TSamp'
+  real_T FilterCoefficient;            // '<S4>/Filter Coefficient'
+  SL_Bus_base_std_msgs_Float64 BusAssignment1;// '<Root>/Bus Assignment1'
+  SL_Bus_base_std_msgs_Float64 BusAssignment;// '<Root>/Bus Assignment'
+  SL_Bus_base_std_msgs_Int64 In1_d;    // '<S24>/In1'
+  SL_Bus_base_std_msgs_Int64 In1_f;    // '<S23>/In1'
+  SL_Bus_base_std_msgs_Int64 varargout_2_m;
+} B_base_T;
+
+// Block states (auto storage) for system '<Root>'
+typedef struct {
+  robotics_slros_internal_block_T obj; // '<Root>/Get Parameter1'
+  robotics_slros_internal_block_T obj_h;// '<Root>/Get Parameter'
+  real_T UD_DSTATE;                    // '<S21>/UD'
+  real_T Filter1_FILT_STATES[4];       // '<S7>/Filter1'
+  real_T Integrator_DSTATE;            // '<S4>/Integrator'
+  real_T Filter_DSTATE;                // '<S4>/Filter'
+  real_T UD_DSTATE_o;                  // '<S20>/UD'
+  real_T Filter1_FILT_STATES_j[4];     // '<S6>/Filter1'
+  real_T Integrator_DSTATE_g;          // '<S5>/Integrator'
+  real_T Filter_DSTATE_d;              // '<S5>/Filter'
+  real_T DiscreteTimeIntegrator1_DSTATE[2];// '<S9>/Discrete-Time Integrator1'
+  real_T DiscreteTimeIntegrator_DSTATE;// '<S9>/Discrete-Time Integrator'
+  void *SourceBlock_PWORK;             // '<S15>/SourceBlock'
+  void *SourceBlock_PWORK_b;           // '<S14>/SourceBlock'
+  void *SourceBlock_PWORK_f;           // '<S13>/SourceBlock'
+  void *SinkBlock_PWORK;               // '<S12>/SinkBlock'
+  void *SinkBlock_PWORK_i;             // '<S11>/SinkBlock'
+  void *SinkBlock_PWORK_k;             // '<S10>/SinkBlock'
+  void *GetParameter1_PWORK;           // '<Root>/Get Parameter1'
+  void *GetParameter_PWORK;            // '<Root>/Get Parameter'
+  robotics_slros_internal_blo_j_T obj_m;// '<S12>/SinkBlock'
+  robotics_slros_internal_blo_j_T obj_k;// '<S11>/SinkBlock'
+  robotics_slros_internal_blo_j_T obj_kj;// '<S10>/SinkBlock'
+  robotics_slros_internal_bl_jw_T obj_n;// '<S15>/SourceBlock'
+  robotics_slros_internal_bl_jw_T obj_o;// '<S14>/SourceBlock'
+  robotics_slros_internal_bl_jw_T obj_p;// '<S13>/SourceBlock'
+} DW_base_T;
+
+// Parameters (auto storage)
+struct P_base_T_ {
+  real_T DiscretePIDController1_D;     // Mask Parameter: DiscretePIDController1_D
+                                       //  Referenced by: '<S4>/Derivative Gain'
+
+  real_T DiscretePIDController2_D;     // Mask Parameter: DiscretePIDController2_D
+                                       //  Referenced by: '<S5>/Derivative Gain'
+
+  real_T DiscretePIDController1_I;     // Mask Parameter: DiscretePIDController1_I
+                                       //  Referenced by: '<S4>/Integral Gain'
+
+  real_T DiscretePIDController2_I;     // Mask Parameter: DiscretePIDController2_I
+                                       //  Referenced by: '<S5>/Integral Gain'
+
+  real_T DiscreteDerivative_ICPrevScaled;// Mask Parameter: DiscreteDerivative_ICPrevScaled
+                                         //  Referenced by: '<S21>/UD'
+
+  real_T DiscreteDerivative_ICPrevScal_f;// Mask Parameter: DiscreteDerivative_ICPrevScal_f
+                                         //  Referenced by: '<S20>/UD'
+
+  real_T DiscretePIDController1_LowerSat;// Mask Parameter: DiscretePIDController1_LowerSat
+                                         //  Referenced by:
+                                         //    '<S4>/Saturate'
+                                         //    '<S18>/DeadZone'
+
+  real_T DiscretePIDController2_LowerSat;// Mask Parameter: DiscretePIDController2_LowerSat
+                                         //  Referenced by:
+                                         //    '<S5>/Saturate'
+                                         //    '<S19>/DeadZone'
+
+  real_T DiscretePIDController1_N;     // Mask Parameter: DiscretePIDController1_N
+                                       //  Referenced by: '<S4>/Filter Coefficient'
+
+  real_T DiscretePIDController2_N;     // Mask Parameter: DiscretePIDController2_N
+                                       //  Referenced by: '<S5>/Filter Coefficient'
+
+  real_T DiscretePIDController1_P;     // Mask Parameter: DiscretePIDController1_P
+                                       //  Referenced by: '<S4>/Proportional Gain'
+
+  real_T DiscretePIDController2_P;     // Mask Parameter: DiscretePIDController2_P
+                                       //  Referenced by: '<S5>/Proportional Gain'
+
+  real_T DiscretePIDController1_UpperSat;// Mask Parameter: DiscretePIDController1_UpperSat
+                                         //  Referenced by:
+                                         //    '<S4>/Saturate'
+                                         //    '<S18>/DeadZone'
+
+  real_T DiscretePIDController2_UpperSat;// Mask Parameter: DiscretePIDController2_UpperSat
+                                         //  Referenced by:
+                                         //    '<S5>/Saturate'
+                                         //    '<S19>/DeadZone'
+
+  SL_Bus_base_nav_msgs_Odometry Constant_Value;// Computed Parameter: Constant_Value
+                                               //  Referenced by: '<S3>/Constant'
+
+  SL_Bus_base_geometry_msgs_Twist Out1_Y0;// Computed Parameter: Out1_Y0
+                                          //  Referenced by: '<S22>/Out1'
+
+  SL_Bus_base_geometry_msgs_Twist Constant_Value_i;// Computed Parameter: Constant_Value_i
+                                                   //  Referenced by: '<S13>/Constant'
+
+  real_T GetParameter_SampleTime;      // Expression: SampleTime
+                                       //  Referenced by: '<Root>/Get Parameter'
+
+  real_T GetParameter1_SampleTime;     // Expression: SampleTime
+                                       //  Referenced by: '<Root>/Get Parameter1'
+
+  real_T Constant_Value_d;             // Expression: 0
+                                       //  Referenced by: '<S16>/Constant'
+
+  real_T Constant3_Value;              // Expression: 0
+                                       //  Referenced by: '<S17>/Constant3'
+
+  real_T Gain_Gain;                    // Expression: 1/2
+                                       //  Referenced by: '<Root>/Gain'
+
+  real_T Gain1_Gain;                   // Expression: 1/2
+                                       //  Referenced by: '<Root>/Gain1'
+
+  real_T Constant_Value_c;             // Expression: (2*pi)/40000
+                                       //  Referenced by: '<S7>/Constant'
+
+  real_T TSamp_WtEt;                   // Computed Parameter: TSamp_WtEt
+                                       //  Referenced by: '<S21>/TSamp'
+
+  real_T Integrator_gainval;           // Computed Parameter: Integrator_gainval
+                                       //  Referenced by: '<S4>/Integrator'
+
+  real_T Integrator_IC;                // Expression: InitialConditionForIntegrator
+                                       //  Referenced by: '<S4>/Integrator'
+
+  real_T Filter_gainval;               // Computed Parameter: Filter_gainval
+                                       //  Referenced by: '<S4>/Filter'
+
+  real_T Filter_IC;                    // Expression: InitialConditionForFilter
+                                       //  Referenced by: '<S4>/Filter'
+
+  real_T Constant_Value_j;             // Expression: (2*pi)/40000
+                                       //  Referenced by: '<S6>/Constant'
+
+  real_T TSamp_WtEt_m;                 // Computed Parameter: TSamp_WtEt_m
+                                       //  Referenced by: '<S20>/TSamp'
+
+  real_T Integrator_gainval_o;         // Computed Parameter: Integrator_gainval_o
+                                       //  Referenced by: '<S5>/Integrator'
+
+  real_T Integrator_IC_f;              // Expression: InitialConditionForIntegrator
+                                       //  Referenced by: '<S5>/Integrator'
+
+  real_T Filter_gainval_l;             // Computed Parameter: Filter_gainval_l
+                                       //  Referenced by: '<S5>/Filter'
+
+  real_T Filter_IC_i;                  // Expression: InitialConditionForFilter
+                                       //  Referenced by: '<S5>/Filter'
+
+  real_T DiscreteTimeIntegrator1_gainval;// Computed Parameter: DiscreteTimeIntegrator1_gainval
+                                         //  Referenced by: '<S9>/Discrete-Time Integrator1'
+
+  real_T DiscreteTimeIntegrator1_IC;   // Expression: 0
+                                       //  Referenced by: '<S9>/Discrete-Time Integrator1'
+
+  real_T DiscreteTimeIntegrator_gainval;// Computed Parameter: DiscreteTimeIntegrator_gainval
+                                        //  Referenced by: '<S9>/Discrete-Time Integrator'
+
+  real_T DiscreteTimeIntegrator_IC;    // Expression: 0
+                                       //  Referenced by: '<S9>/Discrete-Time Integrator'
+
+  real_T Gain1_Gain_k;                 // Expression: 1/2
+                                       //  Referenced by: '<S9>/Gain1'
+
+  real_T Gain_Gain_m;                  // Expression: 2
+                                       //  Referenced by: '<S9>/Gain'
+
+  real_T ZeroGain_Gain;                // Expression: 0
+                                       //  Referenced by: '<S18>/ZeroGain'
+
+  real_T Constant_Value_m;             // Expression: 0
+                                       //  Referenced by: '<S4>/Constant'
+
+  real_T ZeroGain_Gain_m;              // Expression: 0
+                                       //  Referenced by: '<S19>/ZeroGain'
+
+  real_T Constant_Value_n;             // Expression: 0
+                                       //  Referenced by: '<S5>/Constant'
+
+  SL_Bus_base_std_msgs_Float64 Constant_Value_f;// Computed Parameter: Constant_Value_f
+                                                //  Referenced by: '<S1>/Constant'
+
+  SL_Bus_base_std_msgs_Float64 Constant_Value_k;// Computed Parameter: Constant_Value_k
+                                                //  Referenced by: '<S2>/Constant'
+
+  SL_Bus_base_std_msgs_Int64 Out1_Y0_c;// Computed Parameter: Out1_Y0_c
+                                       //  Referenced by: '<S23>/Out1'
+
+  SL_Bus_base_std_msgs_Int64 Constant_Value_ne;// Computed Parameter: Constant_Value_ne
+                                               //  Referenced by: '<S14>/Constant'
+
+  SL_Bus_base_std_msgs_Int64 Out1_Y0_a;// Computed Parameter: Out1_Y0_a
+                                       //  Referenced by: '<S24>/Out1'
+
+  SL_Bus_base_std_msgs_Int64 Constant_Value_g;// Computed Parameter: Constant_Value_g
+                                              //  Referenced by: '<S15>/Constant'
+
+};
+
+// Real-time Model Data Structure
+struct tag_RTM_base_T {
+  const char_T *errorStatus;
+};
+
+// Block parameters (auto storage)
+#ifdef __cplusplus
+
+extern "C" {
+
+#endif
+
+  extern P_base_T base_P;
+
+#ifdef __cplusplus
+
+}
+#endif
+
+// Block signals (auto storage)
+extern B_base_T base_B;
+
+// Block states (auto storage)
+extern DW_base_T base_DW;
+
+#ifdef __cplusplus
+
+extern "C" {
+
+#endif
+
+#ifdef __cplusplus
+
+}
+#endif
+
+#ifdef __cplusplus
+
+extern "C" {
+
+#endif
+
+  // Model entry point functions
+  extern void base_initialize(void);
+  extern void base_step(void);
+  extern void base_terminate(void);
+
+#ifdef __cplusplus
+
+}
+#endif
+
+// Real-time Model object
+#ifdef __cplusplus
+
+extern "C" {
+
+#endif
+
+  extern RT_MODEL_base_T *const base_M;
+
+#ifdef __cplusplus
+
+}
+#endif
+
+//-
+//  The generated code includes comments that allow you to trace directly
+//  back to the appropriate location in the model.  The basic format
+//  is <system>/block_name, where system is the system number (uniquely
+//  assigned by Simulink) and block_name is the name of the block.
+//
+//  Use the MATLAB hilite_system command to trace the generated code back
+//  to the model.  For example,
+//
+//  hilite_system('<S3>')    - opens system 3
+//  hilite_system('<S3>/Kp') - opens and selects block Kp which resides in S3
+//
+//  Here is the system hierarchy for this model
+//
+//  '<Root>' : 'base'
+//  '<S1>'   : 'base/Blank Message'
+//  '<S2>'   : 'base/Blank Message1'
+//  '<S3>'   : 'base/Blank Message2'
+//  '<S4>'   : 'base/Discrete PID Controller1'
+//  '<S5>'   : 'base/Discrete PID Controller2'
+//  '<S6>'   : 'base/Encoder Ticks  to rad//s1'
+//  '<S7>'   : 'base/Encoder Ticks  to rad//s2'
+//  '<S8>'   : 'base/Inverse Kinematik'
+//  '<S9>'   : 'base/Kinematik'
+//  '<S10>'  : 'base/Publish'
+//  '<S11>'  : 'base/Publish1'
+//  '<S12>'  : 'base/Publish2'
+//  '<S13>'  : 'base/Subscribe'
+//  '<S14>'  : 'base/Subscribe1'
+//  '<S15>'  : 'base/Subscribe2'
+//  '<S16>'  : 'base/in Nan'
+//  '<S17>'  : 'base/in Nan1'
+//  '<S18>'  : 'base/Discrete PID Controller1/Clamping circuit'
+//  '<S19>'  : 'base/Discrete PID Controller2/Clamping circuit'
+//  '<S20>'  : 'base/Encoder Ticks  to rad//s1/Discrete Derivative'
+//  '<S21>'  : 'base/Encoder Ticks  to rad//s2/Discrete Derivative'
+//  '<S22>'  : 'base/Subscribe/Enabled Subsystem'
+//  '<S23>'  : 'base/Subscribe1/Enabled Subsystem'
+//  '<S24>'  : 'base/Subscribe2/Enabled Subsystem'
+
+#endif                                 // RTW_HEADER_base_h_
+
+//
+// File trailer for generated code.
+//
+// [EOF]
+//

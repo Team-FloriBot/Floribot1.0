@@ -1,0 +1,46 @@
+global roscore rosnode cmd_vel_pub cmd_vel_msg scan_sub scan_msg...
+ left_power_pub left_power_msg right_power_msg right_power_pub ...
+ encoder_left_msg encoder_left_sub encoder_right_msg encoder_right_sub;
+
+hostname = '192.168.0.42';
+uri = ['http://' hostname ':11311'];
+setenv('ROS_MASTER_URI', uri);
+%setenv('ROS_IP',hostname);
+setenv('ROS_HOSTNAME',hostname);
+rosinit;
+
+%% Code for Matlab 2017a
+%roscore = rosmatlab.roscore();
+rosnode = robotics.ros.Node('/matlab_node');
+left_power_pub = robotics.ros.Publisher(rosnode,'left_power', 'std_msgs/Float64');
+left_power_msg = rosmessage('std_msgs/Float64');
+right_power_pub = robotics.ros.Publisher(rosnode,'right_power', 'std_msgs/Float64');
+right_power_msg = rosmessage('std_msgs/Float64');
+cmd_vel_pub = robotics.ros.Publisher(rosnode,'cmd_vel', 'geometry_msgs/Twist');
+cmd_vel_msg = rosmessage('geometry_msgs/Twist');
+scan_sub = robotics.ros.Subscriber(rosnode,'scan', 'sensor_msgs/LaserScan', 1);
+scan_msg = rosmessage('sensor_msgs/LaserScan');
+scan_sub.setOnNewMessageListeners({@scan_message});
+encoder_left_sub = robotics.ros.Subscriber(rosnode,'left_encoder', 'floribot_engines/encoder_params', 1);
+encoder_left_msg = rosmessage('floribot_engines/encoder_params');
+encoder_left_sub.setOnNewMessageListeners({@encoder_left_message});
+encoder_right_sub = robotics.ros.Subscriber(rosnode,'right_encoder', 'floribot_engines/encoder_params', 1);
+encoder_right_msg = rosmessage('floribot_engines/encoder_params');
+encoder_right_sub.setOnNewMessageListeners({@encoder_right_message});
+
+%% Code for older Matlab-Version
+%left_power_pub = rosnode.addPublisher('left_power', 'std_msgs/Float64');
+%left_power_msg = rosnode.newMessage('std_msgs/Float64');
+%right_power_pub = rosnode.addPublisher('right_power', 'std_msgs/Float64');
+%right_power_msg = rosnode.newMessage('std_msgs/Float64');
+%cmd_vel_pub = rosnode.addPublisher('cmd_vel', 'geometry_msgs/Twist');
+%cmd_vel_msg = rosnode.newMessage('geometry_msgs/Twist');
+%scan_sub = rosnode.addSubscriber('scan', 'sensor_msgs/LaserScan', 1);
+%scan_msg = rosnode.newMessage('sensor_msgs/LaserScan');
+%scan_sub.setOnNewMessageListeners({@scan_message});
+% encoder_left_sub = rosnode.addSubscriber('left_encoder', 'floribot_engines/encoder_params', 1);
+% encoder_left_msg = rosnode.newMessage('floribot_engines/encoder_params');
+% encoder_left_sub.setOnNewMessageListeners({@encoder_left_message});
+% encoder_right_sub = rosnode.addSubscriber('right_encoder', 'floribot_engines/encoder_params', 1);
+% encoder_right_msg = rosnode.newMessage('floribot_engines/encoder_params');
+% encoder_right_sub.setOnNewMessageListeners({@encoder_right_message});

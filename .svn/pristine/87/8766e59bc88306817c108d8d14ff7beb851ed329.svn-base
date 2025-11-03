@@ -1,0 +1,523 @@
+/*************************************************************************************************
+*	FILE:			row_detection_src.cpp
+*	SW-COMPONENT:	row_detection Node
+*	DESCRIPTION:	This source-file contains function descriptions of the Node "row_detection"
+*
+*	COPYRIGHT:		(C) 2018 Floribot-Team Hochschule Heilbronn 
+*	AUTHOR:			Lukas Eberle RAB6
+*
+*
+*The reproduction, distribution and utilization of this file as well as the communication of its
+*contents to others without express authorization is prohibited. Offenders will be held liable
+*for the payment of damages. All rights reserved in the event of the grant of a patent,
+*utility model or design.
+*************************************************************************************************/
+
+#include "row_detection.h"
+
+#include <geometry_msgs/Pose2D.h>
+#include <visualization_msgs/Marker.h>
+#include <pcl/filters/passthrough.h>
+#include <pcl/segmentation/sac_segmentation.h>
+#include <math.h>
+#include <laser_geometry/laser_geometry.h>
+#include <vector>
+
+#include <ros/ros.h>
+
+/* -- Constructor of RowDetection class -- */
+RowDetection::RowDetection(ros::NodeHandle n_, RowDetection_Params param_) : n(n_), param(param_), error_message(""), recentAngle(0.0), 
+	recentCentreOffset(0.0), detectionFail_count(0),
+	Scanner_sub(n, "scan", 1000)/*subscribe to "scan" topic with (,,X) msgs buffer queue-size*/,
+	ScanFrame_Filter(Scanner_sub, TF_listener, TF_FRAME, 0)/*(subscriber, tf_listener, expected target tf_frame, buffer queue-size*/
+{	
+	lastAngles.clear();
+	lastOffsets.clear();
+	lastCoefficients.clear();
+	pose_pub = n.advertise<geometry_msgs::Pose2D> ("delta2centre", 0);// message-type is: geometry_msgs::Pose2D // topicname is "delta2centre" // buffersize is 0 msgs
+	line_pub = n.advertise<visualization_msgs::Marker> ("detected_line", 0);
+	ScanFrame_Filter.setTolerance(ros::Duration(0.001));	//time-tolerance for the notifier to return true
+	ScanFrame_Filter.registerCallback(boost::bind(&RowDetection::ProcessRecentScanFrame, this, _1)); //bind callback function
+}
+
+
+/* -- Destructor of RowDetection class -- */
+RowDetection::~RowDetection(){
+	
+}
+
+
+/* -- This function adapts/cuts the point cloud for optimized application of RANSAC algo -- */
+void RowDetection::AdaptPointCloud(pcl::PCLPointCloud2::Ptr pointcloud2_pcl_src, pcl::PCLPointCloud2::Ptr pointcloud2_pcl_adapted, float range_x_min, float range_x_max, float range_y_min, float range_y_max){
+	
+	pcl::PassThrough<pcl::PCLPointCloud2> pass_through;
+	/* -- Filter in X-direction -- */
+    pass_through.setInputCloud(pointcloud2_pcl_src);	
+    pass_through.setFilterFieldName("x");    // set fieldname to filter over
+    pass_through.setFilterLimits(range_x_min, range_x_max);	// set range for selected field
+    pass_through.filter(*pointcloud2_pcl_adapted);    // execute filtering			
+	
+	/* -- Filter in Y-direction -- */
+	pass_through.setInputCloud(pointcloud2_pcl_adapted);	
+    pass_through.setFilterFieldName("y");
+    pass_through.setFilterLimits(range_y_min, range_y_max);
+    pass_through.filter(*pointcloud2_pcl_adapted); 
+}	
+
+
+/* -- Extract the row centre line from point cloud -- */
+void RowDetection::FindLine(pcl::PCLPointCloud2::Ptr pointcloud2_pcl, pcl::ModelCoefficients::Ptr coefficients, pcl::PointIndices::Ptr inliers){
+	
+	/*	# -- Description of the detected line -- #
+		pcl::ModelCoefficients->values[0] == point_on_line.x
+    	pcl::ModelCoefficients->values[1] == point_on_line.y
+    	pcl::ModelCoefficients->values[2] == point_on_line.z
+    	pcl::ModelCoefficients->values[3] == line_direction.x
+    	pcl::ModelCoefficients->values[4] == line_direction.y
+    	pcl::ModelCoefficients->values[5] == line_direction.z	*/
+	
+	/* -- check if input point cloud is empty -- */
+	if((pointcloud2_pcl->data.size()/20) < param.min_linePointCount){	// point cloud contains too less points (each point in data owns a size of 20)
+		return;
+	}
+	
+	
+	pcl::PointCloud<pcl::PointXYZ> pointcloud;
+	pcl::SACSegmentation<pcl::PointXYZ> seg;
+
+	
+	/* -- pointcloud conversion necessary for segmentation -- */
+	pcl::fromPCLPointCloud2(*pointcloud2_pcl, pointcloud);
+	
+	/* -- perform segmentation algo -- */
+	seg.setModelType(pcl::SACMODEL_LINE);	// search for line models
+	seg.setMethodType(pcl::SAC_RANSAC);		// use RANSAC algorithm
+	seg.setDistanceThreshold(param.RANSAC_threshold); // area of valid points around the detected line in meter
+	seg.setInputCloud(pointcloud.makeShared());
+	seg.segment(*inliers, *coefficients);	// perform segmentation	
+}
+
+
+/* -- Check plausibility of detected line -- */
+int RowDetection::LineValidation(pcl::ModelCoefficients::Ptr coefficients_left, pcl::PointIndices::Ptr inliers_left,
+					   		pcl::ModelCoefficients::Ptr coefficients_right, pcl::PointIndices::Ptr inliers_right){
+	
+	/* The return value equals:
+	* 10 = both rows valid
+	*  1 = only left row valid
+	*  2 = only right row valid
+	* -1 = no row detected		*/
+	
+	double angle_difference; // angle difference between right and left row
+	double angle_left;
+	double angle_right;
+	double difference_left;
+	double difference_right;
+	int inliers_left_count = inliers_left->indices.size();
+	int inliers_right_count = inliers_right->indices.size();
+	
+	/* -- check the amount of inliers and match the current angle with the recently detected angle -- */
+	if(inliers_left_count >= param.min_linePointCount && inliers_right_count >= param.min_linePointCount){ //left and right row successful detected
+
+		angle_left = RowDetection::CalculateAngle(coefficients_left);
+		angle_right = RowDetection::CalculateAngle(coefficients_right);
+		angle_difference = fabs(angle_left - angle_right);
+		difference_left = fabs(angle_left - recentAngle);
+		difference_right = fabs(angle_right - recentAngle);
+		if(error_mode){
+			difference_left	= 0.0;
+			difference_right= 0.0;
+		}
+		
+		if(angle_difference > param.max_AngleDiffBetweenRows){ // angle difference between the two rows is to high
+			if(difference_left <= difference_right && difference_left <= param.max_AngleDiff_recent2current){ // left row is more valid than right 
+				return 1;
+			}
+			else if(difference_left > difference_right && difference_right <= param.max_AngleDiff_recent2current){	// right row is more valid than left
+				return 2;
+			}
+			else{	// no row valid
+				return -1;
+			}
+		}
+		else if(difference_left <= param.max_AngleDiff_recent2current && difference_right <= param.max_AngleDiff_recent2current){	// angle difference in tolerance and left and right row valid
+			return 10;
+		}
+		else if(difference_left <= param.max_AngleDiff_recent2current && difference_right > param.max_AngleDiff_recent2current){	// angle difference in tolerance and only left row valid
+			return 1;
+		}
+		else if(difference_left > param.max_AngleDiff_recent2current && difference_right <= param.max_AngleDiff_recent2current){	// angle difference in tolerance and only right row valid
+			return 2;
+		}
+		else{ // no row valid
+			return -1;
+		}
+
+	}
+	else if(inliers_left_count >= param.min_linePointCount && inliers_right_count < param.min_linePointCount){ //only left row successful detected
+			
+		angle_left = RowDetection::CalculateAngle(coefficients_left);
+		difference_left = fabs(angle_left - recentAngle);
+		if(error_mode){
+			difference_left	= 0.0;
+		}
+
+		if(difference_left <= param.max_AngleDiff_recent2current){ // valid detection 
+			return 1;
+		}
+		else{	// no row valid
+			return -1;
+		}
+	}
+	else if(inliers_left_count < param.min_linePointCount && inliers_right_count >= param.min_linePointCount){ //only right row successful detected
+			
+		angle_right = RowDetection::CalculateAngle(coefficients_right);
+		difference_right = fabs(angle_right - recentAngle);
+		if(error_mode){
+			difference_right	= 0.0;
+		}
+
+		if(difference_right <= param.max_AngleDiff_recent2current){ // valid detection 
+			return 2;
+		}
+		else{	// no row valid
+			return -1;
+		}
+	}
+	else{	// now row detected
+		return -1;
+	}
+}
+
+
+/* -- Determine the centre line of the row -- */
+void RowDetection::DetermineRobotPose(pcl::PCLPointCloud2::Ptr pointcloud2_pcl){
+	
+	pcl::PCLPointCloud2::Ptr pointcloud2_pcl_lookLeft(new pcl::PCLPointCloud2);	//left part of point cloud
+	pcl::PCLPointCloud2::Ptr pointcloud2_pcl_lookRight(new pcl::PCLPointCloud2);//right part of point cloud
+	pcl::ModelCoefficients::Ptr coefficients_left(new pcl::ModelCoefficients);	//coefficients of left row line
+	pcl::ModelCoefficients::Ptr coefficients_right(new pcl::ModelCoefficients); //coefficients of right row line
+	pcl::PointIndices::Ptr inliers_left(new pcl::PointIndices);	//points which describe the detected left row line
+	pcl::PointIndices::Ptr inliers_right(new pcl::PointIndices);//points which describe the detected right row line
+	
+	/* -- adapt point cloud -- */
+	RowDetection::AdaptPointCloud(pointcloud2_pcl, pointcloud2_pcl_lookLeft, param.pointCloudRange_Xmin, param.pointCloudRange_Xmax, param.pointCloudRange_Ymin, param.pointCloudRange_Ymax);	
+	RowDetection::AdaptPointCloud(pointcloud2_pcl, pointcloud2_pcl_lookRight, param.pointCloudRange_Xmin, param.pointCloudRange_Xmax, -param.pointCloudRange_Ymax, -param.pointCloudRange_Ymin);	
+
+	/* -- detect the left and right row in the point cloud -- */
+	RowDetection::FindLine(pointcloud2_pcl_lookLeft, coefficients_left, inliers_left);
+	RowDetection::FindLine(pointcloud2_pcl_lookRight, coefficients_right, inliers_right);
+	
+			
+	/* -- check if segmentation was successful and detected lines are valid -- */
+	/* -- if yes, determine row-centre-line -- */
+	switch (RowDetection::LineValidation(coefficients_left, inliers_left, coefficients_right, inliers_right)){
+			
+		case  10:	// both row-lines detected
+			{
+				/* -- get average of the left and right line-coefficients to determine row-centre-line -- */
+				for(int i = 0; i<6; i++){
+					line_coefficients[i] = static_cast<double>((coefficients_left->values[i] + coefficients_right->values[i]) / 2 );	
+				}
+				
+				/* -- calculate angle --*/	
+				recentAngle = RowDetection::CalculateAngle(line_coefficients);	
+	
+				/* -- calculate distance to detected line --*/	
+				recentCentreOffset = RowDetection::CalculateLineOffset(line_coefficients);
+				
+				/* -- calculate row-centre-line -- */
+				line_coefficients[0] = -recentCentreOffset * sin(recentAngle);
+				line_coefficients[1] = -recentCentreOffset / cos(recentAngle);
+				break;
+			}
+			
+		case  1:	// only left row detected
+			{
+				/* -- determine pose parameters from detected left row -- */
+				for(int i = 0; i<6; i++){
+					line_coefficients[i] = static_cast<double>(coefficients_left->values[i]);	
+				}
+				
+				/* -- calculate angle --*/	
+				recentAngle = RowDetection::CalculateAngle(line_coefficients);	
+	
+				/* -- calculate distance to row-centre-line --*/	
+				recentCentreOffset = ROW_WIDTH / 2 + RowDetection::CalculateLineOffset(line_coefficients);
+				
+				/* -- calculate row-centre-line -- */
+				line_coefficients[0] = -recentCentreOffset * sin(recentAngle);
+				line_coefficients[1] = -recentCentreOffset / cos(recentAngle);
+				break;
+			}
+			
+		case  2:	// only right row detected
+			{
+				/* -- determine pose-parameters from detected right row -- */			
+				for(int i = 0; i<6; i++){
+					line_coefficients[i] = static_cast<double>(coefficients_right->values[i]);	
+				}
+				
+				/* -- calculate angle --*/	
+				recentAngle = RowDetection::CalculateAngle(line_coefficients);	
+	
+				/* -- calculate distance to row-centre-line --*/	
+				recentCentreOffset = RowDetection::CalculateLineOffset(line_coefficients) - ROW_WIDTH / 2;
+								
+				/* -- calculate row-centre-line -- */
+				line_coefficients[0] = -recentCentreOffset * sin(recentAngle);
+				line_coefficients[1] = -recentCentreOffset / cos(recentAngle);
+				break;
+			}
+			
+		case -1:	// no line detected
+			{
+				throw pcl::IOException("Couldn't estimate a line from given point cloud", "row_detection_src.cpp", "RowDetection::FindLine", 227);
+				break;
+			}
+			
+		default:
+			{
+				throw std::invalid_argument("received an unexpected value in row_detection_src.cpp at line 231");
+			}
+	}
+}
+
+
+/* -- Get the in-row angle of the robot -- */
+double RowDetection::CalculateAngle(double line_coefficients[]){
+	
+	double angle;
+	angle = static_cast<double>(atan2 (line_coefficients[4],line_coefficients[3]));
+	angle = -angle; // invert the angle to obtain the desired prefix
+	
+	//ROS_INFO("Winkel = %.2f", angle/PI*180);	// display angle on terminal in degrees
+	return angle;
+}
+
+
+/* -- Get the in-row angle of the robot -- */
+double RowDetection::CalculateAngle(pcl::ModelCoefficients::Ptr coefficients){
+	
+	double angle;
+	angle = static_cast<double>(atan2 (coefficients->values[4],coefficients->values[3]));
+	angle = -angle; // invert the angle to obtain the desired prefix
+		
+	return angle;
+}
+
+
+/* -- Get the distance from the row centre to the robot origin -- */
+double RowDetection::CalculateLineOffset(double line_coefficients[]){
+	
+	double line_offset;
+	tf::Vector3 point_on_line(line_coefficients[0], line_coefficients[1], line_coefficients[2]);
+	tf::Vector3 line_direction(line_coefficients[3], line_coefficients[4], line_coefficients[5]);
+	
+	tf::Vector3 temp_vec =	point_on_line.cross(line_direction);
+	line_offset = fabs(static_cast<double>(temp_vec.length() / line_direction.length()));
+	
+	/* -- determine offset direction -- */
+	if(line_coefficients[1] >= 0){
+		line_offset = -line_offset;
+	}
+	
+	return line_offset;
+}
+
+
+/* -- Visualize the detected row lines -- */
+void RowDetection::VisualizeRowLines(double line_coefficients[]){
+
+	/* -- determine quaternions for RViz -- */
+	tf::Vector3 axis_vector(line_coefficients[3], line_coefficients[4], line_coefficients[5]); 
+	tf::Vector3 up_vector(1.0, 0.0, 0.0);
+	tf::Vector3 right_vector = axis_vector.cross(up_vector);
+	right_vector.normalized();
+	tf::Quaternion q(right_vector, -1.0*acos(axis_vector.dot(up_vector)));
+	q.normalize();
+	geometry_msgs::Quaternion line_orientation;
+	tf::quaternionTFToMsg(q, line_orientation);
+						
+	/* -- configure marker --*/			
+	marker.ns = "floribot_orientation"; //namespace to place this object in
+	marker.header.frame_id = TF_FRAME;	//associated frame
+	marker.header.stamp = ros::Time::now();
+	marker.type = visualization_msgs::Marker::ARROW;
+	marker.action = visualization_msgs::Marker::ADD;
+	marker.pose.position.x = line_coefficients[0]; 	//x-position (origin of detected line)
+	marker.pose.position.y = line_coefficients[1];	//y-position (origin of detected line)
+	marker.pose.position.z = line_coefficients[2];	//z-position (origin of detected line)
+	marker.pose.orientation = line_orientation;
+	marker.id = 0;
+	marker.scale.x = 1.5;
+	marker.scale.y = 0.03;
+	marker.scale.z = 0.03;
+	marker.color.r = 0.0f;
+	marker.color.g = 0.0f;
+	marker.color.b = 1.0f;
+	marker.color.a = 1.0f; // alpha
+	marker.lifetime = ros::Duration();
+	
+	/* -- publish marker -- */	
+	line_pub.publish(marker);
+}
+
+
+/* -- callback function of topic "scan" -- */
+void RowDetection::ProcessRecentScanFrame(const sensor_msgs::LaserScan::ConstPtr& recentScanFrame){
+	
+	/* -- determine runtime -- */
+	/*
+	//ros::Duration secs;
+	//ros::Time start;
+	//ros::Time end;	
+	//start = ros::Time::now();
+	*/
+
+	/* -- set status variables -- */
+	error_occurred = false;	// reset error variable
+	
+	/* -- convert scan to pointcloud -- */	
+	// determine cutoff range for conversion from scan to point cloud. All points with distance > CUTOFF_RANGE will be removed
+	const float cutoff_range = 	fabs(param.pointCloudRange_Xmax) > fabs(param.pointCloudRange_Xmin) && 
+								fabs(param.pointCloudRange_Xmax) > fabs(param.pointCloudRange_Ymax) && 
+								fabs(param.pointCloudRange_Xmax) > fabs(param.pointCloudRange_Ymin) ? fabs(param.pointCloudRange_Xmax) :
+								fabs(param.pointCloudRange_Xmin) > fabs(param.pointCloudRange_Ymax) &&
+								fabs(param.pointCloudRange_Xmin) > fabs(param.pointCloudRange_Ymin) ? fabs(param.pointCloudRange_Xmin) :
+								fabs(param.pointCloudRange_Ymin) > fabs(param.pointCloudRange_Ymax) ? fabs(param.pointCloudRange_Ymin) : fabs(param.pointCloudRange_Ymax);
+	
+	sensor_msgs::PointCloud2 pointcloud2_sm;	// container for point cloud
+	laser_geometry::LaserProjection LaserProjector; // tool to convert the scan
+
+	try{
+		pcl::PCLPointCloud2::Ptr pointcloud2_pcl(new pcl::PCLPointCloud2);	
+		
+		/* -- transform scan to point cloud -- */
+		LaserProjector.transformLaserScanToPointCloud(TF_FRAME, *recentScanFrame, pointcloud2_sm, TF_listener, cutoff_range);//(target_frame, scan_in, cloud_out, tf_transformer, cutoff-range)		
+		
+		/* -- pointcloud conversion to pcl format --*/
+    	pcl_conversions::toPCL(pointcloud2_sm, *pointcloud2_pcl);	
+	
+		/* -- compute the pose of the robot --*/
+		DetermineRobotPose(pointcloud2_pcl);	
+	}
+	catch(tf::TransformException& exc){ // Misbehaviour during transformLaserScanToPointcloud()
+		//error_message = exc.what();
+		error_occurred = true;
+	}
+	catch(std::bad_alloc& exc){ 
+		//error_message = exc.what();
+		error_occurred = true;
+	}
+	catch(pcl::IOException& exc){
+		//error_message = exc.what();
+		error_occurred = true;
+	}
+	catch(std::invalid_argument& exc){
+		//error_message = exc.what();
+		error_occurred = true;	
+	}
+	catch(...){
+		//error_message = "Caused by an unhandled exception";
+		error_occurred = true;
+	}
+	
+	if(!error_occurred){ // no errors
+		detectionFail_count = 0;
+		error_mode = false;
+	}
+	else{	// some error occurred
+		detectionFail_count++;
+		
+		/* -- check count of consecutive fails -- */
+		if(detectionFail_count > param.max_FailCount){
+			
+			error_mode = true;
+			lastAngles.clear();	// delete angle buffer
+			lastOffsets.clear();// delete offset buffer
+			lastCoefficients.clear();
+			recentAngle = 0.0;	// reset recentAngle
+			recentCentreOffset = 0.0; // reset recentCentreOffset
+			line_coefficients[0] = 0.1;	
+			line_coefficients[1] = 0.00001;	// reset coefficients (this value is neccessary because 0.0 will not be accepted)		
+			line_coefficients[2] = 0.0;		
+			line_coefficients[3] = 1.0;		
+			line_coefficients[4] = 0.00001;		
+			line_coefficients[5] = 0.0;		
+		}
+		//std::cout << "Misbehaviour in node row_detection." << std::endl;
+		//std::cout << error_message << std::endl;
+	}
+	
+	
+	/* -- determine average over relevant scans -- */
+	try{
+		/* -- aquire relevant parameters -- */
+		lastAngles.push_back(recentAngle);
+		lastOffsets.push_back(recentCentreOffset);
+		
+		/* -- remove old values -- */
+		while(lastAngles.size() > param.relevantScans_cnt){
+			lastAngles.erase(lastAngles.begin());	
+		}
+		while(lastOffsets.size() > param.relevantScans_cnt){
+			lastOffsets.erase(lastOffsets.begin());	
+		}	
+
+		/* -- compute angle -- */
+		double angleTemp = 0.0;
+		for(int i = 0; i < lastAngles.size(); i++){
+			angleTemp += lastAngles[i];
+		}
+		PoseOfRobot.theta = angleTemp/lastAngles.size(); 
+		
+		/* -- compute centre offset -- */
+		double offsetTemp = 0.0;
+		for(int i = 0; i < lastOffsets.size(); i++){
+			offsetTemp += lastOffsets[i];
+		}
+		PoseOfRobot.y = offsetTemp/lastOffsets.size();	
+		
+		/* -- visualize row-centre-line if enabled -- */
+		if(param.enableDisable_visualization == "enabled"){ // only execute when desired
+			
+			/* -- aquire relevant coefficients -- */
+			lastCoefficients.push_back(line_coefficients);
+			
+			/* -- remove old values -- */ 
+			while(lastCoefficients.size() > param.relevantScans_cnt){
+				lastCoefficients.erase(lastCoefficients.begin());	
+			}
+
+			double coefficientsTemp[6] = {};
+			for(int i = 0; i < lastCoefficients.size(); i++){
+				for(int j = 0; j < 6; j++){
+					coefficientsTemp[j] += lastCoefficients[i][j];
+				}
+			}
+			for(int i = 0; i < 6; i++){
+				coefficientsTemp[i] = coefficientsTemp[i]/lastCoefficients.size();	
+			}
+
+			/* -- visualize row line -- */
+			RowDetection::VisualizeRowLines(coefficientsTemp);
+		}	
+		
+		/* -- publish pose -- */
+		pose_pub.publish(PoseOfRobot);
+		
+	}
+	catch(...){
+		// if error occurred, do nothing	
+	}
+		
+	
+	/* -- print runtime -- */
+	/*
+	//end = ros::Time::now();	
+	//secs = end -start;
+	//ROS_INFO("Cyclic runtime: %f sec", secs.toSec());
+	*/	
+}
+

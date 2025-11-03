@@ -1,0 +1,47 @@
+global scan_pub;
+global scan_sub;
+global scan_msg;
+global cmd_vel_pub;
+global cmd_vel_sub;
+global ptree;
+global clientID;
+global vrep;
+global ptu_cmd_pub;
+global ptu_state_pub;
+global ptu_msg;
+global polling_timer;
+
+
+rosinit;
+yaml2rosparam;
+
+% ptree = rosparam;
+% set(ptree, '/laser/position_x',0.25);
+% set(ptree, '/robot/diameter',0.88);
+% set(ptree, '/robot/wheels/distance_in_between',0.440);
+% set(ptree, '/robot/wheels/diameter',0.215);
+% set(ptree, '/robot/wheels/encoder_ticks_per_round',400009.0);
+% set(ptree, '/robot/voltage_threshold',8.0);
+% set(ptree, '/robot/max_angular_velocity',8.521852);
+% set(ptree, '/rows/width',0.75);
+
+
+scan_pub = rospublisher('/scan','sensor_msgs/LaserScan');
+scan_sub = rossubscriber('/scan','sensor_msgs/LaserScan');
+cmd_vel_pub = rospublisher('/cmd_vel','geometry_msgs/Twist');
+ptu_cmd_pub = rospublisher('/ptu/cmd','sensor_msgs/JointState');
+ptu_state_pub = rospublisher('/ptu/state','sensor_msgs/JointState');
+scan_msg = rosmessage('sensor_msgs/LaserScan');
+scan_msg.AngleMin = deg2rad(-90);%-1.57079637051;
+scan_msg.AngleMax = deg2rad(90); %1.56643295288; %deg2rad(60);
+scan_msg.AngleIncrement = deg2rad(0.25); %0.00436332309619; %deg2rad(0.25);
+scan_msg.RangeMin = 0;
+scan_msg.RangeMax = 1;
+%scan_msg.TimeIncrement = 0.0ros1;
+scan_msg.ScanTime = inf;
+
+
+ptu_msg = rosmessage('sensor_msgs/JointState');
+ptu_msg.Name = {'pan', 'tilt'};
+ptu_msg.Position = [0 0];
+ptu_msg.Velocity = [0 0];

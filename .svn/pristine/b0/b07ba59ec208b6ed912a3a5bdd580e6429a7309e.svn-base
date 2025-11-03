@@ -1,0 +1,88 @@
+function [] = ConnectToVRep()
+global cmd_vel_sub;
+global ptu_cmd_sub;
+global ptree;
+global clientID;
+global vrep;
+global polling_timer;
+
+    disp('Program started');
+    vrep=remApi('remoteApi'); % using the prototype file (remoteApiProto.m)
+    vrep.simxFinish(-1); % just in case, close all opened connections
+    clientID=vrep.simxStart('127.0.0.1',19997,true,true,5000,5);
+
+    if (clientID>-1)
+        disp('Connected to remote API server');
+        vrep.simxStartSimulation(clientID, vrep.simx_opmode_oneshot);
+        vrep.simxGetStringSignal(clientID,'laser',vrep.simx_opmode_streaming); % Initialize streaming
+        vrep.simxGetFloatSignal(clientID,'pPan',vrep.simx_opmode_streaming); % Initialize streaming
+        vrep.simxGetFloatSignal(clientID,'pTilt',vrep.simx_opmode_streaming); % Initialize streaming
+        
+        cmd_vel_sub = rossubscriber('/cmd_vel',@cmd_vel_callback); 
+        ptu_cmd_sub = rossubscriber('/ptu/cmd',@ptu_cmd_callback);
+        
+%          polling_timer = timer('ExecutionMode', 'fixedDelay', 'Period', 0.1);
+%          polling_timer.TimerFcn = @read_from_vrep;
+%          start(polling_timer);
+    else
+        disp('Failed connecting to remote API server');
+    end
+end
+
+
+function cmd_vel_callback(sub, msg)
+global clientID;
+global vrep;
+
+    vel_x = msg.Linear.X;
+    vel_alpha = msg.Angular.Z;
+    ptree = rosparam();
+    wheel_dist = ptree.get('/task1/wheel_distance_in_between');
+    wheel_diameter = ptree.get('/task1/wheel_diameter');
+    left_vel = (vel_x - vel_alpha*wheel_dist/2)/wheel_diameter;
+    right_vel = (vel_x + vel_alpha*wheel_dist/2)/wheel_diameter;
+    vrep.simxSetFloatSignal(clientID,'vLeft', left_vel, vrep.simx_opmode_oneshot);
+    vrep.simxSetFloatSignal(clientID,'vRight', right_vel, vrep.simx_opmode_oneshot);
+    read_from_vrep();
+end
+
+
+function ptu_cmd_callback(sub, msg)
+global clientID;
+global vrep;
+
+    pPan = msg.Position(1);
+    pTilt = msg.Position(2);
+    vrep.simxSetFloatSignal(clientID,'pPan', pPan, vrep.simx_opmode_oneshot);
+    vrep.simxSetFloatSignal(clientID,'pTilt', pTilt, vrep.simx_opmode_oneshot);
+    vPan = msg.Velocity(1);
+    vTilt = msg.Velocity(2);
+    vrep.simxSetFloatSignal(clientID,'vPan', vPan, vrep.simx_opmode_oneshot);
+    vrep.simxSetFloatSignal(clientID,'vTilt', vTilt, vrep.simx_opmode_oneshot);
+    read_from_vrep();
+end
+
+function timer_callback(obj, event)
+global scan_pub;
+global scan_msg;
+global clientID;
+global vrep;
+global ptu_msg;
+global ptu_state_pub;
+    
+    disp('ee');
+    [returnCode,data]=vrep.simxGetStringSignal(clientID,'laser',vrep.simx_opmode_buffer); % Try to retrieve the streamed data
+    if (returnCode==vrep.simx_return_ok) % After initialization of streaming, it will take a few ms before the first value arrives, so check the return code
+       scan_msg.Ranges = vrep.simxUnpackFloats(data);
+       send(scan_pub, scan_msg);
+    end
+
+    [returnCode,pPan] = vrep.simxGetFloatSignal(clientID,'pPan', vrep.simx_opmode_buffer);
+    [returnCode2,pTilt] = vrep.simxGetFloatSignal(clientID,'pTilt', vrep.simx_opmode_buffer);
+    if (returnCode==vrep.simx_return_ok && returnCode2==vrep.simx_return_ok) % After initialization of streaming, it will take a few ms before the first value arrives, so check the return code
+        ptu_msg.Position(1) = pPan;
+        ptu_msg.Position(2) = pTilt;
+        disp('pan/tilt empfangen');
+        send(ptu_state_pub, ptu_msg);
+    end
+end

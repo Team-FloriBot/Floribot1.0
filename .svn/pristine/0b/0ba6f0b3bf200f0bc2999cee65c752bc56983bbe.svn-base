@@ -1,0 +1,15 @@
+left_motor_center:  1500
+right_motor_center: 1500
+left_motor_range:   500
+right_motor_range:  500
+
+left_serial_number: 101902
+right_serial_number: 102191
+
+tick_rate: 100
+
+# ttyS0 = COM_Port1, ttyS1 = COM_Port2
+tty_scc_32: '/dev/ttyS1'
+
+# ttyUSB0-3 for USB to Serial adapter
+# tty_scc_32: '/dev/ttyUSB0'

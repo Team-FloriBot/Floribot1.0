@@ -1,0 +1,126 @@
+#include <ros/ros.h>
+#include <tf2_ros/transform_broadcaster.h>
+#include <tf2_ros/transform_listener.h>
+
+#include <geometry_msgs/TransformStamped.h>
+#include <geometry_msgs/PointStamped.h>
+#include "pcl/common/geometry.h"
+
+#include <pcl_ros/point_cloud.h>
+#include <pcl/point_types.h>
+
+#include <boost/foreach.hpp>
+
+#include "tf2_geometry_msgs/tf2_geometry_msgs.h"
+
+#include "serial/serial.h"
+#include <string>
+
+typedef pcl::PointCloud<pcl::PointXYZ> PointCloud;
+
+tf2_ros::Buffer tfBuffer;
+tf2_ros::TransformListener *tfListener;
+PointCloud golfballs;
+ros::Publisher golf_pub;
+PointCloud tennisballs;
+ros::Publisher tennis_pub;
+
+double min_dist_threshold = 10; 
+std::string port = "/dev/ttyUSB0";
+int baud = 300;
+// port, baudrate, timeout in milliseconds
+serial::Serial *my_serial;
+
+
+void golfCallback(const geometry_msgs::PointStampedConstPtr& point_ptr) 
+  {
+    geometry_msgs::PointStamped point_out;
+
+    try 
+    {
+      tfBuffer.transform(*point_ptr, point_out, "map");
+    }
+    catch (tf2::TransformException &ex) 
+    {
+      ROS_WARN("Failure %s\n", ex.what()); //Print exception which was caught
+    }
+    Eigen::Vector3f a = Eigen::Vector3f(point_out.point.x,
+             point_out.point.y,
+             point_out.point.z);
+
+    double min_dist = 10;
+    BOOST_FOREACH (const pcl::PointXYZ& pt, golfballs.points) {
+      Eigen::Vector3f b = Eigen::Vector3f(pt.x, pt.y, pt.z);
+      double dist = pcl::geometry::distance(a,b);
+      if(dist<min_dist) {
+        min_dist = dist;
+      }
+    }
+    if (min_dist>=min_dist_threshold || golfballs.points.size()==0) {
+      golfballs.push_back(pcl::PointXYZ(
+             point_out.point.x,
+             point_out.point.y,
+             point_out.point.z));
+      golfballs.header.stamp  = ros::Time::now().toNSec();
+      golf_pub.publish(golfballs);
+	  my_serial->write("x");
+    }
+  }
+
+  
+void tennisCallback(const geometry_msgs::PointStampedConstPtr& point_ptr) 
+  {
+    geometry_msgs::PointStamped point_out;
+
+    try 
+    {
+      tfBuffer.transform(*point_ptr, point_out, "map");
+    }
+    catch (tf2::TransformException &ex) 
+    {
+      ROS_WARN("Failure %s\n", ex.what()); //Print exception which was caught
+    }
+    Eigen::Vector3f a = Eigen::Vector3f(point_out.point.x,
+             point_out.point.y,
+             point_out.point.z);
+
+    double min_dist = 10;
+    BOOST_FOREACH (const pcl::PointXYZ& pt, tennisballs.points) {
+      Eigen::Vector3f b = Eigen::Vector3f(pt.x, pt.y, pt.z);
+      double dist = pcl::geometry::distance(a,b);
+      if(dist<min_dist) {
+        min_dist = dist;
+      }
+    }
+    if (min_dist>=min_dist_threshold || tennisballs.points.size()==0) {
+      tennisballs.push_back(pcl::PointXYZ(
+             point_out.point.x,
+             point_out.point.y,
+             point_out.point.z));
+      tennisballs.header.stamp  = ros::Time::now().toNSec();
+      tennis_pub.publish(tennisballs);
+	  my_serial->write("xx");
+    }
+  }
+int main(int argc, char **argv)
+{
+  ros::init(argc,argv, "floribot_ball_into_pointcloud");
+  ros::NodeHandle node;
+  
+
+  nodehandle.getParam("ballfinder/min_dist", min_dist_threshold);
+  nodehandle.getParam("ballfinder/serial_port", port);
+  nodehandle.getParam("ballfinder/serial_baud", baud);
+  my_serial = new serial::Serial(port, baud, serial::Timeout::simpleTimeout(1000));
+  ros::Subscriber golf_sub = node.subscribe("/golfball", 1, &golfCallback);
+  ros::Subscriber tennis_sub = node.subscribe("/tennisball", 1, &tennisCallback);
+  golf_pub = node.advertise<sensor_msgs::PointCloud2>("/golfballs", 1);
+  golfballs.header.frame_id ="map";
+  tennis_pub = node.advertise<sensor_msgs::PointCloud2>("/tennisballs", 1);
+  tennisballs.header.frame_id ="map";
+
+  tfListener = new tf2_ros::TransformListener(tfBuffer);
+  ros::spin();
+  return 0;
+}
+

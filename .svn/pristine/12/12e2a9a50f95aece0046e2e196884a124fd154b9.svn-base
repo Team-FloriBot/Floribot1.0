@@ -1,0 +1,4 @@
+<launch>
+  <node name="fre2017" pkg="fre2017" type="fre2017_node">
+  </node>
+</launch>

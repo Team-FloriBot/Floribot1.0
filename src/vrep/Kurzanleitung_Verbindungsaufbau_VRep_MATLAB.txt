@@ -1,0 +1,62 @@
+______________________________________________________________________________________
+
+Kurzanleitung zur Installation / Verwendung von Vrep in Verbindung mit MATLAB/Simulink
+______________________________________________________________________________________
+
+Author: Bernd Hückmann
+Datum: 06.06.2017
+Version: 1.0
+Kommentar: Es soll gezeigt werden wie Vrep intalliert wird und was zu beachten ist um 
+	   Vrep in Verbindung mit MATLAB/Simulink verwenden zu können.
+______________________________________________________________________________________
+Installation:
+
+Vrep ist eine kostenlose Simulationsplattform der Firma Coppelia Robotics.
+Für die Installation von Vrep wird zuerst der Installer von der Homepage heruntergela-
+den und dann ausgeführt. Die "Vrep Pro Edu" ist kostenlos und ist mit dem Zusatz "Non-
+limited EDUCATIONAL version. Free." versehen.
+Zu finden ist diese auf der Homepage von Coppelia Robotics im Downloadreiter (siehe
+Link):
+http://www.coppeliarobotics.com/downloads.html
+--------------------------------------------------------------------------------------
+Einrichtung für Nutzung mit MATLAB/Simulink:
+
+Nach der Installation von Vrep müssen noch drei Dateien aus dem neu erstellten Ver-
+zeichnis von Vrep kopiert werden. Diese müssen in das Arbeitsverzeichnis (den momentan
+genutzten Ordner) von MATLAB/Simulink kopiert werden.
+
+Die zu kopierenden Dateien und der Standardpfad zu diesen Dateien sind die Folgenden:
+	1. Datei: "remApi" 
+	   Typ: Matlab-file
+	   Pfad: C:\Program Files\V-REP3\V-REP_PRO_EDU\programming\remoteApiBindings\matlab\matlab
+	2. Datei: "remoteApiProto" 
+	   Typ: Matlab-file
+	   Pfad: C:\Program Files\V-REP3\V-REP_PRO_EDU\programming\remoteApiBindings\matlab\matlab
+	3. Datei: "romoteApi.dll" 
+	   Typ: Anwendungsdatei
+	   Pfad: C:\Program Files\V-REP3\V-REP_PRO_EDU\programming\remoteApiBindings\lib\lib\64Bit
+
+!!! WICHTIG !!!
+Bei der 3. Datei (remoteApi.dll) ist darauf zu achten ob ein 32Bit oder 64Bit System 
+verwendet wird. Wenn die falsche Datei genutzt wird, kann es zu Fehlern kommen oder
+keine Verbindung hergestellt werden!
+
+Optional sind die drei Dateien auch im Projektverzeichnis des FloriBot's hinterlegt.
+	trunk\12_Software\floribot_ws\src\simulink 
+--------------------------------------------------------------------------------------
+Verbindungsaufbau MATLAB zu Vrep:
+
+1. Vrepmodell öffnen
+2. Matlab starten
+3. SimulateROS ausführen (MATLAB-file welches ROS-Netzwerk aufzieht)
+4. ConnectToVRep ausführen (MATLAB-file welches die Verbindung herstellt)
+
+Jetzt sollte die Verbindung hergestellt sein und Vrep zusammen mit MATLAB/Simulink 
+nutzbar sein.
+Fehler sollten im MATLAB Command Window angezeigt werden.
+--------------------------------------------------------------------------------------
+Verbindung trennen:
+
+Zum Trennen der Verbindung alle Simuilationen stoppen und das MATLAB-file 
+"DisconnectFromVRep" ausführen. Anschließend das Netzwerk mittels dem Befehl "rosshutdown"
+im MATLAB Command Window herunterfahren.

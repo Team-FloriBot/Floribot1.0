@@ -1,0 +1,14 @@
+% move according to the pattern 
+
+% encoding of the pattern for Simulink in an m by 2 matix where m is the
+% numer of move commands. The first row stands for the number of rows to be
+% skipped and the second for the direction.
+% left = 1
+% right = -1
+
+% example pattern: S-2R-4L-2L-5R-F
+
+p = [2, -1;... % 2R
+     4,  1;... % 4L
+     2,  1;... % 2L
+     5, -1];   % 5R

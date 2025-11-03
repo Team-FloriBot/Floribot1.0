@@ -1,0 +1,5 @@
+
+# Per-language clean rules from dependency scanning.
+foreach(lang )
+  include(CMakeFiles/floribot_engines_gennodejs.dir/cmake_clean_${lang}.cmake OPTIONAL)
+endforeach()

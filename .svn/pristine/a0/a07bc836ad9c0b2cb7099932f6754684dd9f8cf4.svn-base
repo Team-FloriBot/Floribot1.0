@@ -1,0 +1,4 @@
+global roscore rosnode cmd_vel_pub cmd_vel_msg scan_sub scan_msg;
+
+rosnode.delete;
+%roscore.delete;

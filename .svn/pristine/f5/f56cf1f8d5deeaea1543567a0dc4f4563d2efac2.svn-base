@@ -1,0 +1,9 @@
+function [ ] = publish_cmd_vel( x, yaw )
+
+global cmd_vel_pub cmd_vel_msg;
+cmd_vel_msg.getLinear.setX(x);
+cmd_vel_msg.getAngular.setZ(yaw);
+cmd_vel_pub.publish(cmd_vel_msg);
+
+end
+

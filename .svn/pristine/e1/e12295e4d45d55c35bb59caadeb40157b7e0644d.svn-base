@@ -1,0 +1,5 @@
+<launch>
+  <node name="engines" pkg="floribot_engines" type="engines_node" >
+    <rosparam file="$(find floribot_engines)/config/engines.yaml" command="load" />
+  </node>
+</launch>

@@ -1,0 +1,8 @@
+prefix=/home/user/floribot_ws/devel
+
+Name: floribot_engines
+Description: Description of floribot_engines
+Version: 0.0.0
+Cflags: -I/home/user/floribot_ws/devel/include
+Libs: -L${prefix}/lib 
+Requires: message_runtime roscpp rospy std_msgs

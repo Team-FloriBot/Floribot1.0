@@ -1,0 +1,9 @@
+min_linePointCount: 50
+relevantScans_cnt: 4
+max_AngleDiffBetweenRows: 0.25
+max_AngleDiff_recent2current: 0.05
+RANSAC_threshold: 0.1
+pointCloudRange_Xmin: 0.0
+pointCloudRange_Xmax: 1.2
+pointCloudRange_Ymin: 0.05
+pointCloudRange_Ymax: 0.7

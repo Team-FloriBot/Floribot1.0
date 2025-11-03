@@ -1,0 +1,6 @@
+y_detection_range: 1.0
+detection_threshold: 1.5
+max_error_dist: 0.3
+max_error_count: 5
+max_detection_dist: 1.5
+

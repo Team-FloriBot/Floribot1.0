@@ -1,0 +1,28 @@
+
+<launch>
+	<include file="$(find floribot_engines)/launch/engines.launch" />
+
+	<include file="$(find floribot_robot)/launch/base.launch" />
+
+	<include file="$(find floribot_robot)/launch/laser.launch" />
+
+	<!--<include file="$(find floribot_robot)/launch/fre2019.launch"/>-->
+	
+	<!--<include file="$(find ueye)/launch/nodelets.launch"/>-->
+	
+	<!--<include file="$(find floribot_robot)/launch/image_processing.launch"/>-->
+
+	<!--<include file="$(find floribot_engines)/launch/interface_kit.launch"/>-->
+
+	<!--include file="$(find floribot_robot)/launch/fre2017.launch" /-->
+
+	<include file="$(find floribot_tf2)/launch/tf2.launch"/>
+
+	<!--<include file="$(find floribot_robot)/launch/gmapping.launch"/>-->
+
+	<!--include file="$(find floribot_robot)/launch/ptu46.launch" /-->
+	<!--include file="$(find floribot_ballfinder)/launch/ballfinder.launch" /-->
+	<!--include file="$(find floribot_robot)/launch/end_row.launch" /-->
+
+	<!--include file="$(find floribot_robot)/launch/row_detection.launch" /-->
+</launch>

@@ -1,0 +1,19 @@
+include_directories(
+  ../simulink/
+  ${catkin_INCLUDE_DIRS}
+)
+
+add_executable(task1_node
+  ../simulink/task1_ert_rtw/task1.cpp
+  ../simulink/task1_ert_rtw/task1_data.cpp
+  ../simulink/task1_ert_rtw/rtGetNaN.cpp
+  ../simulink/task1_ert_rtw/rt_nonfinite.cpp
+  ../simulink/task1_ert_rtw/rtGetInf.cpp
+  src/task1.cpp
+  src/task1_params.c
+  src/task1_node.cpp
+)
+
+target_link_libraries(task1_node
+  ${catkin_LIBRARIES}
+)

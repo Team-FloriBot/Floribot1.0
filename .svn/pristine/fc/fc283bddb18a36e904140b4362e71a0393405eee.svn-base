@@ -1,0 +1,23 @@
+function [ ] = read_from_vrep(obj, event)
+%UNTITLED Summary of this function goes here
+%   Detailed explanation goes here
+global scan_pub;
+global scan_msg;
+global clientID;
+global vrep;
+
+    
+    [returnCode,data]=vrep.simxGetStringSignal(clientID,'laser',vrep.simx_opmode_buffer); % Try to retrieve the streamed data
+    if (returnCode==vrep.simx_return_ok) % After initialization of streaming, it will take a few ms before the first value arrives, so check the return code
+       scan_msg.Ranges = vrep.simxUnpackFloats(data);
+       send(scan_pub, scan_msg);
+       
+%        cartScanData = readCartesian(scan_msg);
+%         cartScanData = scan_msg.readCartesian;
+%        homScanData = cart2hom(cartScanData);
+       
+       disp('scan empfangen');
+    end
+
+end
+

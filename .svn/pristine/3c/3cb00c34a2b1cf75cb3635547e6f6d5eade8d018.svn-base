@@ -1,0 +1,4 @@
+global polling_timer;
+
+stop(polling_timer);
+rosshutdown;

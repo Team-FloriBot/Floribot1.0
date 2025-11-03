@@ -1,0 +1,21 @@
+#####################################################################
+# The row_detection node subscribes the /scan topic and publishes   #
+# the actual position data of the robot via the /delta2centre topic.#
+# The messgae type of /delta2centre is "geometry_msgs/Pose2D"       #
+#                                                                   #
+# The members of Pose2D are used as follows:                        #
+#  x:       not used                                                #
+#  y:       distance from the robot origin(0, 0, 0) to the centre   #
+#           of the actual row, at which are:                        #
+#           - positive values <-> left from the centre line         #
+#           - negative values <-> right from the centre line        #
+#  theta:   angle of rotation between robot y-axis and              #
+#           centre line at which are:                               #
+#           - positive values <-> counter clockwise rotation        #
+#           - negative values <-> clockwise rotation                #
+#                                                                   #
+# HINT:	row_detection is executable with visualization of the       #
+#       detected row direction by publishing a marker which can be  #
+#       visualized in RViz. To do this, use:                        #
+#       rosrun row_detection row_detection _visualization:=enabled  #
+#####################################################################

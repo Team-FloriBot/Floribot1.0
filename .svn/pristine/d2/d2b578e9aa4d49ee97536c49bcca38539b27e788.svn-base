@@ -1,0 +1,235 @@
+//
+// Academic License - for use in teaching, academic research, and meeting
+// course requirements at degree granting institutions only.  Not for
+// government, commercial, or other organizational use.
+//
+// File: fre2017_types.h
+//
+// Code generated for Simulink model 'fre2017'.
+//
+// Model version                  : 1.17
+// Simulink Coder version         : 8.12 (R2017a) 16-Feb-2017
+// C/C++ source code generated on : Wed Jun 14 18:10:58 2017
+//
+// Target selection: ert.tlc
+// Embedded hardware selection: Generic->Unspecified (assume 32-bit Generic)
+// Code generation objectives: Unspecified
+// Validation result: Not run
+//
+#ifndef RTW_HEADER_fre2017_types_h_
+#define RTW_HEADER_fre2017_types_h_
+#include "rtwtypes.h"
+#ifndef DEFINED_TYPEDEF_FOR_SL_Bus_fre2017_geometry_msgs_Vector3_
+#define DEFINED_TYPEDEF_FOR_SL_Bus_fre2017_geometry_msgs_Vector3_
+
+// MsgType=geometry_msgs/Vector3
+typedef struct {
+  real_T X;
+  real_T Y;
+  real_T Z;
+} SL_Bus_fre2017_geometry_msgs_Vector3;
+
+#endif
+
+#ifndef DEFINED_TYPEDEF_FOR_SL_Bus_fre2017_geometry_msgs_Twist_
+#define DEFINED_TYPEDEF_FOR_SL_Bus_fre2017_geometry_msgs_Twist_
+
+// MsgType=geometry_msgs/Twist
+typedef struct {
+  // MsgType=geometry_msgs/Vector3
+  SL_Bus_fre2017_geometry_msgs_Vector3 Linear;
+
+  // MsgType=geometry_msgs/Vector3
+  SL_Bus_fre2017_geometry_msgs_Vector3 Angular;
+} SL_Bus_fre2017_geometry_msgs_Twist;
+
+#endif
+
+#ifndef DEFINED_TYPEDEF_FOR_SL_Bus_ROSVariableLengthArrayInfo_
+#define DEFINED_TYPEDEF_FOR_SL_Bus_ROSVariableLengthArrayInfo_
+
+typedef struct {
+  uint32_T CurrentLength;
+  uint32_T ReceivedLength;
+} SL_Bus_ROSVariableLengthArrayInfo;
+
+#endif
+
+#ifndef DEFINED_TYPEDEF_FOR_SL_Bus_fre2017_ros_time_Time_
+#define DEFINED_TYPEDEF_FOR_SL_Bus_fre2017_ros_time_Time_
+
+// MsgType=ros_time/Time
+typedef struct {
+  real_T Sec;
+  real_T Nsec;
+} SL_Bus_fre2017_ros_time_Time;
+
+#endif
+
+#ifndef DEFINED_TYPEDEF_FOR_SL_Bus_fre2017_std_msgs_Header_
+#define DEFINED_TYPEDEF_FOR_SL_Bus_fre2017_std_msgs_Header_
+
+// MsgType=std_msgs/Header
+typedef struct {
+  uint32_T Seq;
+
+  // PrimitiveROSType=string:IsVarLen=1:VarLenCategory=data:VarLenElem=FrameId_SL_Info:TruncateAction=warn 
+  uint8_T FrameId[128];
+
+  // IsVarLen=1:VarLenCategory=length:VarLenElem=FrameId
+  SL_Bus_ROSVariableLengthArrayInfo FrameId_SL_Info;
+
+  // MsgType=ros_time/Time
+  SL_Bus_fre2017_ros_time_Time Stamp;
+} SL_Bus_fre2017_std_msgs_Header;
+
+#endif
+
+#ifndef DEFINED_TYPEDEF_FOR_SL_Bus_fre2017_sensor_msgs_LaserScan_
+#define DEFINED_TYPEDEF_FOR_SL_Bus_fre2017_sensor_msgs_LaserScan_
+
+// MsgType=sensor_msgs/LaserScan
+typedef struct {
+  real32_T AngleMin;
+  real32_T AngleMax;
+  real32_T AngleIncrement;
+  real32_T TimeIncrement;
+  real32_T ScanTime;
+  real32_T RangeMin;
+  real32_T RangeMax;
+
+  // IsVarLen=1:VarLenCategory=data:VarLenElem=Ranges_SL_Info:TruncateAction=warn 
+  real32_T Ranges[720];
+
+  // IsVarLen=1:VarLenCategory=length:VarLenElem=Ranges
+  SL_Bus_ROSVariableLengthArrayInfo Ranges_SL_Info;
+
+  // IsVarLen=1:VarLenCategory=data:VarLenElem=Intensities_SL_Info:TruncateAction=warn 
+  real32_T Intensities[720];
+
+  // IsVarLen=1:VarLenCategory=length:VarLenElem=Intensities
+  SL_Bus_ROSVariableLengthArrayInfo Intensities_SL_Info;
+
+  // MsgType=std_msgs/Header
+  SL_Bus_fre2017_std_msgs_Header Header;
+} SL_Bus_fre2017_sensor_msgs_LaserScan;
+
+#endif
+
+#ifndef DEFINED_TYPEDEF_FOR_SL_Bus_fre2017_std_msgs_Bool_
+#define DEFINED_TYPEDEF_FOR_SL_Bus_fre2017_std_msgs_Bool_
+
+// MsgType=std_msgs/Bool
+typedef struct {
+  boolean_T Data;
+} SL_Bus_fre2017_std_msgs_Bool;
+
+#endif
+
+#ifndef DEFINED_TYPEDEF_FOR_SL_Bus_fre2017_sensor_msgs_Joy_
+#define DEFINED_TYPEDEF_FOR_SL_Bus_fre2017_sensor_msgs_Joy_
+
+// MsgType=sensor_msgs/Joy
+typedef struct {
+  // IsVarLen=1:VarLenCategory=data:VarLenElem=Axes_SL_Info:TruncateAction=warn
+  real32_T Axes[128];
+
+  // IsVarLen=1:VarLenCategory=length:VarLenElem=Axes
+  SL_Bus_ROSVariableLengthArrayInfo Axes_SL_Info;
+
+  // IsVarLen=1:VarLenCategory=data:VarLenElem=Buttons_SL_Info:TruncateAction=warn 
+  int32_T Buttons[128];
+
+  // IsVarLen=1:VarLenCategory=length:VarLenElem=Buttons
+  SL_Bus_ROSVariableLengthArrayInfo Buttons_SL_Info;
+
+  // MsgType=std_msgs/Header
+  SL_Bus_fre2017_std_msgs_Header Header;
+} SL_Bus_fre2017_sensor_msgs_Joy;
+
+#endif
+
+#ifndef typedef_robotics_slros_internal_block_T
+#define typedef_robotics_slros_internal_block_T
+
+typedef struct {
+  int32_T isInitialized;
+} robotics_slros_internal_block_T;
+
+#endif                                 //typedef_robotics_slros_internal_block_T
+
+#ifndef typedef_robotics_slros_internal_blo_l_T
+#define typedef_robotics_slros_internal_blo_l_T
+
+typedef struct {
+  int32_T isInitialized;
+} robotics_slros_internal_blo_l_T;
+
+#endif                                 //typedef_robotics_slros_internal_blo_l_T
+
+#ifndef typedef_struct_T_fre2017_T
+#define typedef_struct_T_fre2017_T
+
+typedef struct {
+  real_T f1[2];
+} struct_T_fre2017_T;
+
+#endif                                 //typedef_struct_T_fre2017_T
+
+#ifndef typedef_struct_T_fre2017_l_T
+#define typedef_struct_T_fre2017_l_T
+
+typedef struct {
+  char_T f1[4];
+} struct_T_fre2017_l_T;
+
+#endif                                 //typedef_struct_T_fre2017_l_T
+
+#ifndef typedef_struct_T_fre2017_ls_T
+#define typedef_struct_T_fre2017_ls_T
+
+typedef struct {
+  char_T f1[8];
+} struct_T_fre2017_ls_T;
+
+#endif                                 //typedef_struct_T_fre2017_ls_T
+
+#ifndef typedef_struct_T_fre2017_ls5_T
+#define typedef_struct_T_fre2017_ls5_T
+
+typedef struct {
+  char_T f1[7];
+} struct_T_fre2017_ls5_T;
+
+#endif                                 //typedef_struct_T_fre2017_ls5_T
+
+#ifndef typedef_struct_T_fre2017_ls5i_T
+#define typedef_struct_T_fre2017_ls5i_T
+
+typedef struct {
+  char_T f1[8];
+  char_T f2[7];
+  char_T f3[6];
+} struct_T_fre2017_ls5i_T;
+
+#endif                                 //typedef_struct_T_fre2017_ls5i_T
+
+// Parameters for system: '<S15>/CoreSubsys'
+typedef struct P_CoreSubsys_fre2017_T_ P_CoreSubsys_fre2017_T;
+
+// Parameters for system: '<S16>/CoreSubsys'
+typedef struct P_CoreSubsys_fre2017_g_T_ P_CoreSubsys_fre2017_g_T;
+
+// Parameters (auto storage)
+typedef struct P_fre2017_T_ P_fre2017_T;
+
+// Forward declaration for rtModel
+typedef struct tag_RTM_fre2017_T RT_MODEL_fre2017_T;
+
+#endif                                 // RTW_HEADER_fre2017_types_h_
+
+//
+// File trailer for generated code.
+//
+// [EOF]
+//

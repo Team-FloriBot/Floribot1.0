@@ -1,0 +1,135 @@
+% Masterprojekt FRE17
+% Code für Task 1 mti Hilfe eines Histogramms und abgeleitete
+% Potentialfeldmethode
+% Author: Bernd Hückmann
+% Datum: 24.05.2017
+
+%% Einlesen der Scanner-Daten
+xy = readCartesian(scan_msg); % Lädt aus scan_msg die Polarkoord., wandelt diese in karth. Koord. um und speichert diese in xy.
+
+% Aufteilung in x- und y-Komponenten
+x = xy(:,1); % aus xy die x-Komp. extrahieren
+y = xy(:,2); % aus xy die y-Komp. extrahieren
+
+% Ausfiltern der Werte die 0 sind
+x = x(x~=0); % entfernt alle 0 aus x
+y = y(y~=0); % entfernt alle 0 aus y
+
+%% Arbeiten mit dem Histogramm der y-Werte (Ber. Angular.Z)
+hist_y = histcounts(y,'BinWidth', 0.05, 'BinLimits', [-0.4 0.4]); % Erstellt das Histogramm der y-Werte ohne Plot. Schrittweite der x-Achse =0.05 und Bereich zw. -0.4 und 0.4
+
+% Umkehren der Werte, so dass aus den Bergen außen ein lokales Maximum in
+% der Mitte entsteht auf das man den Roboter zusteuern lässt
+hist_y_max = max(hist_y) - hist_y; % Durch Subtraktion der Einzelwerte vom maximalen Wert ensteht das lokale Maximum
+
+% Durch Gewitchtsfunktion kann nun die Abweichung von 0 festgestellt
+% werden. Daraus ergibt sich die Ansteuerung für Angular.Z in cmd_vel
+n_j_az = -0.4:0.05:0.4; % Wertebereichswerte der x-Achse im Histogramm
+n_j_az = n_j_az(n_j_az~=0); % Es entsteh ein Wert mit 0, dieser wird so gelöscht
+z = sum(hist_y_max.*n_j_az)/length(n_j_az); % Gewichtungsfunktion: Multiplikation der Gewichte mit ihrer Haeufigkeit und anschließender Division durch die Gesamthaeufigkeiten
+% abklären ob das mit length passt, Werte sehen gut aus oder doch sum(n_j)
+
+%% Arbeiten mit dem Histogramm der x-Werte (Ber. Linear.X)
+hist_x = histcounts(x,'BinWidth', 0.1, 'BinLimits', [0 1]); % Erstellt das Histogramm der x-Werte ohne Plot. Schrittweite der x-Achse =0.1 und Bereich zw. 0 und 1
+
+hist_x_max = max(hist_x) - hist_x;
+
+n_j_lx = 0:0.1:1; % Wertebereichswerte der x-Achse im Histogramm
+n_j_lx = n_j_lx(n_j_lx~=0);
+lx = sum(hist_x_max.*n_j_lx)/sum(n_j_lx);
+
+
+%% Kontrollplot fuer Angular.Z während Debuggingphase
+x_axis_az = -0.4:0.05:0.4;
+x_axis_az = x_axis_az(x_axis_az~=0);
+
+figure('NumberTitle','off','Name','Kontrollplot Angular.Z')
+plot(x_axis_az,hist_y_max)
+hold on
+
+x_w = z; %* 10^-18;  Wird benötigt bei sum(n_j)
+y_w = 10;
+plot(x_w,y_w,'ro') % plotten des Angular.Z Wertes
+title('Max Werte für y')
+ylabel('Haeufigkeiten')
+xlabel('Verteilung')
+legend('y', 'Angular.Z')
+
+%% Kontrollplot fuer Linear.X während Debuggingphase
+x_axis_lx = 0:0.1:1;
+x_axis_lx = x_axis_lx(x_axis_lx~=0);
+
+figure('NumberTitle','off','Name','Kontrollplot Linear.X')
+plot(x_axis_lx,hist_x)
+hold on
+
+x_w = 1/lx; %* 10^-18;  Wird benötigt bei sum(n_j)
+y_w = 5;
+plot(x_w,y_w,'ro') % plotten des Angular.Z Wertes
+title('Max Werte für y')
+ylabel('Haeufigkeiten')
+xlabel('Verteilung')
+legend('x', 'Linear.X')
+
+%% Kontrollplot fuer Angular.Z Histogramm erzeugen
+
+figure('NumberTitle','off','Name','Kontrollplot Angular.Z Histogramm')  %% oeffnet ein Plotfenster
+hist = histogram(y, 'BinLimits', [-0.4 0.4], 'BinWidth', 0.05);  % Funktion zum erstellen des Histogramms
+title('Histogramm xy')  % Titel des Plots
+xlabel('Wertebereich')  % x-Achsenbeschriftung
+ylabel('Hauefigkeiten')  % x-Achsenbeschriftung
+
+%% Kontrollplot fuer Linear.X Histogramm erzeugen
+
+% figure('NumberTitle','off','Name','Kontrollplot Linear.X Histogramm')  %% oeffnet ein Plotfenster
+% hist = histogram(x, 'BinLimits', [0 1], 'BinWidth', 0.1);  % Funktion zum erstellen des Histogramms
+% title('Histogramm Linear.X')  % Titel des Plots
+% xlabel('Wertebereich')  % x-Achsenbeschriftung
+% ylabel('Hauefigkeiten')  % x-Achsenbeschriftung
+
+%% Kontrollplot erstellen fuer linke und rechte Seite der xy-Werte
+% figure('NumberTitle','off','Name','Kontrollplot xy-Werte inkl. Diff zu Nullinie')  %% oeffnet ein Plotfenster
+% 
+% xy_val = [x y];  % x & y-Koordinaten wieder zu xy zusammenführen
+% a = length(xy_val);  % Bestimmung der xy-Vektorlänge
+% x_val = xy_val(:,1);  % x-Koordinaten aus xy_val holen
+% y_val = xy_val(:,2);  % y-Koordinaten aus xy_val holen
+% 
+% x_re = x_val(1:a/2-10);  % erste Haelfte des x-Vektors fuer rechte Seite / "a/2-10" weil sonst Werte die auf linker Seite liegen ueberlappen
+% y_re = y_val(1:a/2-10);  % erste Haelfte des y-Vektors fuer rechte Seite
+% 
+% x_li = x_val(a/2+1:a);  % zweite Haelfte des x-Vektors fuer linke Seite
+% y_li = y_val(a/2+1:a);  % zweite Haelfte des y-Vektors fuer linke Seite
+% 
+% xy_re = [x_re y_re];  % Zusammenfuehren xy-Koordinaten rechte Seite
+% xy_li = [x_li y_li];  % Zusammenfuehren xy-Koordinaten linke Seite
+% 
+% plot(xy_li(:,1), xy_li(:,2), 'b.')  % plotten der Pflanzen links
+% hold on
+% grid on
+% plot(xy_re(:,1), xy_re(:,2), 'g.')  % plotten der Pflanzen links
+% 
+% % Bildung Mittelwerte 
+% y_re_mw = mean(y_re);  % Mittelwert der rechten y-Werte
+% y_li_mw = mean(y_li);  % Mittelwert der linken y-Werte
+% 
+% % aus Mittelwert Vektor machen fuer Plot
+% mean_re = [y_re_mw; y_re_mw];  % erzeugt Vektor damit im Plot eine Linie entsteht
+% mean_li = [y_li_mw; y_li_mw];  % erzeugt Vektor damit im Plot eine Linie entsteht
+% 
+% mean_x_axis = [0.1; 0.9];
+% 
+% plot(mean_x_axis, mean_re, 'g-')
+% plot(mean_x_axis, mean_li, 'b-')
+% 
+% % Bildung der Mittelwertdifferenz
+% diff = y_li_mw - abs(y_re_mw);  % Abweichung der Mittelwerte von der Nulllinie. Positive Werte bedeuten Robbi zu weit links -> Drehung gg UZ.
+% 
+% % Vektor erzeugen fuer Plot
+% diff_vec = [diff; diff];  % erzeugt Vektor damit im Plot eine Linie entsteht
+% 
+% plot(mean_x_axis, diff_vec, 'r-')
+% legend('xy-li', 'xy-re', 'mean-re', 'mean-li', 'diff')
+% title('Abweichung von der Nulllinie')  % Titel des Plots
+% xlabel('x')  % x-Achsenbeschriftung
+% ylabel('y')  % x-Achsenbeschriftung

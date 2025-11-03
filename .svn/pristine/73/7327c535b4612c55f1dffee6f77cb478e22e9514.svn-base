@@ -1,0 +1,26 @@
+#include "slros_initialize.h"
+
+ros::NodeHandle * SLROSNodePtr;
+const std::string SLROSNodeName = "fre2017";
+
+// For Block fre2017/Subscribe
+SimulinkSubscriber<sensor_msgs::LaserScan, SL_Bus_fre2017_sensor_msgs_LaserScan> Sub_fre2017_5;
+
+// For Block fre2017/Subscribe1
+SimulinkSubscriber<geometry_msgs::Twist, SL_Bus_fre2017_geometry_msgs_Twist> Sub_fre2017_6;
+
+// For Block fre2017/Subscribe2
+SimulinkSubscriber<std_msgs::Bool, SL_Bus_fre2017_std_msgs_Bool> Sub_fre2017_7;
+
+// For Block fre2017/Subscribe4
+SimulinkSubscriber<sensor_msgs::Joy, SL_Bus_fre2017_sensor_msgs_Joy> Sub_fre2017_8;
+
+// For Block fre2017/Publish
+SimulinkPublisher<geometry_msgs::Twist, SL_Bus_fre2017_geometry_msgs_Twist> Pub_fre2017_860;
+
+void slros_node_init(int argc, char** argv)
+{
+  ros::init(argc, argv, SLROSNodeName);
+  SLROSNodePtr = new ros::NodeHandle();
+}
+

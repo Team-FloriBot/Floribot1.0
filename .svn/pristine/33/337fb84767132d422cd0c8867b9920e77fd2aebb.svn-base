@@ -1,0 +1,11 @@
+
+
+patternpub = rospublisher('/teleop/movement_sequence', 'sensor_msgs/Joy');
+patternmsg = rosmessage('sensor_msgs/Joy');
+patternmsg.Buttons = [1, 1, 2, 1, 1, 1, 2, 1, 0];
+send(patternpub, patternmsg)
+
+statepub = rospublisher('/teleop/state', 'std_msgs/Bool');
+statemsg = rosmessage('std_msgs/Bool');
+statemsg.Data= false;
+send(statepub, statemsg)

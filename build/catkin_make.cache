@@ -1,0 +1,2 @@
+base:camera_package:floribot_engines:floribot_robot:floribot_tf2:fre2019_row_detection:fre2019_tasks_drive:fre2019_tasks_logic:ptu46
+-DCATKIN_DEVEL_PREFIX=/home/user/floribot_ws/devel -DCMAKE_INSTALL_PREFIX=/home/user/floribot_ws/install -G Unix Makefiles

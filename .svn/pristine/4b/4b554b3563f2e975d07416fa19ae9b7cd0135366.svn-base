@@ -1,0 +1,36 @@
+//
+// File: task2_private.h
+//
+// Code generated for Simulink model 'task2'.
+//
+// Model version                  : 1.363
+// Simulink Coder version         : 8.7 (R2014b) 08-Sep-2014
+// C/C++ source code generated on : Tue Jun 16 17:40:37 2015
+//
+// Target selection: ert.tlc
+// Embedded hardware selection: 32-bit Generic
+// Code generation objectives: Unspecified
+// Validation result: Not run
+//
+#ifndef RTW_HEADER_task2_private_h_
+#define RTW_HEADER_task2_private_h_
+#include "rtwtypes.h"
+
+// Imported (extern) block parameters
+extern int32_T pattern;                // Variable: pattern
+                                       //  Referenced by: '<S27>/Constant2'
+
+extern int32_T pattern2;               // Variable: pattern2
+                                       //  Referenced by: '<S27>/Constant'
+
+extern real_T rt_roundd_snf(real_T u);
+extern real_T rt_modd_snf(real_T u0, real_T u1);
+extern real_T rt_atan2d_snf_cordic11(real_T u0, real_T u1);
+
+#endif                                 // RTW_HEADER_task2_private_h_
+
+//
+// File trailer for generated code.
+//
+// [EOF]
+//

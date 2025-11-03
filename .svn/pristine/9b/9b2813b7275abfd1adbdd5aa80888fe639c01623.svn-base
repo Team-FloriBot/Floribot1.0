@@ -1,0 +1,5 @@
+<launch>
+  <node name="ball_into_pointcloud" pkg="floribot_ballfinder" type="ball_into_pointcloud">
+    <rosparam file="$(find floribot_ballfinder)/config/ballfinder.yaml" command="load" />
+  </node>
+</launch>

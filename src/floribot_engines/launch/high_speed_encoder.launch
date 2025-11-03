@@ -1,0 +1,5 @@
+<launch>
+  <node name="high_speed_encoder" pkg="floribot_engines" type="high_speed_encoder_node" >
+    <rosparam file="$(find floribot_engines)/config/high_speed_encoder.yaml" command="load" />
+  </node>
+</launch>

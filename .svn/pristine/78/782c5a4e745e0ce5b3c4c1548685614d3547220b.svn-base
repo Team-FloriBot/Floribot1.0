@@ -1,0 +1,9 @@
+function [ ] = publish_left_power( power )
+
+global left_power_pub left_power_msg;
+
+left_power_msg.setData(power);
+left_power_pub.publish(left_power_msg);
+
+end
+

@@ -1,0 +1,18 @@
+ptree = rosparam;
+yaml = YAML.read('../floribot_engines/config/engines.yaml');
+names = fieldnames(yaml);
+for i = 1:size(names)
+  set(ptree, strcat('/engines/',names{i}), getfield(yaml,names{i}));
+end
+
+yaml = YAML.read('../floribot_robot/config/task1.yaml');
+names = fieldnames(yaml);
+for i = 1:size(names)
+  set(ptree, strcat('/task1/',names{i}), getfield(yaml,names{i}));
+end
+
+yaml = YAML.read('../floribot_robot/config/laser.yaml');
+names = fieldnames(yaml);
+for i = 1:size(names)
+  set(ptree, strcat('/laser/',names{i}), getfield(yaml,names{i}));
+end

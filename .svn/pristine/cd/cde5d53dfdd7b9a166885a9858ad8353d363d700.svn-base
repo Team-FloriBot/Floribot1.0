@@ -1,0 +1,26 @@
+yaml = YAML.read('../floribot_robot/config/laser.yaml');
+names = fieldnames(yaml);
+for i = 1:size(names)
+    command = names{i};
+    command = strcat(command,' = Simulink.Parameter;');
+    command = strcat(command,names{i});
+    command = strcat(command,'.Value = ');
+    command = strcat(command,num2str(getfield(yaml,names{i})));
+    command = strcat(command,';');
+    command = strcat(command,names{i});
+    command = strcat(command,'.StorageClass = ');
+    command = strcat(command,char(39));
+    command = strcat(command,'ImportedExtern',char(39),';');
+    
+    eval(sprintf(command));
+%     names{i} = 
+%     names{i}.Value = ;
+%     names{i}.CoderInfo.StorageClass = 'ImportedExtern';
+%     names{i}.CoderInfo.Alias = '';
+%     names{i}.CoderInfo.Alignment = -1;
+%     names{i}.Description = '';
+%     names{i}.DataType = 'auto';
+%     names{i}.Min = [];
+%     names{i}.Max = [];
+%     names{i}.DocUnits = '';
+end

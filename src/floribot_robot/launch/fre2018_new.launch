@@ -1,0 +1,4 @@
+<launch>
+  <node name="fre2018_new" pkg="fre2018_new" type="fre2018_new_node">
+  </node>
+</launch>

@@ -1,0 +1,9 @@
+function [ ] = scan_message( msg )
+
+global scan_msg;
+
+scan_msg = msg;
+% set_param('robot1_MIL/hokuyo_laser/Constant', 'Value','scan_msg.getRanges');
+set_param('robot2_MIL/hokuyo_laser/Constant', 'Value','scan_msg.getRanges');
+end
+

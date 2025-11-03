@@ -1,0 +1,1 @@
+unix('./catkin_make.sh', '-echo');

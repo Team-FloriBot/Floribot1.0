@@ -1,0 +1,8 @@
+prefix=/home/user/floribot_ws/devel
+
+Name: fre2019_tasks_drive
+Description: Description of fre2019_tasks_drive
+Version: 1.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: geometry_msgs roscpp std_msgs

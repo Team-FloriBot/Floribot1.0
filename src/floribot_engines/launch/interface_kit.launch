@@ -1,0 +1,5 @@
+<launch>
+  <node name="interface_kit" pkg="floribot_engines" type="interface_kit_node" >
+    <rosparam file="$(find floribot_engines)/config/interface_kit.yaml" command="load" />
+  </node>
+</launch>

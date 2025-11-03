@@ -1,0 +1,158 @@
+close all
+clear all
+%% Get picture from webcam
+% % % Create the webcam object.
+% cam = webcam(1);
+% cam.Resolution = cam.AvailableResolutions{1,1};
+% 
+% cam = webcam(2);
+% cam.Resolution = cam.AvailableResolutions{1,1};
+% 
+
+
+% waitforbuttonpress;
+% while(1)
+    % Capture one frame
+%     videoFrame = snapshot(cam);
+    videoFrame=imread('test_20150617_10_54_39.jpg');
+    
+    videoFrameHSV = rgb2hsv(videoFrame);
+    
+    hVideoFrame = videoFrameHSV(:,:,1);
+    sVideoFrame = videoFrameHSV(:,:,2);
+    vVideoFrame = videoFrameHSV(:,:,3);
+    
+    vVideoFrame = imcomplement(vVideoFrame);
+    
+    hVideoFrame = hVideoFrame .* vVideoFrame;
+    
+    % figure
+    % imshow(videoFrame)
+    % title('Orginal-Bild')
+    %
+    % figure
+    % imshow(hVideoFrame);
+    % title('h-Bild')
+    %
+    % figure
+    % imshow(sVideoFrame);
+    % title('s-Bild')
+    %
+    % figure
+    % imshow(vVideoFrame);
+    % title('v-Bild')
+    
+    %% Thresholds
+    hueThresholdLow = 0.15;
+    hueThresholdHigh = 0.2;
+    
+    satThresholdLow = 0.2;
+    satThresholdHigh = 1;
+    
+    valThresholdLow = 0.7;
+    valThresholdHigh = 1;
+    
+    hueMask = (hVideoFrame >= hueThresholdLow) & (hVideoFrame <= hueThresholdHigh);
+    satMask = (sVideoFrame >= satThresholdLow) & (sVideoFrame <= satThresholdHigh);
+    valMask = (vVideoFrame >= valThresholdLow) & (vVideoFrame <= valThresholdHigh);
+    
+    
+    %% hue
+    % figure
+    % imshow(hueMask,[]);
+    % title('hueMask')
+    
+    smallestAcceptableArea = 100; % Keep areas only if they're bigger than this.
+    hueMaskclean = uint8(bwareaopen(hueMask, smallestAcceptableArea));
+    
+    % figure
+    % imshow(hueMaskclean,[]);
+    % title('hue vor kantenglättung')
+    
+    structuringElement = strel('disk', 1);
+    hueMaskclean = imopen(hueMaskclean, structuringElement);
+    
+    structuringElement = strel('disk', 5);
+    hueMaskclean = imclose(hueMaskclean, structuringElement);
+    
+    figure(5)
+    imshow(hueMaskclean,[]);
+    title('hue nach kantenglättung')
+    
+    %% sat
+    % figure
+    % imshow(satMask,[]);
+    % title('satMask')
+    
+    smallestAcceptableArea = 50; % Keep areas only if they're bigger than this.
+    satMaskclean = uint8(bwareaopen(satMask, smallestAcceptableArea));
+    
+    % figure
+    % imshow(satMaskclean,[]);
+    % title('sat vor kantenglättung')
+    
+    structuringElement = strel('disk', 3);
+    satMaskclean = imopen(satMaskclean, structuringElement);
+    
+    figure(1)
+    imshow(satMaskclean,[]);
+    title('sat nach kantenglättung')
+    
+    
+    %% val
+    % figure
+    % imshow(valMask,[]);
+    % title('valMask')
+    
+    smallestAcceptableArea = 50; % Keep areas only if they're bigger than this.
+    valMaskclean = uint8(bwareaopen(valMask, smallestAcceptableArea));
+    
+    figure(2)
+    imshow(valMaskclean,[]);
+    title('val vor kantenglättung')
+    
+    structuringElement = strel('disk', 3);
+    valMaskclean = imopen(valMaskclean, structuringElement);
+    
+    figure(3)
+    imshow(valMaskclean,[]);
+    title('val nach kantenglättung')
+    
+    
+    %% fertig
+    maskClean = (hueMaskclean & satMaskclean & valMaskclean);
+    
+    % figure
+    % imshow(maskClean,[]);
+    % title('fertig vor kantenglättung')
+    
+    structuringElement = strel('disk', 7);
+    maskClean = imclose(maskClean, structuringElement);
+    
+    % figure
+    % imshow(maskClean,[]);
+    % title('fertig nach kantenglättung')
+    %
+    % figure
+    % imshowpair(videoFrame,maskClean,'montage')
+    
+    
+    %% Objekterkennung
+    % wirf alles wag was keliner ist als
+    smallestAcceptableArea = 1000; % Keep areas only if they're bigger than this.
+    maskCleancleaner = uint8(bwareaopen(maskClean, smallestAcceptableArea));
+    
+    figure(4)
+    imshow(maskCleancleaner,[]);
+    title('fertig bereinigt')
+    
+    cc = bwconncomp(maskCleancleaner,4);
+    number  = cc.NumObjects;
+    
+    if number > 0
+        beep
+    end
+% end
+% 
+% closepreview;
+% clear('cam');

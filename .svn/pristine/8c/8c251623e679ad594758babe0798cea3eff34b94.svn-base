@@ -1,0 +1,32 @@
+rosinit('192.168.0.42');
+
+global pixel_image_x;
+global pixel_image_y;
+global meter_image_x; % [ m ]
+global meter_image_y; % [ m ]
+global meter_per_pixel_x;
+global meter_per_pixel_y;
+global tennis_r_min; % r_max muss < 3* r_min sein und r_max - r_min < 100
+global tennis_r_max;
+global threshhold_golfball_bw;
+
+global image_sub; % subscribe zum Bild in komprimiertem Zustand    'sensor_msgs/CompressedImage'
+global image_msg_type;
+
+pixel_image_x = 723;
+pixel_image_y = 543;
+meter_image_x = 0.53; % [ m ]
+meter_image_y = 0.4; % [ m ]
+meter_per_pixel_x = meter_image_x / pixel_image_x;
+meter_per_pixel_y = meter_image_y / pixel_image_y;
+tennis_r_min = 25; % r_max muss < 3* r_min sein und r_max - r_min < 100
+tennis_r_max = 75;
+threshhold_golfball_bw = 0.18;
+
+image_sub = rossubscriber('camera/image/compressed'); % subscribe zum Bild in komprimiertem Zustand    'sensor_msgs/CompressedImage'
+image_msg_type = rosmessage('sensor_msgs/CompressedImage');
+
+
+polling_timer = timer('ExecutionMode', 'fixedDelay', 'Period', 0.1);
+polling_timer.TimerFcn = @cyclic_image_processing;
+start(polling_timer);

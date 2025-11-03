@@ -1,0 +1,4 @@
+<launch>
+  <node name="fre2017_task4" pkg="fre2017_task4" type="fre2017_task4_node">
+  </node>
+</launch>

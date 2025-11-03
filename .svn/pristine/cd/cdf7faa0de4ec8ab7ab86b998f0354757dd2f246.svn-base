@@ -1,0 +1,13 @@
+cam = webcam(2);
+cam.Resolution = cam.AvailableResolutions{1,1}
+preview(cam)
+
+for i=1:10
+    videoFrame= snapshot(cam);
+    s=strcat('test_',datestr(clock, 'yyyymmdd_HH_MM_SS'), '.jpg');
+    imwrite(videoFrame,s);
+    waitforbuttonpress
+
+end
+closepreview;
+clear('cam');

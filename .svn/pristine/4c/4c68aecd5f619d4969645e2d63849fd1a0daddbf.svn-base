@@ -1,0 +1,10 @@
+
+params.min_linePointCount: 50
+params.relevantScans_cnt: 4			
+params.max_AngleDiffBetweenRows: 0.25
+params.max_AngleDiff_recent2current: 0.05
+params.RANSAC_threshold: 0.1
+params.pointCloudRange_Xmin: 0.0		
+params.pointCloudRange_Xmax: 1.2	
+params.pointCloudRange_Ymin: 0.05
+params.pointCloudRange_Ymax: 0.7

@@ -1,0 +1,6 @@
+package floribot_engines;
+
+public interface interface_kit extends org.ros.internal.message.Message {
+  static final java.lang.String _TYPE = "floribot_engines/interface_kit";
+  static final java.lang.String _DEFINITION = "int32 index\nint32 value_type\nint32 value\n---\nint32 ack\n";
+}

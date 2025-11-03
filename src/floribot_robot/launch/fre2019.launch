@@ -1,0 +1,12 @@
+<launch>
+  <node name="fre2019_row_detection" pkg="fre2019_row_detection" type="fre2019_row_detection_node">
+  </node>
+  
+    <node name="fre2019_tasks_drive" pkg="fre2019_tasks_drive" type="fre2019_tasks_drive_node">
+  </node>
+  
+    <node name="fre2019_tasks_logic" pkg="fre2019_tasks_logic" type="fre2019_tasks_logic_node">
+  </node>
+
+
+</launch>

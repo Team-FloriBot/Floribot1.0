@@ -1,0 +1,6 @@
+serial_port: '/dev/ttyUSB0'
+serial_baud: 300
+min_dist: 0.5
+
+beep_golf: 'A'
+beep_tennis: '~~~~~~~~~~~~~~~~~~~~~'

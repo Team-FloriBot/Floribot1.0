@@ -1,0 +1,68 @@
+%% Skript fuer Bildverarbeitung / Mapping
+
+%rosinit('192.168.0.42') % ROS-Master aufziehen
+%%
+% image_sub = rossubscriber('camera/image/compressed'); % subscribe zum Bild in komprimiertem Zustand    'sensor_msgs/CompressedImage'
+% image_msg_type = rosmessage('sensor_msgs/CompressedImage');
+% pause(1);
+% image_msg = receive(image_sub, 1);
+% 
+% 
+% image = readImage(image_msg);
+% imshow(image)
+
+
+%% Bildverarbeitung Tennisball
+image_golf = imread('mit_beleuchtung.png');
+image(image_golf)
+
+[centers, radii, metric] = imfindcircles(image_golf, [30 70])
+viscircles(centers, radii, 'EdgeColor', 'b')
+
+%% Bildverarbeitung Golfball    
+img_gray = rgb2gray(image_golf);
+diff_im = imsubtract(image_golf(:,:,1), img_gray);
+%Use a median filter to filter out noise
+img_median = medfilt2(diff_im, [3 3]);
+% Convert the resulting grayscale image into a binary image.
+img_bw = im2bw(img_median,0.18); % 0.18 threshhold fuer black and white
+% Remove all those pixels less than 300px
+img_closed = bwareaopen(img_bw,300);
+    
+% subplot(3,2,1),imshow(diff_im)
+% subplot(3,2,2),imshow(img_median)
+% subplot(3,2,3),imshow(img_bw)
+% subplot(3,2,4),imshow(img_closed)
+% subplot(3,2,5),imshow(img_gray)
+% subplot(3,2,6),imshow(image_golf)
+%Label all the connected components in the image.
+bw = bwlabel(img_closed, 8);
+    
+% Here we do the image blob analysis.
+% We get a set of properties for each labeled region.
+stats = regionprops(bw, 'BoundingBox', 'Centroid');
+    
+% Display the image
+figure(2)
+
+imshow(image_golf)
+    
+hold on
+    
+%This is a loop to bound the red objects in a rectangular box.
+for object = 1:length(stats)
+     bb = stats(object).BoundingBox;
+     bc = stats(object).Centroid;
+     rectangle('Position',bb,'EdgeColor','r','LineWidth',2)
+     plot(bc(1),bc(2), '-m+')
+     a=text(bc(1)+15,bc(2), strcat('X: ', num2str(round(bc(1))), '    Y: ', num2str(round(bc(2)))));
+     set(a, 'FontName', 'Arial', 'FontWeight', 'bold', 'FontSize', 12, 'Color', 'yellow');
+end
+    
+hold off
+
+%% Bildverarbeitung mit Schwarz-Weiﬂ-Bild
+% image_golf_gray = rgb2gray(image_golf);
+% level = graythresh(image_golf_gray);
+% BW = imbinarize(image_golf_gray, level);
+% imshowpair(image_golf_gray, BW, 'montage')

@@ -1,0 +1,272 @@
+//
+// File: task2.h
+//
+// Code generated for Simulink model 'task2'.
+//
+// Model version                  : 1.363
+// Simulink Coder version         : 8.7 (R2014b) 08-Sep-2014
+// C/C++ source code generated on : Tue Jun 16 17:40:37 2015
+//
+// Target selection: ert.tlc
+// Embedded hardware selection: 32-bit Generic
+// Code generation objectives: Unspecified
+// Validation result: Not run
+//
+#ifndef RTW_HEADER_task2_h_
+#define RTW_HEADER_task2_h_
+#include <float.h>
+#include <math.h>
+#include <string.h>
+#include <stddef.h>
+#ifndef task2_COMMON_INCLUDES_
+# define task2_COMMON_INCLUDES_
+#include "rtwtypes.h"
+#endif                                 // task2_COMMON_INCLUDES_
+
+#include "task2_types.h"
+#include "rt_nonfinite.h"
+#include "rtGetInf.h"
+
+// Macros for accessing real-time model data structure
+#ifndef rtmGetErrorStatus
+# define rtmGetErrorStatus(rtm)        ((rtm)->errorStatus)
+#endif
+
+#ifndef rtmSetErrorStatus
+# define rtmSetErrorStatus(rtm, val)   ((rtm)->errorStatus = (val))
+#endif
+
+// Block signals (auto storage)
+typedef struct {
+  real_T DataTypeConversion[720];      // '<S3>/Data Type Conversion'
+  real_T ImpAsg_InsertedFor_scan_x_o[720];// '<S14>/right side of the left box1' 
+  real_T cmd_vel_x;                    // '<S4>/teleop_chart'
+  real_T cmd_vel_yaw;                  // '<S4>/teleop_chart'
+  real_T task_enable;                  // '<S4>/teleop_chart'
+  real_T Width1;                       // '<S18>/Width1'
+  real_T Width1_e;                     // '<S19>/Width1'
+  real_T Width;                        // '<S20>/Width'
+  real_T VectorConcatenate2[20];       // '<S27>/Vector Concatenate2'
+  real_T Merge[2];                     // '<S3>/Merge'
+  boolean_T start_right;               // '<S4>/teleop_chart'
+  boolean_T LogicalOperator;           // '<S3>/Logical Operator'
+  boolean_T Switch;                    // '<S29>/Switch'
+  boolean_T Switch_f;                  // '<S30>/Switch'
+  boolean_T bool_turn_right;           // '<S3>/Chart'
+  boolean_T bool_turn_left;            // '<S3>/Chart'
+  boolean_T bool_in_lane;              // '<S3>/Chart'
+} B_task2_T;
+
+// Block states (auto storage) for system '<Root>'
+typedef struct {
+  real_T Movingaverage_states[9];      // '<S8>/Moving average'
+  real_T UD_DSTATE;                    // '<S12>/UD'
+  real_T Integrator_DSTATE;            // '<S5>/Integrator'
+  real_T Filter_DSTATE;                // '<S5>/Filter'
+  real_T Movingaverage_states_f[9];    // '<S9>/Moving average'
+  real_T UD_DSTATE_f;                  // '<S13>/UD'
+  real_T Integrator_DSTATE_e;          // '<S6>/Integrator'
+  real_T Filter_DSTATE_p;              // '<S6>/Filter'
+  real_T dir;                          // '<S3>/Chart'
+  real_T i;                            // '<S3>/Chart'
+  real_T rows;                         // '<S3>/Chart'
+  int32_T FindNonzeroElements1_DIMS1;  // '<S18>/Find Nonzero Elements1'
+  int32_T Selector3_DIMS1;             // '<S18>/Selector3'
+  int32_T FindNonzeroElements1_DIMS1_g;// '<S19>/Find Nonzero Elements1'
+  int32_T Selector3_DIMS1_a;           // '<S19>/Selector3'
+  int32_T FindNonzeroElements_DIMS1;   // '<S20>/Find Nonzero Elements'
+  int32_T Selector_DIMS1;              // '<S20>/Selector'
+  uint32_T temporalCounter_i1;         // '<S3>/Chart'
+  uint8_T is_active_c1_floribot_library;// '<S4>/teleop_chart'
+  uint8_T is_c1_floribot_library;      // '<S4>/teleop_chart'
+  uint8_T is_manual;                   // '<S4>/teleop_chart'
+  uint8_T is_active_c1_task2;          // '<S3>/Chart'
+  uint8_T is_c1_task2;                 // '<S3>/Chart'
+  boolean_T task2_MODE;                // '<Root>/task2'
+} DW_task2_T;
+
+// Invariant block signals (auto storage)
+typedef const struct tag_ConstB_task2_T {
+  real_T Divide4;                      // '<S7>/Divide4'
+} ConstB_task2_T;
+
+// Constant parameters (auto storage)
+typedef struct {
+  // Expression: [scan_angle_min:scan_angle_increment:scan_angle_max]
+  //  Referenced by: '<S3>/scan_angles'
+
+  real_T scan_angles_Value[720];
+
+  // Pooled Parameter (Expression: [1 1 1 1 1 1 1 1 1 1])
+  //  Referenced by:
+  //    '<S8>/Moving average'
+  //    '<S9>/Moving average'
+
+  real_T pooled13[10];
+
+  // Pooled Parameter (Expression: [10 0 0 0 0 0 0 0 0 0])
+  //  Referenced by:
+  //    '<S8>/Moving average'
+  //    '<S9>/Moving average'
+
+  real_T pooled14[10];
+} ConstP_task2_T;
+
+// External inputs (root inport signals with auto storage)
+typedef struct {
+  real_T left_encoder;                 // '<Root>/left_encoder'
+  real_T right_encoder;                // '<Root>/right_encoder'
+  real_T scan_ranges[720];             // '<Root>/scan_ranges'
+  real_T scan_angle_min;               // '<Root>/scan_angle_min'
+  real_T scan_angle_max;               // '<Root>/scan_angle_max'
+  real_T scan_angle_increment;         // '<Root>/scan_angle_increment'
+  real_T battery_voltage;              // '<Root>/battery_voltage'
+  boolean_T button_A;                  // '<Root>/button_A'
+  boolean_T button_B;                  // '<Root>/button_B'
+  boolean_T button_up;                 // '<Root>/button_up'
+  boolean_T button_down;               // '<Root>/button_down'
+  boolean_T button_left;               // '<Root>/button_left'
+  boolean_T button_right;              // '<Root>/button_right'
+  boolean_T button_1;                  // '<Root>/button_1'
+  boolean_T button_2;                  // '<Root>/button_2'
+  real_T joy_roll;                     // '<Root>/joy_roll'
+  real_T joy_pitch;                    // '<Root>/joy_pitch'
+  real_T joy_yaw;                      // '<Root>/joy_yaw'
+} ExtU_task2_T;
+
+// External outputs (root outports fed by signals with auto storage)
+typedef struct {
+  real_T left_power;                   // '<Root>/left_power'
+  real_T right_power;                  // '<Root>/right_power'
+  real_T cmd_vel_x;                    // '<Root>/cmd_vel_x'
+  real_T cmd_vel_yaw;                  // '<Root>/cmd_vel_yaw'
+  boolean_T joy_leds[4];               // '<Root>/joy_leds'
+  real_T joy_rumble;                   // '<Root>/joy_rumble'
+} ExtY_task2_T;
+
+// Real-time Model Data Structure
+struct tag_RTM_task2_T {
+  const char_T * volatile errorStatus;
+};
+
+// Block signals (auto storage)
+extern B_task2_T task2_B;
+
+// Block states (auto storage)
+extern DW_task2_T task2_DW;
+
+#ifdef __cplusplus
+
+extern "C" {
+
+#endif
+
+  // External inputs (root inport signals with auto storage)
+  extern ExtU_task2_T task2_U;
+
+  // External outputs (root outports fed by signals with auto storage)
+  extern ExtY_task2_T task2_Y;
+
+#ifdef __cplusplus
+
+}
+#endif
+
+extern const ConstB_task2_T task2_ConstB;// constant block i/o
+
+// Constant parameters (auto storage)
+extern const ConstP_task2_T task2_ConstP;
+
+#ifdef __cplusplus
+
+extern "C" {
+
+#endif
+
+  // Model entry point functions
+  extern void task2_initialize(void);
+  extern void task2_step(void);
+  extern void task2_terminate(void);
+
+#ifdef __cplusplus
+
+}
+#endif
+
+// Real-time Model object
+#ifdef __cplusplus
+
+extern "C" {
+
+#endif
+
+  extern RT_MODEL_task2_T *const task2_M;
+
+#ifdef __cplusplus
+
+}
+#endif
+
+//-
+//  The generated code includes comments that allow you to trace directly
+//  back to the appropriate location in the model.  The basic format
+//  is <system>/block_name, where system is the system number (uniquely
+//  assigned by Simulink) and block_name is the name of the block.
+//
+//  Use the MATLAB hilite_system command to trace the generated code back
+//  to the model.  For example,
+//
+//  hilite_system('<S3>')    - opens system 3
+//  hilite_system('<S3>/Kp') - opens and selects block Kp which resides in S3
+//
+//  Here is the system hierarchy for this model
+//
+//  '<Root>' : 'task2'
+//  '<S1>'   : 'task2/base'
+//  '<S2>'   : 'task2/switch_cmd_vel'
+//  '<S3>'   : 'task2/task2'
+//  '<S4>'   : 'task2/teleop1'
+//  '<S5>'   : 'task2/base/Discrete PID Controller'
+//  '<S6>'   : 'task2/base/Discrete PID Controller1'
+//  '<S7>'   : 'task2/base/Inverse Kinematik'
+//  '<S8>'   : 'task2/base/Subsystem'
+//  '<S9>'   : 'task2/base/Subsystem1'
+//  '<S10>'  : 'task2/base/in Nan'
+//  '<S11>'  : 'task2/base/in Nan1'
+//  '<S12>'  : 'task2/base/Subsystem/Discrete Derivative'
+//  '<S13>'  : 'task2/base/Subsystem1/Discrete Derivative'
+//  '<S14>'  : 'task2/task2/Box check both sides'
+//  '<S15>'  : 'task2/task2/Box check left side'
+//  '<S16>'  : 'task2/task2/Box check right side'
+//  '<S17>'  : 'task2/task2/Box check right side out of row'
+//  '<S18>'  : 'task2/task2/Calculate average of bothe sides'
+//  '<S19>'  : 'task2/task2/Calculate average of left side'
+//  '<S20>'  : 'task2/task2/Calculate average of right side'
+//  '<S21>'  : 'task2/task2/Calculate cmd_vel parameter for in_lane'
+//  '<S22>'  : 'task2/task2/Calculate cmd_vel parameter for turn_left'
+//  '<S23>'  : 'task2/task2/Calculate cmd_vel parameter for turn_right'
+//  '<S24>'  : 'task2/task2/Chart'
+//  '<S25>'  : 'task2/task2/Compare To Constant'
+//  '<S26>'  : 'task2/task2/Compare To Constant1'
+//  '<S27>'  : 'task2/task2/Pattern'
+//  '<S28>'  : 'task2/task2/find row out of row'
+//  '<S29>'  : 'task2/task2/row_left?'
+//  '<S30>'  : 'task2/task2/row_right?'
+//  '<S31>'  : 'task2/task2/select how far we look'
+//  '<S32>'  : 'task2/task2/sorte out box'
+//  '<S33>'  : 'task2/task2/Box check both sides/Polar to Cartesian1'
+//  '<S34>'  : 'task2/task2/Box check left side/Polar to Cartesian'
+//  '<S35>'  : 'task2/task2/Box check right side/Polar to Cartesian'
+//  '<S36>'  : 'task2/task2/find row out of row/+3'
+//  '<S37>'  : 'task2/task2/find row out of row/+31'
+//  '<S38>'  : 'task2/task2/find row out of row/calculate alphas'
+//  '<S39>'  : 'task2/task2/find row out of row/subtract yi+k-yi'
+//  '<S40>'  : 'task2/teleop1/teleop_chart'
+
+#endif                                 // RTW_HEADER_task2_h_
+
+//
+// File trailer for generated code.
+//
+// [EOF]
+//

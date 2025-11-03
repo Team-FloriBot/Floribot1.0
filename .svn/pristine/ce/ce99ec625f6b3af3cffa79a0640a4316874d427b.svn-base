@@ -1,0 +1,18 @@
+package floribot_engines;
+
+public interface encoder_params extends org.ros.internal.message.Message {
+  static final java.lang.String _TYPE = "floribot_engines/encoder_params";
+  static final java.lang.String _DEFINITION = "Header header\nint32 index\nint32 count\nint32 count_change\nint32 time\n";
+  static final boolean _IS_SERVICE = false;
+  static final boolean _IS_ACTION = false;
+  std_msgs.Header getHeader();
+  void setHeader(std_msgs.Header value);
+  int getIndex();
+  void setIndex(int value);
+  int getCount();
+  void setCount(int value);
+  int getCountChange();
+  void setCountChange(int value);
+  int getTime();
+  void setTime(int value);
+}

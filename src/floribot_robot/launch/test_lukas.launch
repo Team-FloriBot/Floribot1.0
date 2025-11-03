@@ -1,0 +1,8 @@
+<launch>
+
+
+<include file="$(find floribot_robot)/launch/laser.launch" />
+
+
+
+</launch>

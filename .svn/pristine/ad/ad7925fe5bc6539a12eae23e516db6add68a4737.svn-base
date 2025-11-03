@@ -1,0 +1,26 @@
+include_directories(
+  src/simulink/
+  ${catkin_INCLUDE_DIRS}
+)
+add_library(simulink_task2 ../simulink/task2_ert_rtw/task2.cpp)
+add_library(task2 src/task2.cpp)
+add_executable(task2_node 
+
+  ../simulink/task2_ert_rtw/task2.cpp
+  ../simulink/task2_ert_rtw/task2_data.cpp
+  ../simulink/task2_ert_rtw/rtGetNaN.cpp
+  ../simulink/task2_ert_rtw/rt_nonfinite.cpp
+  ../simulink/task2_ert_rtw/rtGetInf.cpp
+  src/task2.cpp
+  src/task2_params.c
+  src/task2_node.cpp
+)
+add_dependencies(task2_node
+  task2
+  simulink_task2
+)
+target_link_libraries(task2_node
+  ${catkin_LIBRARIES}
+  task2
+  simulink_task2
+)

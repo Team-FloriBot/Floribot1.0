@@ -1,0 +1,9 @@
+<launch>
+<include file="$(find floribot_engines)/launch/interface_kit.launch" />
+
+<include file="$(find floribot_robot)/launch/hokuyo.launch" />
+
+<include file="$(find floribot_robot)/launch/base.launch" />
+
+<include file="$(find floribot_engines)/launch/engines.launch" />
+</launch>

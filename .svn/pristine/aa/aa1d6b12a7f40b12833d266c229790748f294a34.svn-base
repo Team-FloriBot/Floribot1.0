@@ -1,0 +1,10 @@
+package floribot_engines;
+
+public interface interface_kitResponse extends org.ros.internal.message.Message {
+  static final java.lang.String _TYPE = "floribot_engines/interface_kitResponse";
+  static final java.lang.String _DEFINITION = "int32 ack";
+  static final boolean _IS_SERVICE = true;
+  static final boolean _IS_ACTION = false;
+  int getAck();
+  void setAck(int value);
+}

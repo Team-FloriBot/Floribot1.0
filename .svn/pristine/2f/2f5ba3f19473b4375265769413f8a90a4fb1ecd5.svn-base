@@ -1,0 +1,1139 @@
+//
+// Academic License - for use in teaching, academic research, and meeting
+// course requirements at degree granting institutions only.  Not for
+// government, commercial, or other organizational use.
+//
+// File: task1.cpp
+//
+// Code generated for Simulink model 'task1'.
+//
+// Model version                  : 1.352
+// Simulink Coder version         : 8.10 (R2016a) 10-Feb-2016
+// C/C++ source code generated on : Sun Jun 12 14:39:34 2016
+//
+// Target selection: ert.tlc
+// Embedded hardware selection: 32-bit Generic
+// Code generation objectives: Unspecified
+// Validation result: Not run
+//
+#include "task1.h"
+#include "task1_private.h"
+
+// Named constants for Chart: '<S3>/Stateflow logic'
+#define task1_IN_NO_ACTIVE_CHILD       ((uint8_T)0U)
+#define task1_IN_in_row                ((uint8_T)1U)
+#define task1_IN_turn_left             ((uint8_T)2U)
+#define task1_IN_turn_right            ((uint8_T)3U)
+#define task1_IN_wait_left             ((uint8_T)4U)
+#define task1_IN_wait_right            ((uint8_T)5U)
+
+// Named constants for Chart: '<S4>/teleop_chart'
+#define task1_DIRECT_PITCH_AXIS_DIV    (10.0)
+#define task1_DIRECT_ROLL_AXIS_DIV     (-10.0)
+#define task1_IN_Down                  ((uint8_T)1U)
+#define task1_IN_Left                  ((uint8_T)2U)
+#define task1_IN_Right                 ((uint8_T)3U)
+#define task1_IN_Up                    ((uint8_T)4U)
+#define task1_IN_automatic             ((uint8_T)1U)
+#define task1_IN_control_x_and_yaw     ((uint8_T)5U)
+#define task1_IN_left_or_right         ((uint8_T)2U)
+#define task1_IN_manual                ((uint8_T)3U)
+#define task1_IN_stand_still           ((uint8_T)6U)
+
+// Block signals (auto storage)
+B_task1_T task1_B;
+
+// Block states (auto storage)
+DW_task1_T task1_DW;
+
+// External inputs (root inport signals with auto storage)
+ExtU_task1_T task1_U;
+
+// External outputs (root outports fed by signals with auto storage)
+ExtY_task1_T task1_Y;
+
+// Real-time model
+RT_MODEL_task1_T task1_M_;
+RT_MODEL_task1_T *const task1_M = &task1_M_;
+real_T rt_atan2d_snf_cordic11(real_T u0, real_T u1)
+{
+  real_T y;
+  real_T xAcc;
+  real_T yAcc;
+  boolean_T y_quad_adjust;
+  boolean_T y_nonzero;
+  boolean_T x_quad_adjust;
+  real_T xtmp;
+  real_T ytmp;
+  int16_T idx;
+  static const real_T cordicLUT_n11_d[11] = { 0.78539816339744828,
+    0.46364760900080609, 0.24497866312686414, 0.12435499454676144,
+    0.06241880999595735, 0.031239833430268277, 0.015623728620476831,
+    0.0078123410601011111, 0.0039062301319669718, 0.0019531225164788188,
+    0.00097656218955931946 };
+
+  const real_T *u3;
+  u3 = &cordicLUT_n11_d[0];
+  if (u0 < 0.0) {
+    yAcc = -u0;
+    y_quad_adjust = true;
+    y_nonzero = true;
+  } else {
+    yAcc = u0;
+    y_quad_adjust = false;
+    y_nonzero = (u0 > 0.0);
+  }
+
+  if (u1 < 0.0) {
+    xAcc = -u1;
+    x_quad_adjust = true;
+  } else {
+    xAcc = u1;
+    x_quad_adjust = false;
+  }
+
+  y = 0.0;
+  xtmp = xAcc;
+  ytmp = yAcc;
+  for (idx = 0; idx < 11; idx++) {
+    if (yAcc < 0.0) {
+      xAcc -= ytmp;
+      yAcc += xtmp;
+      y -= u3[idx];
+    } else {
+      xAcc += ytmp;
+      yAcc -= xtmp;
+      y += u3[idx];
+    }
+
+    xtmp = ldexp(xAcc, -(idx + 1));
+    ytmp = ldexp(yAcc, -(idx + 1));
+  }
+
+  if (y_nonzero) {
+    if (x_quad_adjust) {
+      if (y_quad_adjust) {
+        y -= 3.1415926535897931;
+      } else {
+        y = 3.1415926535897931 - y;
+      }
+    } else {
+      if (y_quad_adjust) {
+        y = -y;
+      }
+    }
+  } else if (x_quad_adjust) {
+    y = 3.1415926535897931;
+  } else {
+    y = 0.0;
+  }
+
+  return y;
+}
+
+// Model step function
+void task1_step(void)
+{
+  // local block i/o variables
+  real_T rtb_Divide;
+  real_T rtb_Gain_b;
+  real_T rtb_Divide2;
+  real_T rtb_Gain1_l;
+
+  // local scratch DWork variables
+  int32_T ForEach_itr;
+  int32_T ForEach_itr_a;
+  int_T outCnt;
+  real_T rtb_Sum_l;
+  real_T rtb_Sum4;
+  real_T rtb_TSamp;
+  real_T rtb_Sum;
+  real_T rtb_Saturate;
+  real_T rtb_FilterCoefficient;
+  real_T rtb_Sum3;
+  real_T rtb_TSamp_e;
+  real_T rtb_FilterCoefficient_f;
+  real_T rtb_ImpAsg_InsertedFor_scan_y_o[360];
+  real_T rtb_Preventdiv1_d;
+  real_T rtb_SumofElements1;
+  int32_T tmp;
+  real_T rtb_ImpAsg_InsertedFor_scan_y_b[360];
+  int32_T i;
+  boolean_T rtb_LogicalOperator1;
+  real_T rtb_TrigonometricFunction2;
+  real_T Movingaverage_tmp;
+  real_T Movingaverage_tmp_i;
+
+  // Chart: '<S4>/teleop_chart' incorporates:
+  //   Inport: '<Root>/button_1'
+  //   Inport: '<Root>/button_2'
+  //   Inport: '<Root>/button_B'
+  //   Inport: '<Root>/button_down'
+  //   Inport: '<Root>/button_left'
+  //   Inport: '<Root>/button_right'
+  //   Inport: '<Root>/button_up'
+  //   Inport: '<Root>/joy_pitch'
+  //   Inport: '<Root>/joy_roll'
+
+  // Gateway: teleop/teleop_chart
+  // During: teleop/teleop_chart
+  if (task1_DW.is_active_c1_floribot_library == 0U) {
+    // Entry: teleop/teleop_chart
+    task1_DW.is_active_c1_floribot_library = 1U;
+
+    // Entry Internal: teleop/teleop_chart
+    // Transition: '<S26>:19'
+    task1_B.start_right = false;
+    task1_DW.is_c1_floribot_library = task1_IN_manual;
+
+    // Entry 'manual': '<S26>:17'
+    task1_B.task_enable = 0.0;
+    task1_Y.joy_leds[0] = true;
+    task1_Y.joy_leds[1] = false;
+    task1_Y.joy_leds[2] = false;
+
+    // Entry Internal 'manual': '<S26>:17'
+    // Transition: '<S26>:23'
+    task1_DW.is_manual = task1_IN_stand_still;
+
+    // Entry 'stand_still': '<S26>:22'
+    task1_B.cmd_vel_x = 0.0;
+    task1_B.cmd_vel_yaw = 0.0;
+  } else {
+    switch (task1_DW.is_c1_floribot_library) {
+     case task1_IN_automatic:
+      // During 'automatic': '<S26>:18'
+      if (task1_U.button_1) {
+        // Transition: '<S26>:21'
+        task1_DW.is_c1_floribot_library = task1_IN_manual;
+
+        // Entry 'manual': '<S26>:17'
+        task1_B.task_enable = 0.0;
+        task1_Y.joy_leds[0] = true;
+        task1_Y.joy_leds[1] = false;
+        task1_Y.joy_leds[2] = false;
+
+        // Entry Internal 'manual': '<S26>:17'
+        // Transition: '<S26>:23'
+        task1_DW.is_manual = task1_IN_stand_still;
+
+        // Entry 'stand_still': '<S26>:22'
+        task1_B.cmd_vel_x = 0.0;
+        task1_B.cmd_vel_yaw = 0.0;
+      } else {
+        task1_Y.joy_leds[0] = false;
+        task1_Y.joy_leds[1] = true;
+        task1_Y.joy_leds[2] = false;
+        task1_Y.joy_leds[3] = false;
+      }
+      break;
+
+     case task1_IN_left_or_right:
+      // During 'left_or_right': '<S26>:56'
+      if (task1_U.button_right) {
+        // Transition: '<S26>:59'
+        task1_B.start_right = false;
+        task1_DW.is_c1_floribot_library = task1_IN_automatic;
+
+        // Entry 'automatic': '<S26>:18'
+        task1_B.task_enable = 1.0;
+      } else {
+        if (task1_U.button_left) {
+          // Transition: '<S26>:57'
+          task1_B.start_right = true;
+          task1_DW.is_c1_floribot_library = task1_IN_automatic;
+
+          // Entry 'automatic': '<S26>:18'
+          task1_B.task_enable = 1.0;
+        }
+      }
+      break;
+
+     default:
+      // During 'manual': '<S26>:17'
+      if (task1_U.button_2 && (!task1_U.button_1)) {
+        // Transition: '<S26>:20'
+        // Exit Internal 'manual': '<S26>:17'
+        task1_DW.is_manual = task1_IN_NO_ACTIVE_CHILD;
+        task1_DW.is_c1_floribot_library = task1_IN_left_or_right;
+      } else {
+        task1_Y.joy_leds[3] = false;
+        switch (task1_DW.is_manual) {
+         case task1_IN_Down:
+          // During 'Down': '<S26>:36'
+          if (!task1_U.button_down) {
+            // Transition: '<S26>:38'
+            task1_DW.is_manual = task1_IN_stand_still;
+
+            // Entry 'stand_still': '<S26>:22'
+            task1_B.cmd_vel_x = 0.0;
+            task1_B.cmd_vel_yaw = 0.0;
+          } else {
+            if (task1_U.joy_pitch < 0.0) {
+              // Transition: '<S26>:46'
+              task1_B.cmd_vel_x = task1_U.joy_pitch /
+                task1_DIRECT_PITCH_AXIS_DIV;
+              task1_DW.is_manual = task1_IN_Down;
+            }
+          }
+          break;
+
+         case task1_IN_Left:
+          // During 'Left': '<S26>:40'
+          if (!task1_U.button_right) {
+            // Transition: '<S26>:44'
+            task1_DW.is_manual = task1_IN_stand_still;
+
+            // Entry 'stand_still': '<S26>:22'
+            task1_B.cmd_vel_x = 0.0;
+            task1_B.cmd_vel_yaw = 0.0;
+          } else {
+            if (task1_U.joy_roll < 0.0) {
+              // Transition: '<S26>:48'
+              task1_B.cmd_vel_yaw = task1_U.joy_roll /
+                task1_DIRECT_ROLL_AXIS_DIV;
+              task1_DW.is_manual = task1_IN_Left;
+            }
+          }
+          break;
+
+         case task1_IN_Right:
+          // During 'Right': '<S26>:39'
+          if (!task1_U.button_left) {
+            // Transition: '<S26>:42'
+            task1_DW.is_manual = task1_IN_stand_still;
+
+            // Entry 'stand_still': '<S26>:22'
+            task1_B.cmd_vel_x = 0.0;
+            task1_B.cmd_vel_yaw = 0.0;
+          } else {
+            if (task1_U.joy_roll > 0.0) {
+              // Transition: '<S26>:47'
+              task1_B.cmd_vel_yaw = task1_U.joy_roll /
+                task1_DIRECT_ROLL_AXIS_DIV;
+              task1_DW.is_manual = task1_IN_Right;
+            }
+          }
+          break;
+
+         case task1_IN_Up:
+          // During 'Up': '<S26>:33'
+          if (!task1_U.button_up) {
+            // Transition: '<S26>:35'
+            task1_DW.is_manual = task1_IN_stand_still;
+
+            // Entry 'stand_still': '<S26>:22'
+            task1_B.cmd_vel_x = 0.0;
+            task1_B.cmd_vel_yaw = 0.0;
+          } else {
+            if (task1_U.joy_pitch > 0.0) {
+              // Transition: '<S26>:45'
+              task1_B.cmd_vel_x = task1_U.joy_pitch /
+                task1_DIRECT_PITCH_AXIS_DIV;
+              task1_DW.is_manual = task1_IN_Up;
+            }
+          }
+          break;
+
+         case task1_IN_control_x_and_yaw:
+          // During 'control_x_and_yaw': '<S26>:24'
+          if (!task1_U.button_B) {
+            // Transition: '<S26>:26'
+            task1_DW.is_manual = task1_IN_stand_still;
+
+            // Entry 'stand_still': '<S26>:22'
+            task1_B.cmd_vel_x = 0.0;
+            task1_B.cmd_vel_yaw = 0.0;
+          } else {
+            task1_B.cmd_vel_x = task1_U.joy_pitch / task1_DIRECT_PITCH_AXIS_DIV;
+            task1_B.cmd_vel_yaw = task1_U.joy_roll / task1_DIRECT_ROLL_AXIS_DIV;
+          }
+          break;
+
+         default:
+          // During 'stand_still': '<S26>:22'
+          if (task1_U.button_B) {
+            // Transition: '<S26>:25'
+            task1_DW.is_manual = task1_IN_control_x_and_yaw;
+          } else if (task1_U.button_up) {
+            // Transition: '<S26>:34'
+            task1_DW.is_manual = task1_IN_Up;
+          } else if (task1_U.button_down) {
+            // Transition: '<S26>:37'
+            task1_DW.is_manual = task1_IN_Down;
+          } else if (task1_U.button_left) {
+            // Transition: '<S26>:41'
+            task1_DW.is_manual = task1_IN_Right;
+          } else {
+            if (task1_U.button_right) {
+              // Transition: '<S26>:43'
+              task1_DW.is_manual = task1_IN_Left;
+            }
+          }
+          break;
+        }
+      }
+      break;
+    }
+  }
+
+  // End of Chart: '<S4>/teleop_chart'
+
+  // Outputs for Enabled SubSystem: '<Root>/task1' incorporates:
+  //   EnablePort: '<S3>/Enable'
+
+  if (task1_B.task_enable > 0.0) {
+    if (!task1_DW.task1_MODE) {
+      task1_DW.task1_MODE = true;
+    }
+
+    // Outputs for Iterator SubSystem: '<S3>/Box check right side' incorporates:
+    //   ForEach: '<S15>/For Each'
+
+    for (ForEach_itr = 0; ForEach_itr < 360; ForEach_itr++) {
+      // ForEachSliceSelector: '<S15>/ImpSel_InsertedFor_scan_phi_in_at_outport_0' incorporates:
+      //   Constant: '<S3>/scan_angles'
+
+      rtb_SumofElements1 = task1_ConstP.scan_angles_Value[ForEach_itr];
+
+      // Switch: '<S15>/right side of the right box' incorporates:
+      //   Constant: '<S15>/zero'
+      //   DataTypeConversion: '<S3>/Data Type Conversion'
+      //   Fcn: '<S23>/r->x'
+      //   ForEachSliceSelector: '<S15>/ImpSel_InsertedFor_scan_r_in_at_outport_0'
+      //   Inport: '<Root>/scan_ranges'
+
+      if (task1_U.scan_ranges[ForEach_itr] * cos(rtb_SumofElements1) >= 0.5) {
+        rtb_SumofElements1 = 0.0;
+      } else {
+        // Fcn: '<S23>/theta->y'
+        rtb_SumofElements1 = task1_U.scan_ranges[ForEach_itr] * sin
+          (rtb_SumofElements1);
+
+        // Switch: '<S15>/bottom side of the right box' incorporates:
+        //   Abs: '<S15>/Abs1'
+        //   Constant: '<S15>/zero'
+
+        if (fabs(rtb_SumofElements1) >= 0.675) {
+          rtb_SumofElements1 = 0.0;
+        }
+
+        // End of Switch: '<S15>/bottom side of the right box'
+
+        // Switch: '<S15>/bottom side of the right box1' incorporates:
+        //   Abs: '<S15>/Abs2'
+        //   Constant: '<S15>/zero'
+
+        if (!(fabs(rtb_SumofElements1) >= 0.1)) {
+          rtb_SumofElements1 = 0.0;
+        }
+
+        // End of Switch: '<S15>/bottom side of the right box1'
+      }
+
+      // End of Switch: '<S15>/right side of the right box'
+
+      // ForEachSliceAssignment: '<S15>/ImpAsg_InsertedFor_scan_y_out_at_inport_0' 
+      rtb_ImpAsg_InsertedFor_scan_y_o[ForEach_itr] = rtb_SumofElements1;
+    }
+
+    // End of Outputs for SubSystem: '<S3>/Box check right side'
+
+    // Sum: '<S17>/Sum of Elements'
+    tmp = 0;
+    rtb_Preventdiv1_d = rtb_ImpAsg_InsertedFor_scan_y_o[0];
+    for (i = 0; i < 359; i++) {
+      rtb_Preventdiv1_d += rtb_ImpAsg_InsertedFor_scan_y_o[i + 1];
+    }
+
+    // End of Sum: '<S17>/Sum of Elements'
+
+    // Find: '<S17>/Find Nonzero Elements'
+    outCnt = 0;
+    for (i = 0; i < 360; i++) {
+      if (rtb_ImpAsg_InsertedFor_scan_y_o[tmp] != 0.0) {
+        outCnt++;
+      }
+
+      tmp++;
+    }
+
+    task1_DW.FindNonzeroElements_DIMS1 = outCnt;
+
+    // End of Find: '<S17>/Find Nonzero Elements'
+
+    // Selector: '<S17>/Selector'
+    task1_DW.Selector_DIMS1 = task1_DW.FindNonzeroElements_DIMS1;
+
+    // Switch: '<S17>/Prevent div 0' incorporates:
+    //   Constant: '<S17>/Const1'
+    //   Width: '<S17>/Width'
+
+    if (task1_DW.Selector_DIMS1 != 0) {
+      rtb_SumofElements1 = task1_DW.Selector_DIMS1;
+    } else {
+      rtb_SumofElements1 = 1.0;
+    }
+
+    // End of Switch: '<S17>/Prevent div 0'
+
+    // Product: '<S17>/Divide'
+    rtb_Divide = rtb_Preventdiv1_d / rtb_SumofElements1;
+
+    // Gain: '<S17>/Gain' incorporates:
+    //   Constant: '<S17>/max. Points'
+    //   Product: '<S17>/Divide1'
+
+    rtb_Gain_b = rtb_SumofElements1 / 339.50000197434269 * 100.0;
+
+    // Outputs for Iterator SubSystem: '<S3>/Box check left side' incorporates:
+    //   ForEach: '<S14>/For Each'
+
+    for (ForEach_itr_a = 0; ForEach_itr_a < 360; ForEach_itr_a++) {
+      // ForEachSliceSelector: '<S14>/ImpSel_InsertedFor_scan_phi_in_at_outport_0' incorporates:
+      //   Constant: '<S3>/scan_angles'
+
+      rtb_Preventdiv1_d = task1_ConstP.scan_angles_Value[ForEach_itr_a + 360];
+
+      // Switch: '<S14>/right side of the left box' incorporates:
+      //   Constant: '<S14>/zero'
+      //   DataTypeConversion: '<S3>/Data Type Conversion'
+      //   Fcn: '<S22>/r->x'
+      //   ForEachSliceSelector: '<S14>/ImpSel_InsertedFor_scan_r_in_at_outport_0'
+      //   Inport: '<Root>/scan_ranges'
+
+      if (task1_U.scan_ranges[ForEach_itr_a + 360] * cos(rtb_Preventdiv1_d) >=
+          0.5) {
+        rtb_Preventdiv1_d = 0.0;
+      } else {
+        // Fcn: '<S22>/theta->y'
+        rtb_Preventdiv1_d = task1_U.scan_ranges[ForEach_itr_a + 360] * sin
+          (rtb_Preventdiv1_d);
+
+        // Switch: '<S14>/bottom side of the left box' incorporates:
+        //   Abs: '<S14>/Abs1'
+        //   Constant: '<S14>/zero'
+
+        if (fabs(rtb_Preventdiv1_d) >= 0.675) {
+          rtb_Preventdiv1_d = 0.0;
+        }
+
+        // End of Switch: '<S14>/bottom side of the left box'
+
+        // Switch: '<S14>/bottom side of the right box1' incorporates:
+        //   Abs: '<S14>/Abs2'
+        //   Constant: '<S14>/zero'
+
+        if (!(fabs(rtb_Preventdiv1_d) >= 0.1)) {
+          rtb_Preventdiv1_d = 0.0;
+        }
+
+        // End of Switch: '<S14>/bottom side of the right box1'
+      }
+
+      // End of Switch: '<S14>/right side of the left box'
+
+      // ForEachSliceAssignment: '<S14>/ImpAsg_InsertedFor_scan_y_out_at_inport_0' 
+      rtb_ImpAsg_InsertedFor_scan_y_b[ForEach_itr_a] = rtb_Preventdiv1_d;
+    }
+
+    // End of Outputs for SubSystem: '<S3>/Box check left side'
+
+    // Sum: '<S16>/Sum of Elements1'
+    tmp = 0;
+    rtb_SumofElements1 = rtb_ImpAsg_InsertedFor_scan_y_b[0];
+    for (i = 0; i < 359; i++) {
+      rtb_SumofElements1 += rtb_ImpAsg_InsertedFor_scan_y_b[i + 1];
+    }
+
+    // End of Sum: '<S16>/Sum of Elements1'
+
+    // Find: '<S16>/Find Nonzero Elements1'
+    outCnt = 0;
+    for (i = 0; i < 360; i++) {
+      if (rtb_ImpAsg_InsertedFor_scan_y_b[tmp] != 0.0) {
+        outCnt++;
+      }
+
+      tmp++;
+    }
+
+    task1_DW.FindNonzeroElements1_DIMS1 = outCnt;
+
+    // End of Find: '<S16>/Find Nonzero Elements1'
+
+    // Selector: '<S16>/Selector3'
+    task1_DW.Selector3_DIMS1 = task1_DW.FindNonzeroElements1_DIMS1;
+
+    // Switch: '<S16>/Prevent div 1' incorporates:
+    //   Constant: '<S16>/Const2'
+    //   Width: '<S16>/Width1'
+
+    if (task1_DW.Selector3_DIMS1 != 0) {
+      rtb_Preventdiv1_d = task1_DW.Selector3_DIMS1;
+    } else {
+      rtb_Preventdiv1_d = 1.0;
+    }
+
+    // End of Switch: '<S16>/Prevent div 1'
+
+    // Product: '<S16>/Divide2'
+    rtb_Divide2 = rtb_SumofElements1 / rtb_Preventdiv1_d;
+
+    // Gain: '<S16>/Gain1' incorporates:
+    //   Constant: '<S16>/max. Points1'
+    //   Product: '<S16>/Divide3'
+
+    rtb_Gain1_l = rtb_Preventdiv1_d / 339.50000197434269 * 100.0;
+
+    // Logic: '<S3>/Logical Operator1'
+    rtb_LogicalOperator1 = !task1_B.start_right;
+
+    // Chart: '<S3>/Stateflow logic' incorporates:
+    //   Constant: '<S3>/Constant1'
+    //   Constant: '<S3>/turn_delay_time = scanner_offset // (vel_gain * x_dot_max)'
+    //   Logic: '<S3>/Logical Operator'
+
+    if (task1_DW.temporalCounter_i1 < MAX_uint32_T) {
+      task1_DW.temporalCounter_i1++;
+    }
+
+    // Gateway: task1/Stateflow logic
+    // During: task1/Stateflow logic
+    if (task1_DW.is_active_c1_task1 == 0U) {
+      // Entry: task1/Stateflow logic
+      task1_DW.is_active_c1_task1 = 1U;
+
+      // Entry Internal: task1/Stateflow logic
+      // Transition: '<S21>:6'
+      task1_DW.inner_turn_left = !rtb_LogicalOperator1;
+      task1_DW.inner_turn_right = rtb_LogicalOperator1;
+      task1_DW.is_c1_task1 = task1_IN_in_row;
+
+      // Entry 'in_row': '<S21>:1'
+      task1_B.bool_in_lane = true;
+      task1_B.bool_turn_left = false;
+      task1_B.bool_turn_right = false;
+    } else {
+      switch (task1_DW.is_c1_task1) {
+       case task1_IN_in_row:
+        // During 'in_row': '<S21>:1'
+        if (task1_DW.inner_turn_left && (rtb_Gain_b < 5.0) && (rtb_Gain1_l < 5.0))
+        {
+          // Transition: '<S21>:9'
+          task1_DW.is_c1_task1 = task1_IN_wait_left;
+          task1_DW.temporalCounter_i1 = 0U;
+        } else {
+          if (task1_DW.inner_turn_right && (rtb_Gain_b < 5.0) && (rtb_Gain1_l <
+               5.0)) {
+            // Transition: '<S21>:24'
+            task1_DW.is_c1_task1 = task1_IN_wait_right;
+            task1_DW.temporalCounter_i1 = 0U;
+          }
+        }
+        break;
+
+       case task1_IN_turn_left:
+        // During 'turn_left': '<S21>:2'
+        if ((rtb_Gain_b >= 5.0) && (rtb_Gain1_l >= 5.0)) {
+          // Transition: '<S21>:10'
+          task1_DW.inner_turn_left = false;
+          task1_DW.inner_turn_right = true;
+          task1_DW.is_c1_task1 = task1_IN_in_row;
+
+          // Entry 'in_row': '<S21>:1'
+          task1_B.bool_in_lane = true;
+          task1_B.bool_turn_left = false;
+          task1_B.bool_turn_right = false;
+        }
+        break;
+
+       case task1_IN_turn_right:
+        // During 'turn_right': '<S21>:3'
+        if ((rtb_Gain_b >= 5.0) && (rtb_Gain1_l >= 5.0)) {
+          // Transition: '<S21>:8'
+          task1_DW.inner_turn_left = true;
+          task1_DW.inner_turn_right = false;
+          task1_DW.is_c1_task1 = task1_IN_in_row;
+
+          // Entry 'in_row': '<S21>:1'
+          task1_B.bool_in_lane = true;
+          task1_B.bool_turn_left = false;
+          task1_B.bool_turn_right = false;
+        }
+        break;
+
+       case task1_IN_wait_left:
+        // During 'wait_left': '<S21>:31'
+        if (task1_DW.temporalCounter_i1 >= (uint32_T)ceil(0.31249999999999994 /
+             0.01 - 1.0E-10)) {
+          // Transition: '<S21>:32'
+          task1_DW.is_c1_task1 = task1_IN_turn_left;
+
+          // Entry 'turn_left': '<S21>:2'
+          task1_B.bool_in_lane = false;
+          task1_B.bool_turn_left = true;
+          task1_B.bool_turn_right = false;
+        } else {
+          if ((rtb_Gain_b >= 5.0) || (rtb_Gain1_l >= 5.0)) {
+            // Transition: '<S21>:36'
+            task1_DW.is_c1_task1 = task1_IN_in_row;
+
+            // Entry 'in_row': '<S21>:1'
+            task1_B.bool_in_lane = true;
+            task1_B.bool_turn_left = false;
+            task1_B.bool_turn_right = false;
+          }
+        }
+        break;
+
+       default:
+        // During 'wait_right': '<S21>:29'
+        if (task1_DW.temporalCounter_i1 >= (uint32_T)ceil(0.31249999999999994 /
+             0.01 - 1.0E-10)) {
+          // Transition: '<S21>:30'
+          task1_DW.is_c1_task1 = task1_IN_turn_right;
+
+          // Entry 'turn_right': '<S21>:3'
+          task1_B.bool_in_lane = false;
+          task1_B.bool_turn_left = false;
+          task1_B.bool_turn_right = true;
+        }
+        break;
+      }
+    }
+
+    // End of Chart: '<S3>/Stateflow logic'
+
+    // Outputs for Enabled SubSystem: '<S3>/Calculate cmd_vel parameter for in_lane' incorporates:
+    //   EnablePort: '<S18>/Enable'
+
+    if (task1_B.bool_in_lane) {
+      // Switch: '<S18>/Prevent div 1' incorporates:
+      //   Constant: '<S18>/const2'
+
+      if (rtb_Gain_b >= 5.0) {
+        rtb_SumofElements1 = rtb_Divide;
+      } else {
+        rtb_SumofElements1 = (-0.475);
+      }
+
+      // End of Switch: '<S18>/Prevent div 1'
+
+      // Switch: '<S18>/Prevent div 2' incorporates:
+      //   Constant: '<S18>/const3'
+
+      if (rtb_Gain1_l >= 5.0) {
+        rtb_Preventdiv1_d = rtb_Divide2;
+      } else {
+        rtb_Preventdiv1_d = 0.475;
+      }
+
+      // End of Switch: '<S18>/Prevent div 2'
+
+      // Trigonometry: '<S18>/Trigonometric Function2' incorporates:
+      //   Constant: '<S18>/const1'
+      //   Constant: '<S18>/scan_box_height//2'
+      //   Product: '<S18>/Divide'
+      //   Sum: '<S18>/Subtract'
+      //   Sum: '<S18>/Subtract1'
+
+      rtb_TrigonometricFunction2 = rt_atan2d_snf_cordic11(rtb_Preventdiv1_d -
+        (rtb_Preventdiv1_d - rtb_SumofElements1) / 2.0, 0.25);
+
+      // Product: '<S18>/Product' incorporates:
+      //   Abs: '<S18>/Abs'
+      //   Constant: '<S18>/Constant'
+      //   Gain: '<S18>/cmd_vel_x_max'
+      //   Gain: '<S18>/gain'
+      //   Gain: '<S18>/secure_slow'
+      //   Sum: '<S18>/Add'
+      //   Sum: '<S18>/Subtract2'
+      //   Trigonometry: '<S18>/Trigonometric Function'
+
+      task1_B.Merge[0] = (1.0 - fabs(rtb_SumofElements1 + rtb_Preventdiv1_d) *
+                          1.0) * (0.8 * cos(rtb_TrigonometricFunction2) * 0.8);
+
+      // Gain: '<S18>/secure_slow1' incorporates:
+      //   Gain: '<S18>/cmd_vel_yaw_max'
+      //   Trigonometry: '<S18>/Trigonometric Function1'
+
+      task1_B.Merge[1] = 1.570796326794 * sin(rtb_TrigonometricFunction2) * 0.8;
+    }
+
+    // End of Outputs for SubSystem: '<S3>/Calculate cmd_vel parameter for in_lane' 
+
+    // Outputs for Enabled SubSystem: '<S3>/Calculate cmd_vel parameter for turn_left' incorporates:
+    //   EnablePort: '<S19>/Enable'
+
+    if (task1_B.bool_turn_left) {
+      // SignalConversion: '<S19>/ConcatBufferAtVector Concatenate1In1'
+      task1_B.Merge[0] = task1_ConstB.x_dot_e;
+
+      // SignalConversion: '<S19>/ConcatBufferAtVector Concatenate1In2'
+      task1_B.Merge[1] = task1_ConstB.phi_dotphit_l;
+    }
+
+    // End of Outputs for SubSystem: '<S3>/Calculate cmd_vel parameter for turn_left' 
+
+    // Outputs for Enabled SubSystem: '<S3>/Calculate cmd_vel parameter for turn_right' incorporates:
+    //   EnablePort: '<S20>/Enable'
+
+    if (task1_B.bool_turn_right) {
+      // SignalConversion: '<S20>/ConcatBufferAtVector Concatenate2In1'
+      task1_B.Merge[0] = task1_ConstB.x_dot;
+
+      // SignalConversion: '<S20>/ConcatBufferAtVector Concatenate2In2'
+      task1_B.Merge[1] = task1_ConstB.turn_right_factor;
+    }
+
+    // End of Outputs for SubSystem: '<S3>/Calculate cmd_vel parameter for turn_right' 
+  } else {
+    if (task1_DW.task1_MODE) {
+      task1_DW.task1_MODE = false;
+    }
+  }
+
+  // End of Outputs for SubSystem: '<Root>/task1'
+
+  // Switch: '<S2>/Switch'
+  if (task1_B.task_enable > 0.0) {
+    rtb_SumofElements1 = task1_B.Merge[0];
+  } else {
+    rtb_SumofElements1 = task1_B.cmd_vel_x;
+  }
+
+  // End of Switch: '<S2>/Switch'
+
+  // Switch: '<S11>/Switch' incorporates:
+  //   Constant: '<S11>/Constant3'
+  //   RelationalOperator: '<S11>/Relational Operator'
+
+  if (rtIsNaN(rtb_SumofElements1)) {
+    rtb_Sum_l = 0.0;
+  } else {
+    rtb_Sum_l = rtb_SumofElements1;
+  }
+
+  // End of Switch: '<S11>/Switch'
+
+  // Product: '<S7>/Divide1' incorporates:
+  //   Constant: '<S7>/Wheel Radius [m]'
+
+  rtb_Preventdiv1_d = rtb_Sum_l / 0.1075;
+
+  // Switch: '<S2>/Switch1'
+  if (task1_B.task_enable > 0.0) {
+    rtb_TrigonometricFunction2 = task1_B.Merge[1];
+  } else {
+    rtb_TrigonometricFunction2 = task1_B.cmd_vel_yaw;
+  }
+
+  // End of Switch: '<S2>/Switch1'
+
+  // Switch: '<S11>/Switch1' incorporates:
+  //   Constant: '<S11>/Constant3'
+  //   RelationalOperator: '<S11>/Relational Operator1'
+
+  if (rtIsNaN(rtb_TrigonometricFunction2)) {
+    rtb_Sum_l = 0.0;
+  } else {
+    rtb_Sum_l = rtb_TrigonometricFunction2;
+  }
+
+  // End of Switch: '<S11>/Switch1'
+
+  // Product: '<S7>/Product1'
+  rtb_Sum_l *= task1_ConstB.Divide4;
+
+  // DiscreteTransferFcn: '<S8>/Moving average' incorporates:
+  //   Inport: '<Root>/left_encoder'
+
+  Movingaverage_tmp = task1_U.left_encoder;
+  tmp = 1;
+  for (i = 0; i < 9; i++) {
+    Movingaverage_tmp -= task1_ConstP.pooled15[tmp] *
+      task1_DW.Movingaverage_states[i];
+    tmp++;
+  }
+
+  Movingaverage_tmp /= 10.0;
+  rtb_Sum4 = 1.0 * Movingaverage_tmp;
+  tmp = 1;
+  for (i = 0; i < 9; i++) {
+    rtb_Sum4 += task1_ConstP.pooled14[tmp] * task1_DW.Movingaverage_states[i];
+    tmp++;
+  }
+
+  // End of DiscreteTransferFcn: '<S8>/Moving average'
+
+  // Gain: '<S8>/ticks2radian'
+  rtb_Sum4 *= 0.00015707963267948965;
+
+  // SampleTimeMath: '<S12>/TSamp'
+  //
+  //  About '<S12>/TSamp':
+  //   y = u * K where K = 1 / ( w * Ts )
+
+  rtb_TSamp = rtb_Sum4 * 100.0;
+
+  // Sum: '<S1>/Sum4' incorporates:
+  //   Gain: '<S7>/Gain'
+  //   Sum: '<S12>/Diff'
+  //   Sum: '<S7>/Subtract'
+  //   UnitDelay: '<S12>/UD'
+
+  rtb_Sum4 = (rtb_Preventdiv1_d - rtb_Sum_l) * (-1.0) - (rtb_TSamp -
+    task1_DW.UD_DSTATE);
+
+  // Gain: '<S6>/Filter Coefficient' incorporates:
+  //   DiscreteIntegrator: '<S6>/Filter'
+  //   Gain: '<S6>/Derivative Gain'
+  //   Sum: '<S6>/SumD'
+
+  rtb_FilterCoefficient = (0.0 * rtb_Sum4 - task1_DW.Filter_DSTATE) * 100.0;
+
+  // Sum: '<S6>/Sum' incorporates:
+  //   DiscreteIntegrator: '<S6>/Integrator'
+  //   Gain: '<S6>/Proportional Gain'
+
+  rtb_Sum = (0.0191234818941408 * rtb_Sum4 + task1_DW.Integrator_DSTATE) +
+    rtb_FilterCoefficient;
+
+  // Saturate: '<S6>/Saturate'
+  if (rtb_Sum > 1.0) {
+    rtb_Saturate = 1.0;
+  } else if (rtb_Sum < (-1.0)) {
+    rtb_Saturate = (-1.0);
+  } else {
+    rtb_Saturate = rtb_Sum;
+  }
+
+  // End of Saturate: '<S6>/Saturate'
+
+  // Switch: '<S10>/Switch' incorporates:
+  //   RelationalOperator: '<S10>/Relational Operator'
+
+  if (rtIsNaN(rtb_Saturate)) {
+    // Outport: '<Root>/left_power' incorporates:
+    //   Constant: '<S10>/Constant3'
+
+    task1_Y.left_power = 0.0;
+  } else {
+    // Outport: '<Root>/left_power'
+    task1_Y.left_power = rtb_Saturate;
+  }
+
+  // End of Switch: '<S10>/Switch'
+
+  // DiscreteTransferFcn: '<S9>/Moving average' incorporates:
+  //   Inport: '<Root>/right_encoder'
+
+  Movingaverage_tmp_i = task1_U.right_encoder;
+  tmp = 1;
+  for (i = 0; i < 9; i++) {
+    Movingaverage_tmp_i -= task1_ConstP.pooled15[tmp] *
+      task1_DW.Movingaverage_states_f[i];
+    tmp++;
+  }
+
+  Movingaverage_tmp_i /= 10.0;
+  rtb_Sum3 = 1.0 * Movingaverage_tmp_i;
+  tmp = 1;
+  for (i = 0; i < 9; i++) {
+    rtb_Sum3 += task1_ConstP.pooled14[tmp] * task1_DW.Movingaverage_states_f[i];
+    tmp++;
+  }
+
+  // End of DiscreteTransferFcn: '<S9>/Moving average'
+
+  // Gain: '<S9>/ticks2radian'
+  rtb_Sum3 *= 0.00015707963267948965;
+
+  // SampleTimeMath: '<S13>/TSamp'
+  //
+  //  About '<S13>/TSamp':
+  //   y = u * K where K = 1 / ( w * Ts )
+
+  rtb_TSamp_e = rtb_Sum3 * 100.0;
+
+  // Sum: '<S1>/Sum3' incorporates:
+  //   Gain: '<S7>/Gain1'
+  //   Sum: '<S13>/Diff'
+  //   Sum: '<S7>/Add'
+  //   UnitDelay: '<S13>/UD'
+
+  rtb_Sum3 = (rtb_Preventdiv1_d + rtb_Sum_l) * (-1.0) - (rtb_TSamp_e -
+    task1_DW.UD_DSTATE_f);
+
+  // Gain: '<S5>/Filter Coefficient' incorporates:
+  //   DiscreteIntegrator: '<S5>/Filter'
+  //   Gain: '<S5>/Derivative Gain'
+  //   Sum: '<S5>/SumD'
+
+  rtb_FilterCoefficient_f = (0.0 * rtb_Sum3 - task1_DW.Filter_DSTATE_l) * 100.0;
+
+  // Sum: '<S5>/Sum' incorporates:
+  //   DiscreteIntegrator: '<S5>/Integrator'
+  //   Gain: '<S5>/Proportional Gain'
+
+  rtb_Sum_l = (0.0191234818941408 * rtb_Sum3 + task1_DW.Integrator_DSTATE_j) +
+    rtb_FilterCoefficient_f;
+
+  // Saturate: '<S5>/Saturate'
+  if (rtb_Sum_l > 1.0) {
+    rtb_Preventdiv1_d = 1.0;
+  } else if (rtb_Sum_l < (-1.0)) {
+    rtb_Preventdiv1_d = (-1.0);
+  } else {
+    rtb_Preventdiv1_d = rtb_Sum_l;
+  }
+
+  // End of Saturate: '<S5>/Saturate'
+
+  // Switch: '<S10>/Switch1' incorporates:
+  //   RelationalOperator: '<S10>/Relational Operator1'
+
+  if (rtIsNaN(rtb_Preventdiv1_d)) {
+    // Outport: '<Root>/right_power' incorporates:
+    //   Constant: '<S10>/Constant3'
+
+    task1_Y.right_power = 0.0;
+  } else {
+    // Outport: '<Root>/right_power'
+    task1_Y.right_power = rtb_Preventdiv1_d;
+  }
+
+  // End of Switch: '<S10>/Switch1'
+
+  // Outport: '<Root>/cmd_vel_x'
+  task1_Y.cmd_vel_x = rtb_SumofElements1;
+
+  // Outport: '<Root>/cmd_vel_yaw'
+  task1_Y.cmd_vel_yaw = rtb_TrigonometricFunction2;
+  for (i = 0; i < 8; i++) {
+    // Update for DiscreteTransferFcn: '<S8>/Moving average'
+    task1_DW.Movingaverage_states[8 - i] = task1_DW.Movingaverage_states[7 - i];
+
+    // Update for DiscreteTransferFcn: '<S9>/Moving average'
+    task1_DW.Movingaverage_states_f[8 - i] = task1_DW.Movingaverage_states_f[7 -
+      i];
+  }
+
+  // Update for DiscreteTransferFcn: '<S8>/Moving average'
+  task1_DW.Movingaverage_states[0] = Movingaverage_tmp;
+
+  // Update for UnitDelay: '<S12>/UD'
+  task1_DW.UD_DSTATE = rtb_TSamp;
+
+  // Update for DiscreteIntegrator: '<S6>/Integrator' incorporates:
+  //   Gain: '<S6>/Integral Gain'
+  //   Gain: '<S6>/Kb'
+  //   Sum: '<S6>/SumI1'
+  //   Sum: '<S6>/SumI2'
+
+  task1_DW.Integrator_DSTATE += ((rtb_Saturate - rtb_Sum) * 1.0 +
+    0.19863816949518 * rtb_Sum4) * 0.01;
+
+  // Update for DiscreteIntegrator: '<S6>/Filter'
+  task1_DW.Filter_DSTATE += 0.01 * rtb_FilterCoefficient;
+
+  // Update for DiscreteTransferFcn: '<S9>/Moving average'
+  task1_DW.Movingaverage_states_f[0] = Movingaverage_tmp_i;
+
+  // Update for UnitDelay: '<S13>/UD'
+  task1_DW.UD_DSTATE_f = rtb_TSamp_e;
+
+  // Update for DiscreteIntegrator: '<S5>/Integrator' incorporates:
+  //   Gain: '<S5>/Integral Gain'
+  //   Gain: '<S5>/Kb'
+  //   Sum: '<S5>/SumI1'
+  //   Sum: '<S5>/SumI2'
+
+  task1_DW.Integrator_DSTATE_j += ((rtb_Preventdiv1_d - rtb_Sum_l) * 1.0 +
+    0.19863816949518 * rtb_Sum3) * 0.01;
+
+  // Update for DiscreteIntegrator: '<S5>/Filter'
+  task1_DW.Filter_DSTATE_l += 0.01 * rtb_FilterCoefficient_f;
+}
+
+// Model initialize function
+void task1_initialize(void)
+{
+  // Registration code
+
+  // initialize non-finites
+  rt_InitInfAndNaN(sizeof(real_T));
+
+  // initialize error status
+  rtmSetErrorStatus(task1_M, (NULL));
+
+  // block I/O
+  (void) memset(((void *) &task1_B), 0,
+                sizeof(B_task1_T));
+
+  // states (dwork)
+  (void) memset((void *)&task1_DW, 0,
+                sizeof(DW_task1_T));
+
+  // external inputs
+  (void) memset((void *)&task1_U, 0,
+                sizeof(ExtU_task1_T));
+
+  // external outputs
+  (void) memset((void *)&task1_Y, 0,
+                sizeof(ExtY_task1_T));
+
+  // SystemInitialize for Chart: '<S4>/teleop_chart'
+  task1_DW.is_manual = task1_IN_NO_ACTIVE_CHILD;
+  task1_DW.is_active_c1_floribot_library = 0U;
+  task1_DW.is_c1_floribot_library = task1_IN_NO_ACTIVE_CHILD;
+  task1_B.cmd_vel_x = 0.0;
+  task1_B.cmd_vel_yaw = 0.0;
+
+  // SystemInitialize for Outport: '<Root>/joy_rumble' incorporates:
+  //   SystemInitialize for Chart: '<S4>/teleop_chart'
+
+  task1_Y.joy_rumble = 0.0;
+
+  // SystemInitialize for Outport: '<Root>/joy_leds' incorporates:
+  //   SystemInitialize for Chart: '<S4>/teleop_chart'
+
+  task1_Y.joy_leds[0] = false;
+  task1_Y.joy_leds[1] = false;
+  task1_Y.joy_leds[2] = false;
+  task1_Y.joy_leds[3] = false;
+
+  // SystemInitialize for Chart: '<S4>/teleop_chart'
+  task1_B.task_enable = 0.0;
+  task1_B.start_right = false;
+
+  // SystemInitialize for Enabled SubSystem: '<Root>/task1'
+  // SystemInitialize for Chart: '<S3>/Stateflow logic'
+  task1_DW.temporalCounter_i1 = 0U;
+  task1_DW.is_active_c1_task1 = 0U;
+  task1_DW.is_c1_task1 = task1_IN_NO_ACTIVE_CHILD;
+  task1_DW.inner_turn_left = false;
+  task1_DW.inner_turn_right = false;
+  task1_B.bool_turn_right = false;
+  task1_B.bool_turn_left = false;
+  task1_B.bool_in_lane = false;
+
+  // SystemInitialize for Merge: '<S3>/Merge'
+  task1_B.Merge[0] = 0.0;
+  task1_B.Merge[1] = 0.0;
+
+  // End of SystemInitialize for SubSystem: '<Root>/task1'
+}
+
+// Model terminate function
+void task1_terminate(void)
+{
+  // (no terminate code required)
+}
+
+//
+// File trailer for generated code.
+//
+// [EOF]
+//

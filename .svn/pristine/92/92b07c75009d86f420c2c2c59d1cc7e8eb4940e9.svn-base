@@ -1,0 +1,16 @@
+package floribot_engines;
+
+public interface interface_kit_params extends org.ros.internal.message.Message {
+  static final java.lang.String _TYPE = "floribot_engines/interface_kit_params";
+  static final java.lang.String _DEFINITION = "Header header\nint32 index\nint32 value_type\nint32 value\n";
+  static final boolean _IS_SERVICE = false;
+  static final boolean _IS_ACTION = false;
+  std_msgs.Header getHeader();
+  void setHeader(std_msgs.Header value);
+  int getIndex();
+  void setIndex(int value);
+  int getValueType();
+  void setValueType(int value);
+  int getValue();
+  void setValue(int value);
+}

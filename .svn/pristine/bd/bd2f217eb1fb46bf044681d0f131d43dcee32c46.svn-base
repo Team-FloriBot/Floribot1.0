@@ -1,0 +1,27 @@
+#ifndef _SLROS_INITIALIZE_H_
+#define _SLROS_INITIALIZE_H_
+
+#include "slros_busmsg_conversion.h"
+#include "slros_generic.h"
+
+extern ros::NodeHandle * SLROSNodePtr;
+extern const std::string SLROSNodeName;
+
+// For Block fre2017/Subscribe
+extern SimulinkSubscriber<sensor_msgs::LaserScan, SL_Bus_fre2017_sensor_msgs_LaserScan> Sub_fre2017_5;
+
+// For Block fre2017/Subscribe1
+extern SimulinkSubscriber<geometry_msgs::Twist, SL_Bus_fre2017_geometry_msgs_Twist> Sub_fre2017_6;
+
+// For Block fre2017/Subscribe2
+extern SimulinkSubscriber<std_msgs::Bool, SL_Bus_fre2017_std_msgs_Bool> Sub_fre2017_7;
+
+// For Block fre2017/Subscribe4
+extern SimulinkSubscriber<sensor_msgs::Joy, SL_Bus_fre2017_sensor_msgs_Joy> Sub_fre2017_8;
+
+// For Block fre2017/Publish
+extern SimulinkPublisher<geometry_msgs::Twist, SL_Bus_fre2017_geometry_msgs_Twist> Pub_fre2017_860;
+
+void slros_node_init(int argc, char** argv);
+
+#endif

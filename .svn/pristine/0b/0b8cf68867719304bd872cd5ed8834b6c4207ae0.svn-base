@@ -1,0 +1,909 @@
+//
+// Academic License - for use in teaching, academic research, and meeting
+// course requirements at degree granting institutions only.  Not for
+// government, commercial, or other organizational use.
+//
+// File: base.cpp
+//
+// Code generated for Simulink model 'base'.
+//
+// Model version                  : 1.400
+// Simulink Coder version         : 8.12 (R2017a) 16-Feb-2017
+// C/C++ source code generated on : Wed Jun 14 21:05:40 2017
+//
+// Target selection: ert.tlc
+// Embedded hardware selection: Generic->Unspecified (assume 32-bit Generic)
+// Code generation objectives: Unspecified
+// Validation result: Not run
+//
+#include "base.h"
+#include "base_private.h"
+#define base_MessageQueueLen           (1)
+#define base_ParameterInitialValue     (0.434)
+#define base_ParameterInitialValue_j   (0.215)
+
+// Block signals (auto storage)
+B_base_T base_B;
+
+// Block states (auto storage)
+DW_base_T base_DW;
+
+// Real-time model
+RT_MODEL_base_T base_M_;
+RT_MODEL_base_T *const base_M = &base_M_;
+
+// Model step function
+void base_step(void)
+{
+  real_T rtb_TSamp;
+  real_T rtb_FilterCoefficient;
+  real_T rtb_Integrator_f;
+  real_T rtb_Filter_i;
+  boolean_T rtb_NotEqual_e;
+  boolean_T rtb_NotEqual;
+  real_T rtb_Gain1;
+  real_T Filter1_c;
+  real_T Filter1;
+  int8_T rtb_SignDeltaU_0;
+
+  // Outputs for Atomic SubSystem: '<Root>/Subscribe'
+  // Start for MATLABSystem: '<S14>/SourceBlock' incorporates:
+  //   Inport: '<S23>/In1'
+  //   MATLABSystem: '<S14>/SourceBlock'
+
+  rtb_NotEqual = Sub_base_633.getLatestMessage(&base_B.varargout_2);
+
+  // Outputs for Enabled SubSystem: '<S14>/Enabled Subsystem' incorporates:
+  //   EnablePort: '<S23>/Enable'
+
+  if (rtb_NotEqual) {
+    base_B.In1 = base_B.varargout_2;
+  }
+
+  // End of Start for MATLABSystem: '<S14>/SourceBlock'
+  // End of Outputs for SubSystem: '<S14>/Enabled Subsystem'
+  // End of Outputs for SubSystem: '<Root>/Subscribe'
+
+  // Start for MATLABSystem: '<Root>/Get Parameter1' incorporates:
+  //   MATLABSystem: '<Root>/Get Parameter1'
+
+  rtb_NotEqual = false;
+  rtb_NotEqual_e = true;
+  if (!(base_DW.obj.SampleTime == base_P.GetParameter1_SampleTime)) {
+    rtb_NotEqual_e = false;
+  }
+
+  if (rtb_NotEqual_e) {
+    rtb_NotEqual = true;
+  }
+
+  if (!rtb_NotEqual) {
+    base_DW.obj.SampleTime = base_P.GetParameter1_SampleTime;
+  }
+
+  ParamGet_base_648.get_parameter(&rtb_TSamp);
+
+  // Gain: '<Root>/Gain' incorporates:
+  //   MATLABSystem: '<Root>/Get Parameter1'
+  //   Start for MATLABSystem: '<Root>/Get Parameter1'
+
+  base_B.TrigonometricFunction = base_P.Gain_Gain * rtb_TSamp;
+
+  // Switch: '<S18>/Switch' incorporates:
+  //   Constant: '<S18>/Constant3'
+  //   RelationalOperator: '<S18>/Relational Operator'
+
+  if (rtIsNaN(base_B.In1.Linear.X)) {
+    rtb_TSamp = base_P.Constant3_Value;
+  } else {
+    rtb_TSamp = base_B.In1.Linear.X;
+  }
+
+  // End of Switch: '<S18>/Switch'
+
+  // Product: '<S8>/Divide1'
+  rtb_Filter_i = rtb_TSamp / base_B.TrigonometricFunction;
+
+  // Start for MATLABSystem: '<Root>/Get Parameter' incorporates:
+  //   MATLABSystem: '<Root>/Get Parameter'
+
+  rtb_NotEqual = false;
+  rtb_NotEqual_e = true;
+  if (!(base_DW.obj_h.SampleTime == base_P.GetParameter_SampleTime)) {
+    rtb_NotEqual_e = false;
+  }
+
+  if (rtb_NotEqual_e) {
+    rtb_NotEqual = true;
+  }
+
+  if (!rtb_NotEqual) {
+    base_DW.obj_h.SampleTime = base_P.GetParameter_SampleTime;
+  }
+
+  ParamGet_base_647.get_parameter(&rtb_TSamp);
+
+  // Gain: '<Root>/Gain1' incorporates:
+  //   MATLABSystem: '<Root>/Get Parameter'
+  //   Start for MATLABSystem: '<Root>/Get Parameter'
+
+  rtb_Gain1 = base_P.Gain1_Gain * rtb_TSamp;
+
+  // Switch: '<S18>/Switch1' incorporates:
+  //   Constant: '<S18>/Constant3'
+  //   RelationalOperator: '<S18>/Relational Operator1'
+
+  if (rtIsNaN(base_B.In1.Angular.Z)) {
+    rtb_TSamp = base_P.Constant3_Value;
+  } else {
+    rtb_TSamp = base_B.In1.Angular.Z;
+  }
+
+  // End of Switch: '<S18>/Switch1'
+
+  // Product: '<S8>/Product1' incorporates:
+  //   Product: '<S8>/Divide4'
+
+  rtb_Integrator_f = rtb_Gain1 / base_B.TrigonometricFunction * rtb_TSamp;
+
+  // Outputs for Atomic SubSystem: '<Root>/Subscribe1'
+  // Start for MATLABSystem: '<S15>/SourceBlock' incorporates:
+  //   Inport: '<S24>/In1'
+  //   MATLABSystem: '<S15>/SourceBlock'
+
+  rtb_NotEqual = Sub_base_634.getLatestMessage(&base_B.varargout_2_m);
+
+  // Outputs for Enabled SubSystem: '<S15>/Enabled Subsystem' incorporates:
+  //   EnablePort: '<S24>/Enable'
+
+  if (rtb_NotEqual) {
+    base_B.In1_f = base_B.varargout_2_m;
+  }
+
+  // End of Start for MATLABSystem: '<S15>/SourceBlock'
+  // End of Outputs for SubSystem: '<S15>/Enabled Subsystem'
+  // End of Outputs for SubSystem: '<Root>/Subscribe1'
+
+  // SampleTimeMath: '<S22>/TSamp' incorporates:
+  //   Constant: '<S7>/Constant'
+  //   Product: '<S7>/Product'
+  //
+  //  About '<S22>/TSamp':
+  //   y = u * K where K = 1 / ( w * Ts )
+
+  rtb_TSamp = base_B.In1_f.Data * base_P.Constant_Value_c * base_P.TSamp_WtEt;
+
+  // Sum: '<S22>/Diff' incorporates:
+  //   UnitDelay: '<S22>/UD'
+
+  base_B.Diff = rtb_TSamp - base_DW.UD_DSTATE;
+
+  // S-Function (sdspbiquad): '<S7>/Filter1'
+  Filter1 = 0.027859766117136031 * base_B.Diff + base_DW.Filter1_FILT_STATES[0];
+  base_DW.Filter1_FILT_STATES[0] = (0.055719532234272062 * base_B.Diff +
+    base_DW.Filter1_FILT_STATES[1]) - (-1.4754804435926461) * Filter1;
+  base_DW.Filter1_FILT_STATES[1] = 0.027859766117136031 * base_B.Diff -
+    0.58691950806119031 * Filter1;
+  base_B.IntegralGain_a = Filter1;
+  Filter1 = 1.0 * Filter1 + base_DW.Filter1_FILT_STATES[2];
+  base_DW.Filter1_FILT_STATES[2] = (0.0 * base_B.IntegralGain_a +
+    base_DW.Filter1_FILT_STATES[3]) - 0.0 * Filter1;
+  base_DW.Filter1_FILT_STATES[3] = 0.0 * base_B.IntegralGain_a - 0.0 * Filter1;
+
+  // Sum: '<Root>/Sum' incorporates:
+  //   Sum: '<S8>/Subtract'
+
+  base_B.Diff = (rtb_Filter_i - rtb_Integrator_f) - Filter1;
+
+  // Gain: '<S4>/Filter Coefficient' incorporates:
+  //   DiscreteIntegrator: '<S4>/Filter'
+  //   Gain: '<S4>/Derivative Gain'
+  //   Sum: '<S4>/SumD'
+
+  rtb_FilterCoefficient = (base_P.DiscretePIDController1_D * base_B.Diff -
+    base_DW.Filter_DSTATE) * base_P.DiscretePIDController1_N;
+
+  // Sum: '<S4>/Sum' incorporates:
+  //   DiscreteIntegrator: '<S4>/Integrator'
+  //   Gain: '<S4>/Proportional Gain'
+
+  base_B.SignDeltaU = (base_P.DiscretePIDController1_P * base_B.Diff +
+                       base_DW.Integrator_DSTATE) + rtb_FilterCoefficient;
+
+  // Saturate: '<S4>/Saturate'
+  if (base_B.SignDeltaU > base_P.DiscretePIDController1_UpperSat) {
+    base_B.IntegralGain_a = base_P.DiscretePIDController1_UpperSat;
+  } else if (base_B.SignDeltaU < base_P.DiscretePIDController1_LowerSat) {
+    base_B.IntegralGain_a = base_P.DiscretePIDController1_LowerSat;
+  } else {
+    base_B.IntegralGain_a = base_B.SignDeltaU;
+  }
+
+  // End of Saturate: '<S4>/Saturate'
+
+  // Switch: '<S17>/Switch' incorporates:
+  //   Constant: '<S17>/Constant'
+  //   RelationalOperator: '<S17>/Relational Operator'
+
+  if (rtIsNaN(base_B.IntegralGain_a)) {
+    base_B.IntegralGain_a = base_P.Constant_Value_d;
+  }
+
+  // End of Switch: '<S17>/Switch'
+
+  // BusAssignment: '<Root>/Bus Assignment'
+  base_B.BusAssignment.Data = base_B.IntegralGain_a;
+
+  // Outputs for Atomic SubSystem: '<Root>/Publish'
+  // Start for MATLABSystem: '<S11>/SinkBlock' incorporates:
+  //   MATLABSystem: '<S11>/SinkBlock'
+
+  Pub_base_631.publish(&base_B.BusAssignment);
+
+  // End of Outputs for SubSystem: '<Root>/Publish'
+
+  // Outputs for Atomic SubSystem: '<Root>/Subscribe2'
+  // Start for MATLABSystem: '<S16>/SourceBlock' incorporates:
+  //   Inport: '<S25>/In1'
+  //   MATLABSystem: '<S16>/SourceBlock'
+
+  rtb_NotEqual = Sub_base_635.getLatestMessage(&base_B.varargout_2_m);
+
+  // Outputs for Enabled SubSystem: '<S16>/Enabled Subsystem' incorporates:
+  //   EnablePort: '<S25>/Enable'
+
+  if (rtb_NotEqual) {
+    base_B.In1_d = base_B.varargout_2_m;
+  }
+
+  // End of Start for MATLABSystem: '<S16>/SourceBlock'
+  // End of Outputs for SubSystem: '<S16>/Enabled Subsystem'
+  // End of Outputs for SubSystem: '<Root>/Subscribe2'
+
+  // SampleTimeMath: '<S21>/TSamp' incorporates:
+  //   Constant: '<S6>/Constant'
+  //   Product: '<S6>/Product'
+  //
+  //  About '<S21>/TSamp':
+  //   y = u * K where K = 1 / ( w * Ts )
+
+  base_B.TSamp_m = base_B.In1_d.Data * base_P.Constant_Value_j *
+    base_P.TSamp_WtEt_m;
+
+  // Sum: '<S21>/Diff' incorporates:
+  //   UnitDelay: '<S21>/UD'
+
+  base_B.Diff_k = base_B.TSamp_m - base_DW.UD_DSTATE_o;
+
+  // S-Function (sdspbiquad): '<S6>/Filter1'
+  Filter1_c = 0.027859766117136031 * base_B.Diff_k +
+    base_DW.Filter1_FILT_STATES_j[0];
+  base_DW.Filter1_FILT_STATES_j[0] = (0.055719532234272062 * base_B.Diff_k +
+    base_DW.Filter1_FILT_STATES_j[1]) - (-1.4754804435926461) * Filter1_c;
+  base_DW.Filter1_FILT_STATES_j[1] = 0.027859766117136031 * base_B.Diff_k -
+    0.58691950806119031 * Filter1_c;
+  base_B.IntegralGain_a = Filter1_c;
+  Filter1_c = 1.0 * Filter1_c + base_DW.Filter1_FILT_STATES_j[2];
+  base_DW.Filter1_FILT_STATES_j[2] = (0.0 * base_B.IntegralGain_a +
+    base_DW.Filter1_FILT_STATES_j[3]) - 0.0 * Filter1_c;
+  base_DW.Filter1_FILT_STATES_j[3] = 0.0 * base_B.IntegralGain_a - 0.0 *
+    Filter1_c;
+
+  // Sum: '<Root>/Sum1' incorporates:
+  //   Sum: '<S8>/Add'
+
+  base_B.IntegralGain_a = (rtb_Filter_i + rtb_Integrator_f) - Filter1_c;
+
+  // Gain: '<S5>/Filter Coefficient' incorporates:
+  //   DiscreteIntegrator: '<S5>/Filter'
+  //   Gain: '<S5>/Derivative Gain'
+  //   Sum: '<S5>/SumD'
+
+  rtb_Filter_i = (base_P.DiscretePIDController2_D * base_B.IntegralGain_a -
+                  base_DW.Filter_DSTATE_d) * base_P.DiscretePIDController2_N;
+
+  // Sum: '<S5>/Sum' incorporates:
+  //   DiscreteIntegrator: '<S5>/Integrator'
+  //   Gain: '<S5>/Proportional Gain'
+
+  rtb_Integrator_f = (base_P.DiscretePIDController2_P * base_B.IntegralGain_a +
+                      base_DW.Integrator_DSTATE_g) + rtb_Filter_i;
+
+  // Saturate: '<S5>/Saturate'
+  if (rtb_Integrator_f > base_P.DiscretePIDController2_UpperSat) {
+    base_B.Diff_k = base_P.DiscretePIDController2_UpperSat;
+  } else if (rtb_Integrator_f < base_P.DiscretePIDController2_LowerSat) {
+    base_B.Diff_k = base_P.DiscretePIDController2_LowerSat;
+  } else {
+    base_B.Diff_k = rtb_Integrator_f;
+  }
+
+  // End of Saturate: '<S5>/Saturate'
+
+  // Switch: '<S17>/Switch1' incorporates:
+  //   Constant: '<S17>/Constant'
+  //   RelationalOperator: '<S17>/Relational Operator1'
+
+  if (rtIsNaN(base_B.Diff_k)) {
+    base_B.Diff_k = base_P.Constant_Value_d;
+  }
+
+  // End of Switch: '<S17>/Switch1'
+
+  // BusAssignment: '<Root>/Bus Assignment1'
+  base_B.BusAssignment1.Data = base_B.Diff_k;
+
+  // Outputs for Atomic SubSystem: '<Root>/Publish1'
+  // Start for MATLABSystem: '<S12>/SinkBlock' incorporates:
+  //   MATLABSystem: '<S12>/SinkBlock'
+
+  Pub_base_632.publish(&base_B.BusAssignment1);
+
+  // End of Outputs for SubSystem: '<Root>/Publish1'
+
+  // Product: '<S9>/Divide2'
+  Filter1 *= base_B.TrigonometricFunction;
+  base_B.TrigonometricFunction *= Filter1_c;
+
+  // Gain: '<S9>/Gain1' incorporates:
+  //   Sum: '<S9>/Add1'
+
+  base_B.Diff_k = (Filter1 + base_B.TrigonometricFunction) * base_P.Gain1_Gain_k;
+
+  // Product: '<S9>/Divide1' incorporates:
+  //   DiscreteIntegrator: '<S9>/Discrete-Time Integrator'
+  //   Trigonometry: '<S9>/Trigonometric Function'
+  //   Trigonometry: '<S9>/Trigonometric Function1'
+
+  Filter1_c = base_B.Diff_k * cos(base_DW.DiscreteTimeIntegrator_DSTATE);
+  base_B.Diff_k *= sin(base_DW.DiscreteTimeIntegrator_DSTATE);
+
+  // Product: '<S9>/Divide' incorporates:
+  //   Gain: '<S9>/Gain'
+  //   Sum: '<S9>/Add'
+
+  base_B.TrigonometricFunction = (base_B.TrigonometricFunction - Filter1) /
+    (base_P.Gain_Gain_m * rtb_Gain1);
+
+  // MATLAB Function: '<Root>/MATLAB Function' incorporates:
+  //   DiscreteIntegrator: '<S9>/Discrete-Time Integrator'
+
+  // MATLAB Function 'MATLAB Function': '<S10>:1'
+  // '<S10>:1:3' quat = eul2quat([orientatoinZ,0,0]);
+  rtb_Gain1 = cos(base_DW.DiscreteTimeIntegrator_DSTATE / 2.0);
+  Filter1 = sin(base_DW.DiscreteTimeIntegrator_DSTATE / 2.0);
+
+  // BusAssignment: '<Root>/Bus Assignment2' incorporates:
+  //   Constant: '<Root>/Covariance'
+  //   Constant: '<S3>/Constant'
+  //   DiscreteIntegrator: '<S9>/Discrete-Time Integrator1'
+  //   MATLAB Function: '<Root>/MATLAB Function'
+
+  base_B.BusAssignment2 = base_P.Constant_Value;
+  base_B.BusAssignment2.Pose.Pose.Position.X =
+    base_DW.DiscreteTimeIntegrator1_DSTATE[0];
+  base_B.BusAssignment2.Pose.Pose.Position.Y =
+    base_DW.DiscreteTimeIntegrator1_DSTATE[1];
+  base_B.BusAssignment2.Twist.Twist.Linear.X = Filter1_c;
+  base_B.BusAssignment2.Twist.Twist.Linear.Y = base_B.Diff_k;
+  base_B.BusAssignment2.Twist.Twist.Angular.Z = base_B.TrigonometricFunction;
+  base_B.BusAssignment2.Pose.Pose.Orientation.W = Filter1 * 0.0 * 0.0 +
+    rtb_Gain1;
+  base_B.BusAssignment2.Pose.Pose.Orientation.X = rtb_Gain1 * 0.0 - Filter1 *
+    0.0;
+  base_B.BusAssignment2.Pose.Pose.Orientation.Y = rtb_Gain1 * 0.0 + Filter1 *
+    0.0;
+  base_B.BusAssignment2.Pose.Pose.Orientation.Z = Filter1 - rtb_Gain1 * 0.0 *
+    0.0;
+  memcpy(&base_B.BusAssignment2.Pose.Covariance[0], &base_P.Covariance_Value[0],
+         36U * sizeof(real_T));
+  memcpy(&base_B.BusAssignment2.Twist.Covariance[0], &base_P.Covariance_Value[0],
+         36U * sizeof(real_T));
+
+  // Outputs for Atomic SubSystem: '<Root>/Publish2'
+  // Start for MATLABSystem: '<S13>/SinkBlock' incorporates:
+  //   MATLABSystem: '<S13>/SinkBlock'
+
+  Pub_base_649.publish(&base_B.BusAssignment2);
+
+  // End of Outputs for SubSystem: '<Root>/Publish2'
+
+  // Gain: '<S19>/ZeroGain'
+  Filter1 = base_P.ZeroGain_Gain * base_B.SignDeltaU;
+
+  // DeadZone: '<S19>/DeadZone'
+  if (base_B.SignDeltaU > base_P.DiscretePIDController1_UpperSat) {
+    base_B.SignDeltaU -= base_P.DiscretePIDController1_UpperSat;
+  } else if (base_B.SignDeltaU >= base_P.DiscretePIDController1_LowerSat) {
+    base_B.SignDeltaU = 0.0;
+  } else {
+    base_B.SignDeltaU -= base_P.DiscretePIDController1_LowerSat;
+  }
+
+  // End of DeadZone: '<S19>/DeadZone'
+
+  // RelationalOperator: '<S19>/NotEqual'
+  rtb_NotEqual = (Filter1 != base_B.SignDeltaU);
+
+  // Signum: '<S19>/SignDeltaU'
+  if (base_B.SignDeltaU < 0.0) {
+    base_B.SignDeltaU = -1.0;
+  } else if (base_B.SignDeltaU > 0.0) {
+    base_B.SignDeltaU = 1.0;
+  } else {
+    if (base_B.SignDeltaU == 0.0) {
+      base_B.SignDeltaU = 0.0;
+    }
+  }
+
+  // End of Signum: '<S19>/SignDeltaU'
+
+  // Gain: '<S4>/Integral Gain'
+  base_B.Diff *= base_P.DiscretePIDController1_I;
+
+  // Gain: '<S20>/ZeroGain'
+  Filter1 = base_P.ZeroGain_Gain_m * rtb_Integrator_f;
+
+  // DeadZone: '<S20>/DeadZone'
+  if (rtb_Integrator_f > base_P.DiscretePIDController2_UpperSat) {
+    rtb_Integrator_f -= base_P.DiscretePIDController2_UpperSat;
+  } else if (rtb_Integrator_f >= base_P.DiscretePIDController2_LowerSat) {
+    rtb_Integrator_f = 0.0;
+  } else {
+    rtb_Integrator_f -= base_P.DiscretePIDController2_LowerSat;
+  }
+
+  // End of DeadZone: '<S20>/DeadZone'
+
+  // RelationalOperator: '<S20>/NotEqual'
+  rtb_NotEqual_e = (Filter1 != rtb_Integrator_f);
+
+  // Signum: '<S20>/SignDeltaU'
+  if (rtb_Integrator_f < 0.0) {
+    rtb_Integrator_f = -1.0;
+  } else if (rtb_Integrator_f > 0.0) {
+    rtb_Integrator_f = 1.0;
+  } else {
+    if (rtb_Integrator_f == 0.0) {
+      rtb_Integrator_f = 0.0;
+    }
+  }
+
+  // End of Signum: '<S20>/SignDeltaU'
+
+  // Gain: '<S5>/Integral Gain'
+  base_B.IntegralGain_a *= base_P.DiscretePIDController2_I;
+
+  // Update for UnitDelay: '<S22>/UD'
+  base_DW.UD_DSTATE = rtb_TSamp;
+
+  // Signum: '<S19>/SignPreIntegrator'
+  if (base_B.Diff < 0.0) {
+    // DataTypeConversion: '<S19>/DataTypeConv2'
+    rtb_TSamp = -1.0;
+  } else if (base_B.Diff > 0.0) {
+    // DataTypeConversion: '<S19>/DataTypeConv2'
+    rtb_TSamp = 1.0;
+  } else if (base_B.Diff == 0.0) {
+    // DataTypeConversion: '<S19>/DataTypeConv2'
+    rtb_TSamp = 0.0;
+  } else {
+    // DataTypeConversion: '<S19>/DataTypeConv2'
+    rtb_TSamp = base_B.Diff;
+  }
+
+  // End of Signum: '<S19>/SignPreIntegrator'
+
+  // DataTypeConversion: '<S19>/DataTypeConv2'
+  if (rtIsNaN(rtb_TSamp) || rtIsInf(rtb_TSamp)) {
+    rtb_TSamp = 0.0;
+  } else {
+    rtb_TSamp = fmod(rtb_TSamp, 256.0);
+  }
+
+  // DataTypeConversion: '<S19>/DataTypeConv1'
+  if (base_B.SignDeltaU < 128.0) {
+    rtb_SignDeltaU_0 = (int8_T)base_B.SignDeltaU;
+  } else {
+    rtb_SignDeltaU_0 = MAX_int8_T;
+  }
+
+  // End of DataTypeConversion: '<S19>/DataTypeConv1'
+
+  // Switch: '<S4>/Switch' incorporates:
+  //   Constant: '<S4>/Constant'
+  //   DataTypeConversion: '<S19>/DataTypeConv2'
+  //   Logic: '<S19>/AND'
+  //   RelationalOperator: '<S19>/Equal'
+
+  if (rtb_NotEqual && ((rtb_TSamp < 0.0 ? (int32_T)(int8_T)-(int8_T)(uint8_T)
+                        -rtb_TSamp : (int32_T)(int8_T)(uint8_T)rtb_TSamp) ==
+                       rtb_SignDeltaU_0)) {
+    base_B.Diff = base_P.Constant_Value_m;
+  }
+
+  // End of Switch: '<S4>/Switch'
+
+  // Update for DiscreteIntegrator: '<S4>/Integrator'
+  base_DW.Integrator_DSTATE += base_P.Integrator_gainval * base_B.Diff;
+
+  // Update for DiscreteIntegrator: '<S4>/Filter'
+  base_DW.Filter_DSTATE += base_P.Filter_gainval * rtb_FilterCoefficient;
+
+  // Update for UnitDelay: '<S21>/UD'
+  base_DW.UD_DSTATE_o = base_B.TSamp_m;
+
+  // Signum: '<S20>/SignPreIntegrator'
+  if (base_B.IntegralGain_a < 0.0) {
+    // DataTypeConversion: '<S20>/DataTypeConv2'
+    rtb_TSamp = -1.0;
+  } else if (base_B.IntegralGain_a > 0.0) {
+    // DataTypeConversion: '<S20>/DataTypeConv2'
+    rtb_TSamp = 1.0;
+  } else if (base_B.IntegralGain_a == 0.0) {
+    // DataTypeConversion: '<S20>/DataTypeConv2'
+    rtb_TSamp = 0.0;
+  } else {
+    // DataTypeConversion: '<S20>/DataTypeConv2'
+    rtb_TSamp = base_B.IntegralGain_a;
+  }
+
+  // End of Signum: '<S20>/SignPreIntegrator'
+
+  // DataTypeConversion: '<S20>/DataTypeConv2'
+  if (rtIsNaN(rtb_TSamp) || rtIsInf(rtb_TSamp)) {
+    rtb_TSamp = 0.0;
+  } else {
+    rtb_TSamp = fmod(rtb_TSamp, 256.0);
+  }
+
+  // DataTypeConversion: '<S20>/DataTypeConv1'
+  if (rtb_Integrator_f < 128.0) {
+    rtb_SignDeltaU_0 = (int8_T)rtb_Integrator_f;
+  } else {
+    rtb_SignDeltaU_0 = MAX_int8_T;
+  }
+
+  // End of DataTypeConversion: '<S20>/DataTypeConv1'
+
+  // Switch: '<S5>/Switch' incorporates:
+  //   Constant: '<S5>/Constant'
+  //   DataTypeConversion: '<S20>/DataTypeConv2'
+  //   Logic: '<S20>/AND'
+  //   RelationalOperator: '<S20>/Equal'
+
+  if (rtb_NotEqual_e && ((rtb_TSamp < 0.0 ? (int32_T)(int8_T)-(int8_T)(uint8_T)
+                          -rtb_TSamp : (int32_T)(int8_T)(uint8_T)rtb_TSamp) ==
+                         rtb_SignDeltaU_0)) {
+    base_B.IntegralGain_a = base_P.Constant_Value_n;
+  }
+
+  // End of Switch: '<S5>/Switch'
+
+  // Update for DiscreteIntegrator: '<S5>/Integrator'
+  base_DW.Integrator_DSTATE_g += base_P.Integrator_gainval_o *
+    base_B.IntegralGain_a;
+
+  // Update for DiscreteIntegrator: '<S5>/Filter'
+  base_DW.Filter_DSTATE_d += base_P.Filter_gainval_l * rtb_Filter_i;
+
+  // Update for DiscreteIntegrator: '<S9>/Discrete-Time Integrator1'
+  base_DW.DiscreteTimeIntegrator1_DSTATE[0] +=
+    base_P.DiscreteTimeIntegrator1_gainval * Filter1_c;
+  base_DW.DiscreteTimeIntegrator1_DSTATE[1] +=
+    base_P.DiscreteTimeIntegrator1_gainval * base_B.Diff_k;
+
+  // Update for DiscreteIntegrator: '<S9>/Discrete-Time Integrator'
+  base_DW.DiscreteTimeIntegrator_DSTATE += base_P.DiscreteTimeIntegrator_gainval
+    * base_B.TrigonometricFunction;
+}
+
+// Model initialize function
+void base_initialize(void)
+{
+  // Registration code
+
+  // initialize non-finites
+  rt_InitInfAndNaN(sizeof(real_T));
+
+  // initialize error status
+  rtmSetErrorStatus(base_M, (NULL));
+
+  // block I/O
+  (void) memset(((void *) &base_B), 0,
+                sizeof(B_base_T));
+
+  // states (dwork)
+  (void) memset((void *)&base_DW, 0,
+                sizeof(DW_base_T));
+
+  {
+    static const char_T tmp[5] = { '/', 'o', 'd', 'o', 'm' };
+
+    static const char_T tmp_0[12] = { '/', 'r', 'i', 'g', 'h', 't', '_', 'p',
+      'o', 'w', 'e', 'r' };
+
+    static const char_T tmp_1[14] = { '/', 'r', 'i', 'g', 'h', 't', '_', 'e',
+      'n', 'c', 'o', 'd', 'e', 'r' };
+
+    static const char_T tmp_2[11] = { '/', 'l', 'e', 'f', 't', '_', 'p', 'o',
+      'w', 'e', 'r' };
+
+    static const char_T tmp_3[13] = { '/', 'l', 'e', 'f', 't', '_', 'e', 'n',
+      'c', 'o', 'd', 'e', 'r' };
+
+    static const char_T tmp_4[12] = { '/', 't', 'r', 'a', 'c', 'k', '_', 'w',
+      'i', 'd', 't', 'h' };
+
+    static const char_T tmp_5[15] = { '/', 'w', 'h', 'e', 'e', 'l', '_', 'd',
+      'i', 'a', 'm', 'e', 't', 'e', 'r' };
+
+    static const char_T tmp_6[8] = { '/', 'c', 'm', 'd', '_', 'v', 'e', 'l' };
+
+    char_T tmp_7[6];
+    char_T tmp_8[12];
+    char_T tmp_9[14];
+    char_T tmp_a[13];
+    char_T tmp_b[9];
+    int32_T i;
+
+    // Start for Atomic SubSystem: '<Root>/Subscribe'
+    // Start for MATLABSystem: '<S14>/SourceBlock'
+    base_DW.obj_p.isInitialized = 0;
+    base_DW.obj_p.isInitialized = 1;
+    for (i = 0; i < 8; i++) {
+      tmp_b[i] = tmp_6[i];
+    }
+
+    tmp_b[8] = '\x00';
+    Sub_base_633.createSubscriber(tmp_b, base_MessageQueueLen);
+
+    // End of Start for MATLABSystem: '<S14>/SourceBlock'
+    // End of Start for SubSystem: '<Root>/Subscribe'
+
+    // Start for MATLABSystem: '<Root>/Get Parameter1'
+    base_DW.obj.isInitialized = 0;
+    base_DW.obj.SampleTime = base_P.GetParameter1_SampleTime;
+    base_DW.obj.isInitialized = 1;
+    for (i = 0; i < 15; i++) {
+      base_B.cv0[i] = tmp_5[i];
+    }
+
+    base_B.cv0[15] = '\x00';
+    ParamGet_base_648.initialize(base_B.cv0);
+    ParamGet_base_648.initialize_error_codes(0U, 1U, 2U, 3U);
+    ParamGet_base_648.set_initial_value(base_ParameterInitialValue_j);
+
+    // End of Start for MATLABSystem: '<Root>/Get Parameter1'
+
+    // Start for MATLABSystem: '<Root>/Get Parameter'
+    base_DW.obj_h.isInitialized = 0;
+    base_DW.obj_h.SampleTime = base_P.GetParameter_SampleTime;
+    base_DW.obj_h.isInitialized = 1;
+    for (i = 0; i < 12; i++) {
+      tmp_a[i] = tmp_4[i];
+    }
+
+    tmp_a[12] = '\x00';
+    ParamGet_base_647.initialize(tmp_a);
+    ParamGet_base_647.initialize_error_codes(0U, 1U, 2U, 3U);
+    ParamGet_base_647.set_initial_value(base_ParameterInitialValue);
+
+    // End of Start for MATLABSystem: '<Root>/Get Parameter'
+
+    // Start for Atomic SubSystem: '<Root>/Subscribe1'
+    // Start for MATLABSystem: '<S15>/SourceBlock'
+    base_DW.obj_o.isInitialized = 0;
+    base_DW.obj_o.isInitialized = 1;
+    for (i = 0; i < 13; i++) {
+      tmp_9[i] = tmp_3[i];
+    }
+
+    tmp_9[13] = '\x00';
+    Sub_base_634.createSubscriber(tmp_9, base_MessageQueueLen);
+
+    // End of Start for MATLABSystem: '<S15>/SourceBlock'
+    // End of Start for SubSystem: '<Root>/Subscribe1'
+
+    // Start for Atomic SubSystem: '<Root>/Publish'
+    // Start for MATLABSystem: '<S11>/SinkBlock'
+    base_DW.obj_kj.isInitialized = 0;
+    base_DW.obj_kj.isInitialized = 1;
+    for (i = 0; i < 11; i++) {
+      tmp_8[i] = tmp_2[i];
+    }
+
+    tmp_8[11] = '\x00';
+    Pub_base_631.createPublisher(tmp_8, base_MessageQueueLen);
+
+    // End of Start for MATLABSystem: '<S11>/SinkBlock'
+    // End of Start for SubSystem: '<Root>/Publish'
+
+    // Start for Atomic SubSystem: '<Root>/Subscribe2'
+    // Start for MATLABSystem: '<S16>/SourceBlock'
+    base_DW.obj_n.isInitialized = 0;
+    base_DW.obj_n.isInitialized = 1;
+    for (i = 0; i < 14; i++) {
+      base_B.cv1[i] = tmp_1[i];
+    }
+
+    base_B.cv1[14] = '\x00';
+    Sub_base_635.createSubscriber(base_B.cv1, base_MessageQueueLen);
+
+    // End of Start for MATLABSystem: '<S16>/SourceBlock'
+    // End of Start for SubSystem: '<Root>/Subscribe2'
+
+    // Start for Atomic SubSystem: '<Root>/Publish1'
+    // Start for MATLABSystem: '<S12>/SinkBlock'
+    base_DW.obj_k.isInitialized = 0;
+    base_DW.obj_k.isInitialized = 1;
+    for (i = 0; i < 12; i++) {
+      tmp_a[i] = tmp_0[i];
+    }
+
+    tmp_a[12] = '\x00';
+    Pub_base_632.createPublisher(tmp_a, base_MessageQueueLen);
+
+    // End of Start for MATLABSystem: '<S12>/SinkBlock'
+    // End of Start for SubSystem: '<Root>/Publish1'
+
+    // Start for Atomic SubSystem: '<Root>/Publish2'
+    // Start for MATLABSystem: '<S13>/SinkBlock'
+    base_DW.obj_m.isInitialized = 0;
+    base_DW.obj_m.isInitialized = 1;
+    for (i = 0; i < 5; i++) {
+      tmp_7[i] = tmp[i];
+    }
+
+    tmp_7[5] = '\x00';
+    Pub_base_649.createPublisher(tmp_7, base_MessageQueueLen);
+
+    // End of Start for MATLABSystem: '<S13>/SinkBlock'
+    // End of Start for SubSystem: '<Root>/Publish2'
+
+    // InitializeConditions for UnitDelay: '<S22>/UD'
+    base_DW.UD_DSTATE = base_P.DiscreteDerivative_ICPrevScaled;
+
+    // InitializeConditions for DiscreteIntegrator: '<S4>/Integrator'
+    base_DW.Integrator_DSTATE = base_P.Integrator_IC;
+
+    // InitializeConditions for DiscreteIntegrator: '<S4>/Filter'
+    base_DW.Filter_DSTATE = base_P.Filter_IC;
+
+    // InitializeConditions for UnitDelay: '<S21>/UD'
+    base_DW.UD_DSTATE_o = base_P.DiscreteDerivative_ICPrevScal_f;
+
+    // InitializeConditions for DiscreteIntegrator: '<S5>/Integrator'
+    base_DW.Integrator_DSTATE_g = base_P.Integrator_IC_f;
+
+    // InitializeConditions for DiscreteIntegrator: '<S5>/Filter'
+    base_DW.Filter_DSTATE_d = base_P.Filter_IC_i;
+
+    // InitializeConditions for DiscreteIntegrator: '<S9>/Discrete-Time Integrator1' 
+    base_DW.DiscreteTimeIntegrator1_DSTATE[0] =
+      base_P.DiscreteTimeIntegrator1_IC;
+    base_DW.DiscreteTimeIntegrator1_DSTATE[1] =
+      base_P.DiscreteTimeIntegrator1_IC;
+
+    // InitializeConditions for DiscreteIntegrator: '<S9>/Discrete-Time Integrator' 
+    base_DW.DiscreteTimeIntegrator_DSTATE = base_P.DiscreteTimeIntegrator_IC;
+
+    // SystemInitialize for Atomic SubSystem: '<Root>/Subscribe'
+    // SystemInitialize for Enabled SubSystem: '<S14>/Enabled Subsystem'
+    // SystemInitialize for Outport: '<S23>/Out1'
+    base_B.In1 = base_P.Out1_Y0;
+
+    // End of SystemInitialize for SubSystem: '<S14>/Enabled Subsystem'
+    // End of SystemInitialize for SubSystem: '<Root>/Subscribe'
+
+    // SystemInitialize for Atomic SubSystem: '<Root>/Subscribe1'
+    // SystemInitialize for Enabled SubSystem: '<S15>/Enabled Subsystem'
+    // SystemInitialize for Outport: '<S24>/Out1'
+    base_B.In1_f = base_P.Out1_Y0_c;
+
+    // End of SystemInitialize for SubSystem: '<S15>/Enabled Subsystem'
+    // End of SystemInitialize for SubSystem: '<Root>/Subscribe1'
+
+    // SystemInitialize for Atomic SubSystem: '<Root>/Subscribe2'
+    // SystemInitialize for Enabled SubSystem: '<S16>/Enabled Subsystem'
+    // SystemInitialize for Outport: '<S25>/Out1'
+    base_B.In1_d = base_P.Out1_Y0_a;
+
+    // End of SystemInitialize for SubSystem: '<S16>/Enabled Subsystem'
+    // End of SystemInitialize for SubSystem: '<Root>/Subscribe2'
+  }
+}
+
+// Model terminate function
+void base_terminate(void)
+{
+  // Terminate for Atomic SubSystem: '<Root>/Subscribe'
+  // Start for MATLABSystem: '<S14>/SourceBlock' incorporates:
+  //   Terminate for MATLABSystem: '<S14>/SourceBlock'
+
+  if (base_DW.obj_p.isInitialized == 1) {
+    base_DW.obj_p.isInitialized = 2;
+  }
+
+  // End of Start for MATLABSystem: '<S14>/SourceBlock'
+  // End of Terminate for SubSystem: '<Root>/Subscribe'
+
+  // Start for MATLABSystem: '<Root>/Get Parameter1' incorporates:
+  //   Terminate for MATLABSystem: '<Root>/Get Parameter1'
+
+  if (base_DW.obj.isInitialized == 1) {
+    base_DW.obj.isInitialized = 2;
+  }
+
+  // End of Start for MATLABSystem: '<Root>/Get Parameter1'
+
+  // Start for MATLABSystem: '<Root>/Get Parameter' incorporates:
+  //   Terminate for MATLABSystem: '<Root>/Get Parameter'
+
+  if (base_DW.obj_h.isInitialized == 1) {
+    base_DW.obj_h.isInitialized = 2;
+  }
+
+  // End of Start for MATLABSystem: '<Root>/Get Parameter'
+
+  // Terminate for Atomic SubSystem: '<Root>/Subscribe1'
+  // Start for MATLABSystem: '<S15>/SourceBlock' incorporates:
+  //   Terminate for MATLABSystem: '<S15>/SourceBlock'
+
+  if (base_DW.obj_o.isInitialized == 1) {
+    base_DW.obj_o.isInitialized = 2;
+  }
+
+  // End of Start for MATLABSystem: '<S15>/SourceBlock'
+  // End of Terminate for SubSystem: '<Root>/Subscribe1'
+
+  // Terminate for Atomic SubSystem: '<Root>/Publish'
+  // Start for MATLABSystem: '<S11>/SinkBlock' incorporates:
+  //   Terminate for MATLABSystem: '<S11>/SinkBlock'
+
+  if (base_DW.obj_kj.isInitialized == 1) {
+    base_DW.obj_kj.isInitialized = 2;
+  }
+
+  // End of Start for MATLABSystem: '<S11>/SinkBlock'
+  // End of Terminate for SubSystem: '<Root>/Publish'
+
+  // Terminate for Atomic SubSystem: '<Root>/Subscribe2'
+  // Start for MATLABSystem: '<S16>/SourceBlock' incorporates:
+  //   Terminate for MATLABSystem: '<S16>/SourceBlock'
+
+  if (base_DW.obj_n.isInitialized == 1) {
+    base_DW.obj_n.isInitialized = 2;
+  }
+
+  // End of Start for MATLABSystem: '<S16>/SourceBlock'
+  // End of Terminate for SubSystem: '<Root>/Subscribe2'
+
+  // Terminate for Atomic SubSystem: '<Root>/Publish1'
+  // Start for MATLABSystem: '<S12>/SinkBlock' incorporates:
+  //   Terminate for MATLABSystem: '<S12>/SinkBlock'
+
+  if (base_DW.obj_k.isInitialized == 1) {
+    base_DW.obj_k.isInitialized = 2;
+  }
+
+  // End of Start for MATLABSystem: '<S12>/SinkBlock'
+  // End of Terminate for SubSystem: '<Root>/Publish1'
+
+  // Terminate for Atomic SubSystem: '<Root>/Publish2'
+  // Start for MATLABSystem: '<S13>/SinkBlock' incorporates:
+  //   Terminate for MATLABSystem: '<S13>/SinkBlock'
+
+  if (base_DW.obj_m.isInitialized == 1) {
+    base_DW.obj_m.isInitialized = 2;
+  }
+
+  // End of Start for MATLABSystem: '<S13>/SinkBlock'
+  // End of Terminate for SubSystem: '<Root>/Publish2'
+}
+
+//
+// File trailer for generated code.
+//
+// [EOF]
+//

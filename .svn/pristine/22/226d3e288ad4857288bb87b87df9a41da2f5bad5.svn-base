@@ -1,0 +1,5 @@
+<launch>
+  <node name="ptu46" pkg="flir_ptu_driver" type="ptu_driver">
+    <rosparam file="$(find floribot_robot)/config/ptu46.yaml" command="load" />
+  </node>
+</launch>

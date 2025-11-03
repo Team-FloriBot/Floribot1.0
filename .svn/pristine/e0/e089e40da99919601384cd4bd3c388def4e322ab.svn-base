@@ -1,0 +1,105 @@
+/*************************************************************************************************
+*	FILE:			row_detection_node.cpp
+*	SW-COMPONENT:	row_detection Node
+*	DESCRIPTION:	This node detects the row in which the robot is currently driving.
+*					It subscribes on the /scan topic and publishes actual position data of the
+*					robot via the /delta2centre topic. The messgae type of /delta2centre is 
+*					"geometry_msgs/Pose2D"		
+*																	
+*					The members of Pose2D are used as follows:						
+*					 x: 		not used												
+*					 y: 		distance from the robot origin(0, 0, 0) to the centre	
+*								of the actual row, at which are:						
+*								- positive values <-> left from the centre line			
+*								- negative values <-> right from the centre line		
+*				  	 theta:		angle of rotation between robot y-axis and centre line at which are:								
+*								- positive values <-> counter clockwise rotation of the robot		
+*								- negative values <-> clockwise rotation of the robot	
+*
+*	HINT:			row_detection is executable with visualization of the       
+*	       			detected row direction by publishing a marker which can be  
+*					visualized in RViz. To do this, set the ROS-param "visualization"
+*					to "enabled". For example at node start:                        
+*       			rosrun row_detection row_detection _visualization:=enabled  
+*
+*	COPYRIGHT:		(C) 2018 Floribot-Team Hochschule Heilbronn 
+*	AUTHOR:			Lukas Eberle RAB6
+*
+*
+*The reproduction, distribution and utilization of this file as well as the communication of its
+*contents to others without express authorization is prohibited. Offenders will be held liable
+*for the payment of damages. All rights reserved in the event of the grant of a patent,
+*utility model or design.
+*************************************************************************************************/
+
+#include <ros/ros.h>
+#include "row_detection.h"
+
+
+int main (int argc, char** argv)
+{
+  	ros::init (argc, argv, "row_detection");	  	// initialize ROS
+  	ros::NodeHandle n;		// create a nodehandler
+	ros::NodeHandle np("~");	// create a private nodehandler
+	RowDetection_Params params; // parameter container
+
+	/* -- parameter initialization -- */
+	if(!np.getParam("visualization", params.enableDisable_visualization)){	// get terminal input parameter	
+		// couldn't get param --> use default value
+		params.enableDisable_visualization = "disabled";
+	}	
+	np.setParam("visualization","");// reset parameter
+	
+	if(!n.getParam("min_linePointCount", params.min_linePointCount)){
+		// couldn't get param --> use default value
+		params.min_linePointCount = 50;
+	}
+	
+	if(!n.getParam("relevantScans_cnt" , params.relevantScans_cnt)){
+		// couldn't get param --> use default value
+		params.relevantScans_cnt = 4;			
+	}
+	
+	if(!n.getParam("max_AngleDiffBetweenRows" , params.max_AngleDiffBetweenRows)){
+		// couldn't get param --> use default value
+		params.max_AngleDiffBetweenRows = 0.25;
+	}
+
+	if(!n.getParam("max_AngleDiff_recent2current" , params.max_AngleDiff_recent2current)){
+		// couldn't get param --> use default value
+		params.max_AngleDiff_recent2current = 0.05;
+	}
+	
+	if(!n.getParam("RANSAC_threshold" , params.RANSAC_threshold)){
+		// couldn't get param --> use default value
+		params.RANSAC_threshold = 0.1;
+	}
+	
+	if(!n.getParam("pointCloudRange_Xmin" , params.pointCloudRange_Xmin)){
+		// couldn't get param --> use default value
+		params.pointCloudRange_Xmin = 0.0;		
+	}
+	
+	if(!n.getParam("pointCloudRange_Xmax" , params.pointCloudRange_Xmax)){
+		// couldn't get param --> use default value
+		params.pointCloudRange_Xmax = 1.2;	
+	}
+	
+	if(!n.getParam("pointCloudRange_Ymin" , params.pointCloudRange_Ymin)){
+		// couldn't get param --> use default value
+		params.pointCloudRange_Ymin = 0.05;
+	}
+	
+	if(!n.getParam("pointCloudRange_Ymax", params.pointCloudRange_Ymax)){
+		// couldn't get param --> use default value
+		params.pointCloudRange_Ymax = 0.7;
+	}
+	
+	
+	/* -- create a RowDetection object -- */
+	RowDetection RowDetector(n, params);	
+	//std::cout << "Row detection node spinning..." << std::endl; // feedback on terminal	
+	ros::spin();	// calling callbacks
+	
+  	return 0;
+}

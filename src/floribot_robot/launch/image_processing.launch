@@ -1,0 +1,8 @@
+<launch>
+  <node name="image_processing" pkg="image_processing" type="image_processing_node">
+  </node>
+
+  <node name="position_balls" pkg="position_balls" type="position_balls_node">
+  </node>  
+
+</launch>

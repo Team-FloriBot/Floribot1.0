@@ -1,0 +1,140 @@
+close all
+clear all
+%% Get picture from webcam
+% % Create the webcam object.
+camR = webcam(1);
+camR.Resolution = camR.AvailableResolutions{1,1};
+
+camL = webcam(3);
+camL.Resolution = camL.AvailableResolutions{1,1};
+
+load gong.mat;
+
+
+L=0;
+R=0;
+% waitforbuttonpress;
+while(1)
+    % Capture one frame
+    videoFrameL = snapshot(camL);
+    % videoFrameL=imread('test_20150617_10_54_47.jpg');
+    videoFrameR = snapshot(camR);
+    % videoFrameR=imread('test_20150617_10_54_47.jpg');
+        
+    videoFrameLHSV = rgb2hsv(videoFrameL);
+    videoFrameRHSV = rgb2hsv(videoFrameR);
+    
+    hVideoFrameL = videoFrameLHSV(:,:,1);
+    sVideoFrameL = videoFrameLHSV(:,:,2);
+    vVideoFrameL = videoFrameLHSV(:,:,3);  
+    
+    hVideoFrameR = videoFrameRHSV(:,:,1);
+    sVideoFrameR = videoFrameRHSV(:,:,2);
+    vVideoFrameR = videoFrameRHSV(:,:,3);
+    
+    vVideoFrameL = imcomplement(vVideoFrameL);
+    vVideoFrameR = imcomplement(vVideoFrameR);
+    
+    hVideoFrameL = hVideoFrameL .* vVideoFrameL;
+    hVideoFrameR = hVideoFrameR .* vVideoFrameR;
+    
+    %% Thresholds
+    hueThresholdLow = 0.15;
+    hueThresholdHigh = 0.2;
+    
+    satThresholdLow = 0.2;
+    satThresholdHigh = 1;
+    
+    valThresholdLow = 0.7;
+    valThresholdHigh = 1;
+    
+    hueMaskL = (hVideoFrameL >= hueThresholdLow) & (hVideoFrameL <= hueThresholdHigh);
+    satMaskL = (sVideoFrameL >= satThresholdLow) & (sVideoFrameL <= satThresholdHigh);
+    valMaskL = (vVideoFrameL >= valThresholdLow) & (vVideoFrameL <= valThresholdHigh);
+    
+    hueMaskR = (hVideoFrameR >= hueThresholdLow) & (hVideoFrameR <= hueThresholdHigh);
+    satMaskR = (sVideoFrameR >= satThresholdLow) & (sVideoFrameR <= satThresholdHigh);
+    valMaskR = (vVideoFrameR >= valThresholdLow) & (vVideoFrameR <= valThresholdHigh);
+    
+    
+    %% hue
+    smallestAcceptableArea = 100; % Keep areas only if they're bigger than this.
+    hueMaskcleanL = uint8(bwareaopen(hueMaskL, smallestAcceptableArea));
+    hueMaskcleanR = uint8(bwareaopen(hueMaskR, smallestAcceptableArea));
+    
+    structuringElement = strel('disk', 1);
+    hueMaskcleanL = imopen(hueMaskcleanL, structuringElement);
+    hueMaskcleanR = imopen(hueMaskcleanR, structuringElement);
+     
+    structuringElement = strel('disk', 5);
+    hueMaskcleanL = imclose(hueMaskcleanL, structuringElement);
+    hueMaskcleanR = imclose(hueMaskcleanR, structuringElement);
+    
+    %% sat
+    smallestAcceptableArea = 50; % Keep areas only if they're bigger than this.
+    satMaskcleanL = uint8(bwareaopen(satMaskL, smallestAcceptableArea));
+    satMaskcleanR = uint8(bwareaopen(satMaskR, smallestAcceptableArea));
+    
+    structuringElement = strel('disk', 3);
+    satMaskcleanL = imopen(satMaskcleanL, structuringElement);
+    satMaskcleanR = imopen(satMaskcleanR, structuringElement);
+    
+    %% val
+    smallestAcceptableArea = 50; % Keep areas only if they're bigger than this.
+    valMaskcleanL = uint8(bwareaopen(valMaskL, smallestAcceptableArea));
+    valMaskcleanR = uint8(bwareaopen(valMaskR, smallestAcceptableArea));    
+
+    structuringElement = strel('disk', 3);
+    valMaskcleanL = imopen(valMaskcleanL, structuringElement);
+    valMaskcleanR = imopen(valMaskcleanR, structuringElement);
+    
+    %% fertig
+    maskCleanL = (satMaskcleanL & valMaskcleanL);
+    maskCleanR = (satMaskcleanR & valMaskcleanR);
+
+%     figure(3)
+%     imshow(maskCleanL,[]);
+%     title('fertig nach kantenglättung')
+%     figure(4)
+%     imshow(maskCleanR,[]);
+%     title('fertig nach kantenglättung')
+%     
+    structuringElement = strel('disk', 7);
+    maskCleanL = imclose(maskCleanL, structuringElement);    
+    maskCleanR = imclose(maskCleanR, structuringElement);    
+    
+    %% Objekterkennung
+    % wirf alles wag was keliner ist als
+    smallestAcceptableArea = 4000; % Keep areas only if they're bigger than this.
+    maskCleancleanerL = uint8(bwareaopen(maskCleanL, smallestAcceptableArea));
+    maskCleancleanerR = uint8(bwareaopen(maskCleanR, smallestAcceptableArea));
+    
+    ccL = bwconncomp(maskCleancleanerL,4);
+    numberL  = ccL.NumObjects;
+    
+    ccR = bwconncomp(maskCleancleanerR,4);
+    numberR  = ccR.NumObjects;
+    
+    if numberL > 0
+        L=L+1;
+        if L == 1
+            sound(y,3*Fs)
+            L=0;
+        end
+    end
+    
+    if numberR > 0
+        R=R+1;
+        if R == 1
+            beep
+            R=0;
+        end
+    end
+%     
+%     figure(1)
+%     imshow(maskCleancleanerL,[]);
+%     title('fertig nach kantenglättung')
+%     figure(2)
+%     imshow(maskCleancleanerR,[]);
+%     title('fertig nach kantenglättung')
+end

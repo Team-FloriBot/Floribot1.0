@@ -1,0 +1,9 @@
+<launch>
+  <node name="laser" pkg="urg_node" type="urg_node">
+    <!-- param name="frame_id" value="/base_laser_link"/ -->
+    <!-- param name="cluster" value="1"/ -->
+    <!-- param name="skip" value="1"/-->
+    <!-- param name="intensity" value="true"/-->
+    <rosparam file="$(find floribot_robot)/config/laser.yaml" command="load" />
+  </node>
+</launch>

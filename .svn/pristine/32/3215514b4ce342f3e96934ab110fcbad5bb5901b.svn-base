@@ -1,0 +1,1875 @@
+//
+// File: task2.cpp
+//
+// Code generated for Simulink model 'task2'.
+//
+// Model version                  : 1.363
+// Simulink Coder version         : 8.7 (R2014b) 08-Sep-2014
+// C/C++ source code generated on : Tue Jun 16 17:40:37 2015
+//
+// Target selection: ert.tlc
+// Embedded hardware selection: 32-bit Generic
+// Code generation objectives: Unspecified
+// Validation result: Not run
+//
+#include "task2.h"
+#include "task2_private.h"
+
+// Named constants for Chart: '<S3>/Chart'
+#define task2_IN_NO_ACTIVE_CHILD       ((uint8_T)0U)
+#define task2_IN_drive_in_row          ((uint8_T)1U)
+#define task2_IN_drive_on_row          ((uint8_T)2U)
+#define task2_IN_drive_straight_on     ((uint8_T)3U)
+#define task2_IN_turn_arround          ((uint8_T)4U)
+#define task2_IN_turn_left             ((uint8_T)5U)
+#define task2_IN_turn_left1            ((uint8_T)6U)
+#define task2_IN_turn_right            ((uint8_T)7U)
+#define task2_IN_turn_right1           ((uint8_T)8U)
+
+// Named constants for Chart: '<S4>/teleop_chart'
+#define task2_DIRECT_PITCH_AXIS_DIV    (10.0)
+#define task2_DIRECT_ROLL_AXIS_DIV     (-10.0)
+#define task2_IN_Down                  ((uint8_T)1U)
+#define task2_IN_Left                  ((uint8_T)2U)
+#define task2_IN_Right                 ((uint8_T)3U)
+#define task2_IN_Up                    ((uint8_T)4U)
+#define task2_IN_automatic             ((uint8_T)1U)
+#define task2_IN_control_x_and_yaw     ((uint8_T)5U)
+#define task2_IN_left_or_right         ((uint8_T)2U)
+#define task2_IN_manual                ((uint8_T)3U)
+#define task2_IN_stand_still           ((uint8_T)6U)
+
+// Block signals (auto storage)
+B_task2_T task2_B;
+
+// Block states (auto storage)
+DW_task2_T task2_DW;
+
+// External inputs (root inport signals with auto storage)
+ExtU_task2_T task2_U;
+
+// External outputs (root outports fed by signals with auto storage)
+ExtY_task2_T task2_Y;
+
+// Real-time model
+RT_MODEL_task2_T task2_M_;
+RT_MODEL_task2_T *const task2_M = &task2_M_;
+
+// Forward declaration for local functions
+static void task2_turn_right1(void);
+real_T rt_roundd_snf(real_T u)
+{
+  real_T y;
+  if (fabs(u) < 4.503599627370496E+15) {
+    if (u >= 0.5) {
+      y = floor(u + 0.5);
+    } else if (u > -0.5) {
+      y = u * 0.0;
+    } else {
+      y = ceil(u - 0.5);
+    }
+  } else {
+    y = u;
+  }
+
+  return y;
+}
+
+real_T rt_modd_snf(real_T u0, real_T u1)
+{
+  real_T y;
+  real_T tmp;
+  if (u1 == 0.0) {
+    y = u0;
+  } else if (!((!rtIsNaN(u0)) && (!rtIsInf(u0)) && ((!rtIsNaN(u1)) && (!rtIsInf
+                (u1))))) {
+    y = (rtNaN);
+  } else {
+    tmp = u0 / u1;
+    if (u1 <= floor(u1)) {
+      y = u0 - floor(tmp) * u1;
+    } else if (fabs(tmp - rt_roundd_snf(tmp)) <= DBL_EPSILON * fabs(tmp)) {
+      y = 0.0;
+    } else {
+      y = (tmp - floor(tmp)) * u1;
+    }
+  }
+
+  return y;
+}
+
+// Function for Chart: '<S3>/Chart'
+static void task2_turn_right1(void)
+{
+  // Constant: '<S3>/pi' incorporates:
+  //   Constant: '<S3>/turn_speed'
+
+  // During 'turn_right1': '<S24>:8'
+  // Transition: '<S24>:19'
+  if (task2_DW.temporalCounter_i1 >= (uint32_T)ceil(3.1415926535897931 / 2.0 /
+       0.62831853071795862 / 0.01 - 1.0E-10)) {
+    // Transition: '<S24>:31'
+    if ((!task2_B.Switch) && (!task2_B.Switch_f)) {
+      // Transition: '<S24>:27'
+      // Exit 'turn_right1': '<S24>:8'
+      task2_B.bool_turn_right = false;
+      task2_DW.is_c1_task2 = task2_IN_drive_straight_on;
+      task2_DW.temporalCounter_i1 = 0U;
+
+      // Entry 'drive_straight_on': '<S24>:3'
+      task2_DW.dir = task2_B.VectorConcatenate2[(int32_T)task2_DW.i - 1];
+      task2_DW.rows = task2_B.VectorConcatenate2[(int32_T)task2_DW.i + 9];
+    } else {
+      // Transition: '<S24>:28'
+      if (task2_B.Switch || task2_B.Switch_f) {
+        // Transition: '<S24>:26'
+        if (task2_B.LogicalOperator) {
+          // Transition: '<S24>:30'
+          // Exit 'turn_right1': '<S24>:8'
+          task2_DW.is_c1_task2 = task2_IN_turn_arround;
+          task2_DW.temporalCounter_i1 = 0U;
+
+          // Entry 'turn_arround': '<S24>:6'
+          task2_B.bool_turn_right = true;
+        } else {
+          // Transition: '<S24>:25'
+          // Exit 'turn_right1': '<S24>:8'
+          task2_B.bool_turn_right = false;
+          task2_DW.is_c1_task2 = task2_IN_drive_in_row;
+
+          // Entry 'drive_in_row': '<S24>:38'
+          task2_B.bool_in_lane = true;
+        }
+      }
+    }
+  }
+
+  // End of Constant: '<S3>/pi'
+}
+
+real_T rt_atan2d_snf_cordic11(real_T u0, real_T u1)
+{
+  real_T y;
+  real_T u3[11];
+  real_T xAcc;
+  real_T yAcc;
+  boolean_T y_quad_adjust;
+  boolean_T y_nonzero;
+  boolean_T x_quad_adjust;
+  real_T xtmp;
+  real_T ytmp;
+  int16_T idx;
+  static const real_T cordicLUT_n11_d[11] = { 0.78539816339744828,
+    0.46364760900080609, 0.24497866312686414, 0.12435499454676144,
+    0.06241880999595735, 0.031239833430268277, 0.015623728620476831,
+    0.0078123410601011111, 0.0039062301319669718, 0.0019531225164788188,
+    0.00097656218955931946 };
+
+  memcpy(&u3[0], &cordicLUT_n11_d[0], 11U * sizeof(real_T));
+  if (u0 < 0.0) {
+    yAcc = -u0;
+    y_quad_adjust = true;
+    y_nonzero = true;
+  } else {
+    yAcc = u0;
+    y_quad_adjust = false;
+    y_nonzero = (u0 > 0.0);
+  }
+
+  if (u1 < 0.0) {
+    xAcc = -u1;
+    x_quad_adjust = true;
+  } else {
+    xAcc = u1;
+    x_quad_adjust = false;
+  }
+
+  y = 0.0;
+  xtmp = xAcc;
+  ytmp = yAcc;
+  for (idx = 0; idx < 11; idx++) {
+    if (yAcc < 0.0) {
+      xAcc -= ytmp;
+      yAcc += xtmp;
+      y -= u3[idx];
+    } else {
+      xAcc += ytmp;
+      yAcc -= xtmp;
+      y += u3[idx];
+    }
+
+    xtmp = ldexp(xAcc, -(idx + 1));
+    ytmp = ldexp(yAcc, -(idx + 1));
+  }
+
+  if (y_nonzero) {
+    if (x_quad_adjust) {
+      if (y_quad_adjust) {
+        y -= 3.1415926535897931;
+      } else {
+        y = 3.1415926535897931 - y;
+      }
+    } else {
+      if (y_quad_adjust) {
+        y = -y;
+      }
+    }
+  } else if (x_quad_adjust) {
+    y = 3.1415926535897931;
+  } else {
+    y = 0.0;
+  }
+
+  return y;
+}
+
+// Model step function
+void task2_step(void)
+{
+  // local scratch DWork variables
+  int32_T ForEach_itr;
+  int32_T ForEach_itr_m;
+  int32_T ForEach_itr_j;
+  int_T outCnt;
+  boolean_T guard1 = false;
+  real_T rtb_RoundingFunction3;
+  real_T rtb_RoundingFunction12;
+  real_T rtb_RoundingFunction2;
+  real_T rtb_Constant2;
+  real_T rtb_ImpAsg_InsertedFor_scan_y_b[360];
+  real_T rtb_Divide2;
+  real_T rtb_Gain1_k;
+  int32_T tmp;
+  real_T rtb_ImpAsg_InsertedFor_scan_y_o[360];
+  int32_T i;
+  real_T rtb_Divide;
+  real_T rtb_Gain_j;
+  real_T rtb_RoundingFunction14;
+  real_T rtb_RoundingFunction;
+  real_T rtb_RoundingFunction16;
+  real_T rtb_RoundingFunction1;
+  real_T rtb_RoundingFunction18;
+  real_T rtb_RoundingFunction4;
+  real_T rtb_RoundingFunction5;
+  real_T rtb_RoundingFunction6;
+  real_T rtb_RoundingFunction7;
+
+  // Chart: '<S4>/teleop_chart' incorporates:
+  //   Inport: '<Root>/button_1'
+  //   Inport: '<Root>/button_2'
+  //   Inport: '<Root>/button_B'
+  //   Inport: '<Root>/button_down'
+  //   Inport: '<Root>/button_left'
+  //   Inport: '<Root>/button_right'
+  //   Inport: '<Root>/button_up'
+  //   Inport: '<Root>/joy_pitch'
+  //   Inport: '<Root>/joy_roll'
+
+  // Gateway: teleop/teleop_chart
+  // During: teleop/teleop_chart
+  if (task2_DW.is_active_c1_floribot_library == 0U) {
+    // Entry: teleop/teleop_chart
+    task2_DW.is_active_c1_floribot_library = 1U;
+
+    // Entry Internal: teleop/teleop_chart
+    // Transition: '<S40>:19'
+    task2_DW.is_c1_floribot_library = task2_IN_manual;
+
+    // Entry 'manual': '<S40>:17'
+    task2_B.task_enable = 0.0;
+    task2_Y.joy_leds[0] = true;
+    task2_Y.joy_leds[1] = false;
+    task2_Y.joy_leds[2] = false;
+
+    // Entry Internal 'manual': '<S40>:17'
+    // Transition: '<S40>:23'
+    task2_DW.is_manual = task2_IN_stand_still;
+
+    // Entry 'stand_still': '<S40>:22'
+    task2_B.cmd_vel_x = 0.0;
+    task2_B.cmd_vel_yaw = 0.0;
+  } else {
+    switch (task2_DW.is_c1_floribot_library) {
+     case task2_IN_automatic:
+      // During 'automatic': '<S40>:18'
+      if (task2_U.button_1) {
+        // Transition: '<S40>:21'
+        task2_DW.is_c1_floribot_library = task2_IN_manual;
+
+        // Entry 'manual': '<S40>:17'
+        task2_B.task_enable = 0.0;
+        task2_Y.joy_leds[0] = true;
+        task2_Y.joy_leds[1] = false;
+        task2_Y.joy_leds[2] = false;
+
+        // Entry Internal 'manual': '<S40>:17'
+        // Transition: '<S40>:23'
+        task2_DW.is_manual = task2_IN_stand_still;
+
+        // Entry 'stand_still': '<S40>:22'
+        task2_B.cmd_vel_x = 0.0;
+        task2_B.cmd_vel_yaw = 0.0;
+      } else {
+        task2_Y.joy_leds[0] = false;
+        task2_Y.joy_leds[1] = true;
+        task2_Y.joy_leds[2] = false;
+        task2_Y.joy_leds[3] = false;
+      }
+      break;
+
+     case task2_IN_left_or_right:
+      // During 'left_or_right': '<S40>:56'
+      if (task2_U.button_right) {
+        // Transition: '<S40>:59'
+        task2_DW.is_c1_floribot_library = task2_IN_automatic;
+
+        // Entry 'automatic': '<S40>:18'
+        task2_B.task_enable = 1.0;
+      } else {
+        if (task2_U.button_left) {
+          // Transition: '<S40>:57'
+          task2_DW.is_c1_floribot_library = task2_IN_automatic;
+
+          // Entry 'automatic': '<S40>:18'
+          task2_B.task_enable = 1.0;
+        }
+      }
+      break;
+
+     default:
+      // During 'manual': '<S40>:17'
+      if (task2_U.button_2 && (!task2_U.button_1)) {
+        // Transition: '<S40>:20'
+        // Exit Internal 'manual': '<S40>:17'
+        task2_DW.is_manual = task2_IN_NO_ACTIVE_CHILD;
+        task2_DW.is_c1_floribot_library = task2_IN_left_or_right;
+      } else {
+        task2_Y.joy_leds[3] = false;
+        switch (task2_DW.is_manual) {
+         case task2_IN_Down:
+          // During 'Down': '<S40>:36'
+          if (!task2_U.button_down) {
+            // Transition: '<S40>:38'
+            task2_DW.is_manual = task2_IN_stand_still;
+
+            // Entry 'stand_still': '<S40>:22'
+            task2_B.cmd_vel_x = 0.0;
+            task2_B.cmd_vel_yaw = 0.0;
+          } else {
+            if (task2_U.joy_pitch < 0.0) {
+              // Transition: '<S40>:46'
+              task2_B.cmd_vel_x = task2_U.joy_pitch /
+                task2_DIRECT_PITCH_AXIS_DIV;
+              task2_DW.is_manual = task2_IN_Down;
+            }
+          }
+          break;
+
+         case task2_IN_Left:
+          // During 'Left': '<S40>:40'
+          if (!task2_U.button_right) {
+            // Transition: '<S40>:44'
+            task2_DW.is_manual = task2_IN_stand_still;
+
+            // Entry 'stand_still': '<S40>:22'
+            task2_B.cmd_vel_x = 0.0;
+            task2_B.cmd_vel_yaw = 0.0;
+          } else {
+            if (task2_U.joy_roll < 0.0) {
+              // Transition: '<S40>:48'
+              task2_B.cmd_vel_yaw = task2_U.joy_roll /
+                task2_DIRECT_ROLL_AXIS_DIV;
+              task2_DW.is_manual = task2_IN_Left;
+            }
+          }
+          break;
+
+         case task2_IN_Right:
+          // During 'Right': '<S40>:39'
+          if (!task2_U.button_left) {
+            // Transition: '<S40>:42'
+            task2_DW.is_manual = task2_IN_stand_still;
+
+            // Entry 'stand_still': '<S40>:22'
+            task2_B.cmd_vel_x = 0.0;
+            task2_B.cmd_vel_yaw = 0.0;
+          } else {
+            if (task2_U.joy_roll > 0.0) {
+              // Transition: '<S40>:47'
+              task2_B.cmd_vel_yaw = task2_U.joy_roll /
+                task2_DIRECT_ROLL_AXIS_DIV;
+              task2_DW.is_manual = task2_IN_Right;
+            }
+          }
+          break;
+
+         case task2_IN_Up:
+          // During 'Up': '<S40>:33'
+          if (!task2_U.button_up) {
+            // Transition: '<S40>:35'
+            task2_DW.is_manual = task2_IN_stand_still;
+
+            // Entry 'stand_still': '<S40>:22'
+            task2_B.cmd_vel_x = 0.0;
+            task2_B.cmd_vel_yaw = 0.0;
+          } else {
+            if (task2_U.joy_pitch > 0.0) {
+              // Transition: '<S40>:45'
+              task2_B.cmd_vel_x = task2_U.joy_pitch /
+                task2_DIRECT_PITCH_AXIS_DIV;
+              task2_DW.is_manual = task2_IN_Up;
+            }
+          }
+          break;
+
+         case task2_IN_control_x_and_yaw:
+          // During 'control_x_and_yaw': '<S40>:24'
+          if (!task2_U.button_B) {
+            // Transition: '<S40>:26'
+            task2_DW.is_manual = task2_IN_stand_still;
+
+            // Entry 'stand_still': '<S40>:22'
+            task2_B.cmd_vel_x = 0.0;
+            task2_B.cmd_vel_yaw = 0.0;
+          } else {
+            task2_B.cmd_vel_x = task2_U.joy_pitch / task2_DIRECT_PITCH_AXIS_DIV;
+            task2_B.cmd_vel_yaw = task2_U.joy_roll / task2_DIRECT_ROLL_AXIS_DIV;
+          }
+          break;
+
+         default:
+          // During 'stand_still': '<S40>:22'
+          if (task2_U.button_B) {
+            // Transition: '<S40>:25'
+            task2_DW.is_manual = task2_IN_control_x_and_yaw;
+          } else if (task2_U.button_up) {
+            // Transition: '<S40>:34'
+            task2_DW.is_manual = task2_IN_Up;
+          } else if (task2_U.button_down) {
+            // Transition: '<S40>:37'
+            task2_DW.is_manual = task2_IN_Down;
+          } else if (task2_U.button_left) {
+            // Transition: '<S40>:41'
+            task2_DW.is_manual = task2_IN_Right;
+          } else {
+            if (task2_U.button_right) {
+              // Transition: '<S40>:43'
+              task2_DW.is_manual = task2_IN_Left;
+            }
+          }
+          break;
+        }
+      }
+      break;
+    }
+  }
+
+  // End of Chart: '<S4>/teleop_chart'
+
+  // Outputs for Enabled SubSystem: '<Root>/task2' incorporates:
+  //   EnablePort: '<S3>/Enable'
+
+  if (task2_B.task_enable > 0.0) {
+    if (!task2_DW.task2_MODE) {
+      task2_DW.task2_MODE = true;
+    }
+
+    // DataTypeConversion: '<S3>/Data Type Conversion' incorporates:
+    //   Inport: '<Root>/scan_ranges'
+
+    memcpy(&task2_B.DataTypeConversion[0], &task2_U.scan_ranges[0], 720U *
+           sizeof(real_T));
+
+    // Outputs for Iterator SubSystem: '<S3>/Box check both sides' incorporates:
+    //   ForEach: '<S14>/For Each'
+
+    for (ForEach_itr_j = 0; ForEach_itr_j < 720; ForEach_itr_j++) {
+      // ForEachSliceSelector: '<S14>/ImpSel_InsertedFor_scan_phi_in_at_outport_0' incorporates:
+      //   Constant: '<S3>/scan_angles'
+
+      rtb_Divide = task2_ConstP.scan_angles_Value[ForEach_itr_j];
+
+      // Switch: '<S14>/right side of the left box1' incorporates:
+      //   Abs: '<S14>/Abs2'
+      //   Constant: '<S14>/zero1'
+      //   Fcn: '<S33>/theta->y'
+      //   ForEachSliceSelector: '<S14>/ImpSel_InsertedFor_scan_r_in_at_outport_0'
+
+      if (fabs(task2_B.DataTypeConversion[ForEach_itr_j] * sin(rtb_Divide)) >=
+          0.175) {
+        rtb_Divide = 0.0;
+      } else {
+        // Fcn: '<S33>/r->x'
+        rtb_Divide = task2_B.DataTypeConversion[ForEach_itr_j] * cos(rtb_Divide);
+
+        // Switch: '<S14>/bottom side of the left box1' incorporates:
+        //   Constant: '<S14>/zero1'
+
+        if (rtb_Divide >= 2.0) {
+          rtb_Divide = 0.0;
+        }
+
+        // End of Switch: '<S14>/bottom side of the left box1'
+      }
+
+      // End of Switch: '<S14>/right side of the left box1'
+
+      // ForEachSliceAssignment: '<S14>/ImpAsg_InsertedFor_scan_x_out_at_inport_0' 
+      task2_B.ImpAsg_InsertedFor_scan_x_o[ForEach_itr_j] = rtb_Divide;
+    }
+
+    // End of Outputs for SubSystem: '<S3>/Box check both sides'
+
+    // Sum: '<S18>/Sum of Elements1'
+    tmp = 0;
+    rtb_RoundingFunction3 = task2_B.ImpAsg_InsertedFor_scan_x_o[0];
+    for (i = 0; i < 719; i++) {
+      rtb_RoundingFunction3 += task2_B.ImpAsg_InsertedFor_scan_x_o[i + 1];
+    }
+
+    // End of Sum: '<S18>/Sum of Elements1'
+
+    // Find: '<S18>/Find Nonzero Elements1'
+    outCnt = 0;
+    for (i = 1; i < 721; i++) {
+      if (task2_B.ImpAsg_InsertedFor_scan_x_o[tmp] != 0.0) {
+        outCnt++;
+      }
+
+      tmp++;
+    }
+
+    task2_DW.FindNonzeroElements1_DIMS1 = outCnt;
+
+    // End of Find: '<S18>/Find Nonzero Elements1'
+
+    // Selector: '<S18>/Selector3'
+    task2_DW.Selector3_DIMS1 = task2_DW.FindNonzeroElements1_DIMS1;
+
+    // Width: '<S18>/Width1'
+    task2_B.Width1 = task2_DW.Selector3_DIMS1;
+
+    // Switch: '<S18>/Prevent div 1' incorporates:
+    //   Constant: '<S18>/Const2'
+
+    if (task2_B.Width1 != 0.0) {
+      rtb_RoundingFunction12 = task2_B.Width1;
+    } else {
+      rtb_RoundingFunction12 = 1.0;
+    }
+
+    // End of Switch: '<S18>/Prevent div 1'
+
+    // Logic: '<S3>/Logical Operator' incorporates:
+    //   Constant: '<S18>/max. Points1'
+    //   Constant: '<S25>/Constant'
+    //   Constant: '<S26>/Constant'
+    //   Gain: '<S18>/Gain1'
+    //   Product: '<S18>/Divide2'
+    //   Product: '<S18>/Divide3'
+    //   RelationalOperator: '<S25>/Compare'
+    //   RelationalOperator: '<S26>/Compare'
+
+    task2_B.LogicalOperator = ((rtb_RoundingFunction3 / rtb_RoundingFunction12 <=
+      0.5) && (rtb_RoundingFunction12 / 719.00000394868539 * 100.0 >= 30.0));
+
+    // Outputs for Iterator SubSystem: '<S3>/Box check left side' incorporates:
+    //   ForEach: '<S15>/For Each'
+
+    for (ForEach_itr_m = 0; ForEach_itr_m < 360; ForEach_itr_m++) {
+      // ForEachSliceSelector: '<S15>/ImpSel_InsertedFor_scan_phi_in_at_outport_0' incorporates:
+      //   Constant: '<S3>/scan_angles'
+
+      rtb_Divide = task2_ConstP.scan_angles_Value[ForEach_itr_m + 360];
+
+      // Switch: '<S15>/right side of the left box' incorporates:
+      //   Constant: '<S15>/zero'
+      //   Fcn: '<S34>/r->x'
+      //   ForEachSliceSelector: '<S15>/ImpSel_InsertedFor_scan_r_in_at_outport_0'
+
+      if (task2_B.DataTypeConversion[ForEach_itr_m + 360] * cos(rtb_Divide) >=
+          0.5) {
+        rtb_Divide = 0.0;
+      } else {
+        // Fcn: '<S34>/theta->y'
+        rtb_Divide = task2_B.DataTypeConversion[ForEach_itr_m + 360] * sin
+          (rtb_Divide);
+
+        // Switch: '<S15>/bottom side of the left box' incorporates:
+        //   Abs: '<S15>/Abs1'
+        //   Constant: '<S15>/zero'
+
+        if (fabs(rtb_Divide) >= 0.675) {
+          rtb_Divide = 0.0;
+        }
+
+        // End of Switch: '<S15>/bottom side of the left box'
+
+        // Switch: '<S15>/bottom side of the right box1' incorporates:
+        //   Abs: '<S15>/Abs2'
+        //   Constant: '<S15>/zero'
+
+        if (!(fabs(rtb_Divide) >= 0.1)) {
+          rtb_Divide = 0.0;
+        }
+
+        // End of Switch: '<S15>/bottom side of the right box1'
+      }
+
+      // End of Switch: '<S15>/right side of the left box'
+
+      // ForEachSliceAssignment: '<S15>/ImpAsg_InsertedFor_scan_y_out_at_inport_0' 
+      rtb_ImpAsg_InsertedFor_scan_y_b[ForEach_itr_m] = rtb_Divide;
+    }
+
+    // End of Outputs for SubSystem: '<S3>/Box check left side'
+
+    // Outputs for Iterator SubSystem: '<S3>/Box check right side' incorporates:
+    //   ForEach: '<S16>/For Each'
+
+    for (ForEach_itr = 0; ForEach_itr < 360; ForEach_itr++) {
+      // ForEachSliceSelector: '<S16>/ImpSel_InsertedFor_scan_phi_in_at_outport_0' incorporates:
+      //   Constant: '<S3>/scan_angles'
+
+      rtb_Divide = task2_ConstP.scan_angles_Value[ForEach_itr];
+
+      // Switch: '<S16>/right side of the right box' incorporates:
+      //   Constant: '<S16>/zero'
+      //   Fcn: '<S35>/r->x'
+      //   ForEachSliceSelector: '<S16>/ImpSel_InsertedFor_scan_r_in_at_outport_0'
+
+      if (task2_B.DataTypeConversion[ForEach_itr] * cos(rtb_Divide) >= 0.5) {
+        rtb_Divide = 0.0;
+      } else {
+        // Fcn: '<S35>/theta->y'
+        rtb_Divide = task2_B.DataTypeConversion[ForEach_itr] * sin(rtb_Divide);
+
+        // Switch: '<S16>/bottom side of the right box' incorporates:
+        //   Abs: '<S16>/Abs1'
+        //   Constant: '<S16>/zero'
+
+        if (fabs(rtb_Divide) >= 0.675) {
+          rtb_Divide = 0.0;
+        }
+
+        // End of Switch: '<S16>/bottom side of the right box'
+
+        // Switch: '<S16>/bottom side of the right box1' incorporates:
+        //   Abs: '<S16>/Abs2'
+        //   Constant: '<S16>/zero'
+
+        if (!(fabs(rtb_Divide) >= 0.1)) {
+          rtb_Divide = 0.0;
+        }
+
+        // End of Switch: '<S16>/bottom side of the right box1'
+      }
+
+      // End of Switch: '<S16>/right side of the right box'
+
+      // ForEachSliceAssignment: '<S16>/ImpAsg_InsertedFor_scan_y_out_at_inport_0' 
+      rtb_ImpAsg_InsertedFor_scan_y_o[ForEach_itr] = rtb_Divide;
+    }
+
+    // End of Outputs for SubSystem: '<S3>/Box check right side'
+
+    // Sum: '<S19>/Sum of Elements1'
+    tmp = 0;
+    rtb_Constant2 = rtb_ImpAsg_InsertedFor_scan_y_b[0];
+    for (i = 0; i < 359; i++) {
+      rtb_Constant2 += rtb_ImpAsg_InsertedFor_scan_y_b[i + 1];
+    }
+
+    // End of Sum: '<S19>/Sum of Elements1'
+
+    // Find: '<S19>/Find Nonzero Elements1'
+    outCnt = 0;
+    for (i = 1; i < 361; i++) {
+      if (rtb_ImpAsg_InsertedFor_scan_y_b[tmp] != 0.0) {
+        outCnt++;
+      }
+
+      tmp++;
+    }
+
+    task2_DW.FindNonzeroElements1_DIMS1_g = outCnt;
+
+    // End of Find: '<S19>/Find Nonzero Elements1'
+
+    // Selector: '<S19>/Selector3'
+    task2_DW.Selector3_DIMS1_a = task2_DW.FindNonzeroElements1_DIMS1_g;
+
+    // Width: '<S19>/Width1'
+    task2_B.Width1_e = task2_DW.Selector3_DIMS1_a;
+
+    // Switch: '<S19>/Prevent div 1' incorporates:
+    //   Constant: '<S19>/Const2'
+
+    if (task2_B.Width1_e != 0.0) {
+      rtb_RoundingFunction2 = task2_B.Width1_e;
+    } else {
+      rtb_RoundingFunction2 = 1.0;
+    }
+
+    // End of Switch: '<S19>/Prevent div 1'
+
+    // Product: '<S19>/Divide2'
+    rtb_Divide2 = rtb_Constant2 / rtb_RoundingFunction2;
+
+    // Gain: '<S19>/Gain1' incorporates:
+    //   Constant: '<S19>/max. Points1'
+    //   Product: '<S19>/Divide3'
+
+    rtb_Gain1_k = rtb_RoundingFunction2 / 339.50000197434269 * 100.0;
+
+    // Sum: '<S20>/Sum of Elements'
+    tmp = 0;
+    rtb_Constant2 = rtb_ImpAsg_InsertedFor_scan_y_o[0];
+    for (i = 0; i < 359; i++) {
+      rtb_Constant2 += rtb_ImpAsg_InsertedFor_scan_y_o[i + 1];
+    }
+
+    // End of Sum: '<S20>/Sum of Elements'
+
+    // Find: '<S20>/Find Nonzero Elements'
+    outCnt = 0;
+    for (i = 1; i < 361; i++) {
+      if (rtb_ImpAsg_InsertedFor_scan_y_o[tmp] != 0.0) {
+        outCnt++;
+      }
+
+      tmp++;
+    }
+
+    task2_DW.FindNonzeroElements_DIMS1 = outCnt;
+
+    // End of Find: '<S20>/Find Nonzero Elements'
+
+    // Selector: '<S20>/Selector'
+    task2_DW.Selector_DIMS1 = task2_DW.FindNonzeroElements_DIMS1;
+
+    // Width: '<S20>/Width'
+    task2_B.Width = task2_DW.Selector_DIMS1;
+
+    // Switch: '<S20>/Prevent div 0' incorporates:
+    //   Constant: '<S20>/Const1'
+
+    if (task2_B.Width != 0.0) {
+      rtb_RoundingFunction2 = task2_B.Width;
+    } else {
+      rtb_RoundingFunction2 = 1.0;
+    }
+
+    // End of Switch: '<S20>/Prevent div 0'
+
+    // Product: '<S20>/Divide'
+    rtb_Divide = rtb_Constant2 / rtb_RoundingFunction2;
+
+    // Gain: '<S20>/Gain' incorporates:
+    //   Constant: '<S20>/max. Points'
+    //   Product: '<S20>/Divide1'
+
+    rtb_Gain_j = rtb_RoundingFunction2 / 339.50000197434269 * 100.0;
+
+    // Switch: '<S29>/Switch' incorporates:
+    //   Constant: '<S29>/Constant2'
+    //   Constant: '<S29>/Constant3'
+
+    if (rtb_Gain_j > 5.0) {
+      task2_B.Switch = true;
+    } else {
+      task2_B.Switch = false;
+    }
+
+    // End of Switch: '<S29>/Switch'
+
+    // Switch: '<S30>/Switch' incorporates:
+    //   Constant: '<S30>/Constant'
+    //   Constant: '<S30>/Constant1'
+
+    if (rtb_Gain1_k > 5.0) {
+      task2_B.Switch_f = true;
+    } else {
+      task2_B.Switch_f = false;
+    }
+
+    // End of Switch: '<S30>/Switch'
+
+    // Product: '<S27>/Divide10' incorporates:
+    //   Constant: '<S27>/Constant1'
+    //   Constant: '<S27>/Constant2'
+
+    rtb_Constant2 = (real_T)pattern / 10.0;
+
+    // Rounding: '<S27>/Rounding Function10'
+    if (rtb_Constant2 < 0.0) {
+      rtb_RoundingFunction2 = ceil(rtb_Constant2);
+    } else {
+      rtb_RoundingFunction2 = floor(rtb_Constant2);
+    }
+
+    // End of Rounding: '<S27>/Rounding Function10'
+
+    // Product: '<S27>/Divide11' incorporates:
+    //   Constant: '<S27>/Constant1'
+
+    rtb_Constant2 = rtb_RoundingFunction2 / 10.0;
+
+    // Rounding: '<S27>/Rounding Function12'
+    if (rtb_Constant2 < 0.0) {
+      rtb_RoundingFunction12 = ceil(rtb_Constant2);
+    } else {
+      rtb_RoundingFunction12 = floor(rtb_Constant2);
+    }
+
+    // End of Rounding: '<S27>/Rounding Function12'
+
+    // Product: '<S27>/Divide12' incorporates:
+    //   Constant: '<S27>/Constant1'
+
+    rtb_Constant2 = rtb_RoundingFunction12 / 10.0;
+
+    // Rounding: '<S27>/Rounding Function11'
+    if (rtb_Constant2 < 0.0) {
+      rtb_RoundingFunction3 = ceil(rtb_Constant2);
+    } else {
+      rtb_RoundingFunction3 = floor(rtb_Constant2);
+    }
+
+    // End of Rounding: '<S27>/Rounding Function11'
+
+    // Product: '<S27>/Divide14' incorporates:
+    //   Constant: '<S27>/Constant1'
+
+    rtb_Constant2 = rtb_RoundingFunction3 / 10.0;
+
+    // Rounding: '<S27>/Rounding Function14'
+    if (rtb_Constant2 < 0.0) {
+      rtb_RoundingFunction14 = ceil(rtb_Constant2);
+    } else {
+      rtb_RoundingFunction14 = floor(rtb_Constant2);
+    }
+
+    // End of Rounding: '<S27>/Rounding Function14'
+
+    // Product: '<S27>/Divide15' incorporates:
+    //   Constant: '<S27>/Constant1'
+
+    rtb_Constant2 = rtb_RoundingFunction14 / 10.0;
+
+    // Rounding: '<S27>/Rounding Function15'
+    if (rtb_Constant2 < 0.0) {
+      rtb_RoundingFunction = ceil(rtb_Constant2);
+    } else {
+      rtb_RoundingFunction = floor(rtb_Constant2);
+    }
+
+    // End of Rounding: '<S27>/Rounding Function15'
+
+    // Product: '<S27>/Divide16' incorporates:
+    //   Constant: '<S27>/Constant1'
+
+    rtb_Constant2 = rtb_RoundingFunction / 10.0;
+
+    // Rounding: '<S27>/Rounding Function16'
+    if (rtb_Constant2 < 0.0) {
+      rtb_RoundingFunction16 = ceil(rtb_Constant2);
+    } else {
+      rtb_RoundingFunction16 = floor(rtb_Constant2);
+    }
+
+    // End of Rounding: '<S27>/Rounding Function16'
+
+    // Product: '<S27>/Divide17' incorporates:
+    //   Constant: '<S27>/Constant1'
+
+    rtb_Constant2 = rtb_RoundingFunction16 / 10.0;
+
+    // Rounding: '<S27>/Rounding Function17'
+    if (rtb_Constant2 < 0.0) {
+      rtb_RoundingFunction1 = ceil(rtb_Constant2);
+    } else {
+      rtb_RoundingFunction1 = floor(rtb_Constant2);
+    }
+
+    // End of Rounding: '<S27>/Rounding Function17'
+
+    // Product: '<S27>/Divide18' incorporates:
+    //   Constant: '<S27>/Constant1'
+
+    rtb_Constant2 = rtb_RoundingFunction1 / 10.0;
+
+    // Rounding: '<S27>/Rounding Function18'
+    if (rtb_Constant2 < 0.0) {
+      rtb_RoundingFunction18 = ceil(rtb_Constant2);
+    } else {
+      rtb_RoundingFunction18 = floor(rtb_Constant2);
+    }
+
+    // End of Rounding: '<S27>/Rounding Function18'
+
+    // Product: '<S27>/Divide19' incorporates:
+    //   Constant: '<S27>/Constant1'
+
+    rtb_Constant2 = rtb_RoundingFunction18 / 10.0;
+
+    // Rounding: '<S27>/Rounding Function19'
+    if (rtb_Constant2 < 0.0) {
+      rtb_Constant2 = ceil(rtb_Constant2);
+    } else {
+      rtb_Constant2 = floor(rtb_Constant2);
+    }
+
+    // Math: '<S27>/Math Function21' incorporates:
+    //   Constant: '<S27>/Constant1'
+    //   Rounding: '<S27>/Rounding Function19'
+
+    task2_B.VectorConcatenate2[0] = rt_modd_snf(rtb_Constant2, 10.0);
+
+    // Math: '<S27>/Math Function19' incorporates:
+    //   Constant: '<S27>/Constant1'
+
+    task2_B.VectorConcatenate2[1] = rt_modd_snf(rtb_RoundingFunction1, 10.0);
+
+    // Math: '<S27>/Math Function17' incorporates:
+    //   Constant: '<S27>/Constant1'
+
+    task2_B.VectorConcatenate2[2] = rt_modd_snf(rtb_RoundingFunction, 10.0);
+
+    // Math: '<S27>/Math Function15' incorporates:
+    //   Constant: '<S27>/Constant1'
+
+    task2_B.VectorConcatenate2[3] = rt_modd_snf(rtb_RoundingFunction3, 10.0);
+
+    // Math: '<S27>/Math Function11' incorporates:
+    //   Constant: '<S27>/Constant1'
+
+    task2_B.VectorConcatenate2[4] = rt_modd_snf(rtb_RoundingFunction2, 10.0);
+
+    // Product: '<S27>/Divide' incorporates:
+    //   Constant: '<S27>/Constant'
+    //   Constant: '<S27>/Constant1'
+
+    rtb_Constant2 = (real_T)pattern2 / 10.0;
+
+    // Rounding: '<S27>/Rounding Function1'
+    if (rtb_Constant2 < 0.0) {
+      rtb_RoundingFunction1 = ceil(rtb_Constant2);
+    } else {
+      rtb_RoundingFunction1 = floor(rtb_Constant2);
+    }
+
+    // End of Rounding: '<S27>/Rounding Function1'
+
+    // Product: '<S27>/Divide1' incorporates:
+    //   Constant: '<S27>/Constant1'
+
+    rtb_Constant2 = rtb_RoundingFunction1 / 10.0;
+
+    // Rounding: '<S27>/Rounding Function'
+    if (rtb_Constant2 < 0.0) {
+      rtb_RoundingFunction = ceil(rtb_Constant2);
+    } else {
+      rtb_RoundingFunction = floor(rtb_Constant2);
+    }
+
+    // End of Rounding: '<S27>/Rounding Function'
+
+    // Product: '<S27>/Divide2' incorporates:
+    //   Constant: '<S27>/Constant1'
+
+    rtb_Constant2 = rtb_RoundingFunction / 10.0;
+
+    // Rounding: '<S27>/Rounding Function2'
+    if (rtb_Constant2 < 0.0) {
+      rtb_RoundingFunction2 = ceil(rtb_Constant2);
+    } else {
+      rtb_RoundingFunction2 = floor(rtb_Constant2);
+    }
+
+    // End of Rounding: '<S27>/Rounding Function2'
+
+    // Product: '<S27>/Divide3' incorporates:
+    //   Constant: '<S27>/Constant1'
+
+    rtb_Constant2 = rtb_RoundingFunction2 / 10.0;
+
+    // Rounding: '<S27>/Rounding Function3'
+    if (rtb_Constant2 < 0.0) {
+      rtb_RoundingFunction3 = ceil(rtb_Constant2);
+    } else {
+      rtb_RoundingFunction3 = floor(rtb_Constant2);
+    }
+
+    // End of Rounding: '<S27>/Rounding Function3'
+
+    // Product: '<S27>/Divide4' incorporates:
+    //   Constant: '<S27>/Constant1'
+
+    rtb_Constant2 = rtb_RoundingFunction3 / 10.0;
+
+    // Rounding: '<S27>/Rounding Function4'
+    if (rtb_Constant2 < 0.0) {
+      rtb_RoundingFunction4 = ceil(rtb_Constant2);
+    } else {
+      rtb_RoundingFunction4 = floor(rtb_Constant2);
+    }
+
+    // End of Rounding: '<S27>/Rounding Function4'
+
+    // Product: '<S27>/Divide5' incorporates:
+    //   Constant: '<S27>/Constant1'
+
+    rtb_Constant2 = rtb_RoundingFunction4 / 10.0;
+
+    // Rounding: '<S27>/Rounding Function5'
+    if (rtb_Constant2 < 0.0) {
+      rtb_RoundingFunction5 = ceil(rtb_Constant2);
+    } else {
+      rtb_RoundingFunction5 = floor(rtb_Constant2);
+    }
+
+    // End of Rounding: '<S27>/Rounding Function5'
+
+    // Product: '<S27>/Divide6' incorporates:
+    //   Constant: '<S27>/Constant1'
+
+    rtb_Constant2 = rtb_RoundingFunction5 / 10.0;
+
+    // Rounding: '<S27>/Rounding Function6'
+    if (rtb_Constant2 < 0.0) {
+      rtb_RoundingFunction6 = ceil(rtb_Constant2);
+    } else {
+      rtb_RoundingFunction6 = floor(rtb_Constant2);
+    }
+
+    // End of Rounding: '<S27>/Rounding Function6'
+
+    // Product: '<S27>/Divide7' incorporates:
+    //   Constant: '<S27>/Constant1'
+
+    rtb_Constant2 = rtb_RoundingFunction6 / 10.0;
+
+    // Rounding: '<S27>/Rounding Function7'
+    if (rtb_Constant2 < 0.0) {
+      rtb_RoundingFunction7 = ceil(rtb_Constant2);
+    } else {
+      rtb_RoundingFunction7 = floor(rtb_Constant2);
+    }
+
+    // End of Rounding: '<S27>/Rounding Function7'
+
+    // Product: '<S27>/Divide8' incorporates:
+    //   Constant: '<S27>/Constant1'
+
+    rtb_Constant2 = rtb_RoundingFunction7 / 10.0;
+
+    // Rounding: '<S27>/Rounding Function8'
+    if (rtb_Constant2 < 0.0) {
+      rtb_Constant2 = ceil(rtb_Constant2);
+    } else {
+      rtb_Constant2 = floor(rtb_Constant2);
+    }
+
+    // Math: '<S27>/11' incorporates:
+    //   Constant: '<S27>/Constant1'
+    //   Rounding: '<S27>/Rounding Function8'
+
+    task2_B.VectorConcatenate2[5] = rt_modd_snf(rtb_Constant2, 10.0);
+
+    // Math: '<S27>/13' incorporates:
+    //   Constant: '<S27>/Constant1'
+
+    task2_B.VectorConcatenate2[6] = rt_modd_snf(rtb_RoundingFunction6, 10.0);
+
+    // Math: '<S27>/15' incorporates:
+    //   Constant: '<S27>/Constant1'
+
+    task2_B.VectorConcatenate2[7] = rt_modd_snf(rtb_RoundingFunction4, 10.0);
+
+    // Math: '<S27>/17' incorporates:
+    //   Constant: '<S27>/Constant1'
+
+    task2_B.VectorConcatenate2[8] = rt_modd_snf(rtb_RoundingFunction2, 10.0);
+
+    // Math: '<S27>/19' incorporates:
+    //   Constant: '<S27>/Constant1'
+
+    task2_B.VectorConcatenate2[9] = rt_modd_snf(rtb_RoundingFunction1, 10.0);
+
+    // Math: '<S27>/Math Function20' incorporates:
+    //   Constant: '<S27>/Constant1'
+
+    task2_B.VectorConcatenate2[10] = rt_modd_snf(rtb_RoundingFunction18, 10.0);
+
+    // Math: '<S27>/Math Function18' incorporates:
+    //   Constant: '<S27>/Constant1'
+
+    task2_B.VectorConcatenate2[11] = rt_modd_snf(rtb_RoundingFunction16, 10.0);
+
+    // Math: '<S27>/Math Function16' incorporates:
+    //   Constant: '<S27>/Constant1'
+
+    task2_B.VectorConcatenate2[12] = rt_modd_snf(rtb_RoundingFunction14, 10.0);
+
+    // Math: '<S27>/Math Function12' incorporates:
+    //   Constant: '<S27>/Constant1'
+
+    task2_B.VectorConcatenate2[13] = rt_modd_snf(rtb_RoundingFunction12, 10.0);
+
+    // Math: '<S27>/10' incorporates:
+    //   Constant: '<S27>/Constant1'
+    //   Constant: '<S27>/Constant2'
+
+    task2_B.VectorConcatenate2[14] = rt_modd_snf((real_T)pattern, 10.0);
+
+    // Math: '<S27>/12' incorporates:
+    //   Constant: '<S27>/Constant1'
+
+    task2_B.VectorConcatenate2[15] = rt_modd_snf(rtb_RoundingFunction7, 10.0);
+
+    // Math: '<S27>/14' incorporates:
+    //   Constant: '<S27>/Constant1'
+
+    task2_B.VectorConcatenate2[16] = rt_modd_snf(rtb_RoundingFunction5, 10.0);
+
+    // Math: '<S27>/16' incorporates:
+    //   Constant: '<S27>/Constant1'
+
+    task2_B.VectorConcatenate2[17] = rt_modd_snf(rtb_RoundingFunction3, 10.0);
+
+    // Math: '<S27>/18' incorporates:
+    //   Constant: '<S27>/Constant1'
+
+    task2_B.VectorConcatenate2[18] = rt_modd_snf(rtb_RoundingFunction, 10.0);
+
+    // Math: '<S27>/20' incorporates:
+    //   Constant: '<S27>/Constant'
+    //   Constant: '<S27>/Constant1'
+
+    task2_B.VectorConcatenate2[19] = rt_modd_snf((real_T)pattern2, 10.0);
+
+    // Chart: '<S3>/Chart' incorporates:
+    //   Constant: '<S3>/pi'
+    //   Constant: '<S3>/turn_delay_time = scanner_offset // (vel_gain * x_dot_max)'
+    //   Constant: '<S3>/turn_speed'
+    //   Constant: '<S3>/vell_gain'
+
+    if (task2_DW.temporalCounter_i1 < MAX_uint32_T) {
+      task2_DW.temporalCounter_i1++;
+    }
+
+    // Gateway: task2/Chart
+    // During: task2/Chart
+    if (task2_DW.is_active_c1_task2 == 0U) {
+      // Entry: task2/Chart
+      task2_DW.is_active_c1_task2 = 1U;
+
+      // Entry Internal: task2/Chart
+      // Transition: '<S24>:23'
+      if ((!task2_B.Switch) && (!task2_B.Switch_f)) {
+        // Transition: '<S24>:27'
+        task2_DW.i = 1.0;
+        task2_DW.is_c1_task2 = task2_IN_drive_straight_on;
+        task2_DW.temporalCounter_i1 = 0U;
+
+        // Entry 'drive_straight_on': '<S24>:3'
+        task2_DW.dir = task2_B.VectorConcatenate2[(int32_T)task2_DW.i - 1];
+        task2_DW.rows = task2_B.VectorConcatenate2[(int32_T)task2_DW.i + 9];
+      } else {
+        // Transition: '<S24>:28'
+        if (task2_B.Switch || task2_B.Switch_f) {
+          // Transition: '<S24>:26'
+          if (task2_B.LogicalOperator) {
+            // Transition: '<S24>:30'
+            task2_DW.i = 1.0;
+            task2_DW.is_c1_task2 = task2_IN_turn_arround;
+            task2_DW.temporalCounter_i1 = 0U;
+
+            // Entry 'turn_arround': '<S24>:6'
+            task2_B.bool_turn_right = true;
+          } else {
+            // Transition: '<S24>:25'
+            task2_DW.i = 1.0;
+            task2_DW.is_c1_task2 = task2_IN_drive_in_row;
+
+            // Entry 'drive_in_row': '<S24>:38'
+            task2_B.bool_in_lane = true;
+          }
+        }
+      }
+    } else {
+      switch (task2_DW.is_c1_task2) {
+       case task2_IN_drive_in_row:
+        // During 'drive_in_row': '<S24>:38'
+        // Transition: '<S24>:24'
+        if ((!task2_B.Switch) && (!task2_B.Switch_f)) {
+          // Transition: '<S24>:27'
+          task2_DW.is_c1_task2 = task2_IN_drive_straight_on;
+          task2_DW.temporalCounter_i1 = 0U;
+
+          // Entry 'drive_straight_on': '<S24>:3'
+          task2_DW.dir = task2_B.VectorConcatenate2[(int32_T)task2_DW.i - 1];
+          task2_DW.rows = task2_B.VectorConcatenate2[(int32_T)task2_DW.i + 9];
+        } else {
+          // Transition: '<S24>:28'
+          if (task2_B.Switch || task2_B.Switch_f) {
+            // Transition: '<S24>:26'
+            if (task2_B.LogicalOperator) {
+              // Transition: '<S24>:30'
+              task2_DW.is_c1_task2 = task2_IN_turn_arround;
+              task2_DW.temporalCounter_i1 = 0U;
+
+              // Entry 'turn_arround': '<S24>:6'
+              task2_B.bool_turn_right = true;
+            } else {
+              // Transition: '<S24>:25'
+              task2_DW.is_c1_task2 = task2_IN_drive_in_row;
+
+              // Entry 'drive_in_row': '<S24>:38'
+              task2_B.bool_in_lane = true;
+            }
+          }
+        }
+        break;
+
+       case task2_IN_drive_on_row:
+        // During 'drive_on_row': '<S24>:11'
+        if (task2_DW.temporalCounter_i1 >= (uint32_T)ceil(task2_DW.rows * 0.75 /
+             (0.7 * 0.8) / 0.01 - 1.0E-10)) {
+          // Transition: '<S24>:20'
+          if (task2_DW.dir == 2.0) {
+            // Transition: '<S24>:36'
+            // Exit 'drive_on_row': '<S24>:11'
+            task2_B.bool_in_lane = false;
+            task2_DW.i++;
+            task2_DW.is_c1_task2 = task2_IN_turn_right1;
+            task2_DW.temporalCounter_i1 = 0U;
+
+            // Entry 'turn_right1': '<S24>:8'
+            task2_B.bool_turn_right = true;
+          } else {
+            if (task2_DW.dir == 1.0) {
+              // Transition: '<S24>:1'
+              // Exit 'drive_on_row': '<S24>:11'
+              task2_B.bool_in_lane = false;
+              task2_DW.i++;
+              task2_DW.is_c1_task2 = task2_IN_turn_left1;
+              task2_DW.temporalCounter_i1 = 0U;
+
+              // Entry 'turn_left1': '<S24>:14'
+              task2_B.bool_turn_left = true;
+            }
+          }
+        }
+        break;
+
+       case task2_IN_drive_straight_on:
+        // During 'drive_straight_on': '<S24>:3'
+        if (task2_DW.temporalCounter_i1 >= (uint32_T)ceil(0.5357142857142857 /
+             0.01 - 1.0E-10)) {
+          // Transition: '<S24>:32'
+          if (task2_DW.dir == 1.0) {
+            // Transition: '<S24>:37'
+            task2_DW.is_c1_task2 = task2_IN_turn_left;
+            task2_DW.temporalCounter_i1 = 0U;
+
+            // Entry 'turn_left': '<S24>:13'
+            task2_B.bool_turn_left = true;
+          } else if (task2_DW.dir == 2.0) {
+            // Transition: '<S24>:35'
+            task2_DW.is_c1_task2 = task2_IN_turn_right;
+            task2_DW.temporalCounter_i1 = 0U;
+
+            // Entry 'turn_right': '<S24>:7'
+            task2_B.bool_turn_right = true;
+          } else {
+            guard1 = true;
+          }
+        } else {
+          guard1 = true;
+        }
+        break;
+
+       case task2_IN_turn_arround:
+        // During 'turn_arround': '<S24>:6'
+        if (task2_DW.temporalCounter_i1 >= (uint32_T)ceil(3.1415926535897931 /
+             0.62831853071795862 / 0.01 - 1.0E-10)) {
+          // Transition: '<S24>:29'
+          if ((!task2_B.Switch) && (!task2_B.Switch_f)) {
+            // Transition: '<S24>:27'
+            // Exit 'turn_arround': '<S24>:6'
+            task2_B.bool_turn_right = false;
+            task2_DW.is_c1_task2 = task2_IN_drive_straight_on;
+            task2_DW.temporalCounter_i1 = 0U;
+
+            // Entry 'drive_straight_on': '<S24>:3'
+            task2_DW.dir = task2_B.VectorConcatenate2[(int32_T)task2_DW.i - 1];
+            task2_DW.rows = task2_B.VectorConcatenate2[(int32_T)task2_DW.i + 9];
+          } else {
+            // Transition: '<S24>:28'
+            if (task2_B.Switch || task2_B.Switch_f) {
+              // Transition: '<S24>:26'
+              if (task2_B.LogicalOperator) {
+                // Transition: '<S24>:30'
+                // Exit 'turn_arround': '<S24>:6'
+                task2_DW.is_c1_task2 = task2_IN_turn_arround;
+                task2_DW.temporalCounter_i1 = 0U;
+
+                // Entry 'turn_arround': '<S24>:6'
+                task2_B.bool_turn_right = true;
+              } else {
+                // Transition: '<S24>:25'
+                // Exit 'turn_arround': '<S24>:6'
+                task2_B.bool_turn_right = false;
+                task2_DW.is_c1_task2 = task2_IN_drive_in_row;
+
+                // Entry 'drive_in_row': '<S24>:38'
+                task2_B.bool_in_lane = true;
+              }
+            }
+          }
+        }
+        break;
+
+       case task2_IN_turn_left:
+        // During 'turn_left': '<S24>:13'
+        // Transition: '<S24>:2'
+        if (task2_DW.temporalCounter_i1 >= (uint32_T)ceil(3.1415926535897931 /
+             2.0 / 0.62831853071795862 / 0.01 - 1.0E-10)) {
+          // Transition: '<S24>:63'
+          // Exit 'turn_left': '<S24>:13'
+          task2_B.bool_turn_left = false;
+          task2_DW.is_c1_task2 = task2_IN_drive_on_row;
+          task2_DW.temporalCounter_i1 = 0U;
+
+          // Entry 'drive_on_row': '<S24>:11'
+          task2_B.bool_in_lane = true;
+        }
+        break;
+
+       case task2_IN_turn_left1:
+        // During 'turn_left1': '<S24>:14'
+        // Transition: '<S24>:33'
+        if (task2_DW.temporalCounter_i1 >= (uint32_T)ceil(3.1415926535897931 /
+             2.0 / 0.62831853071795862 / 0.01 - 1.0E-10)) {
+          // Transition: '<S24>:31'
+          if ((!task2_B.Switch) && (!task2_B.Switch_f)) {
+            // Transition: '<S24>:27'
+            // Exit 'turn_left1': '<S24>:14'
+            task2_B.bool_turn_left = false;
+            task2_DW.is_c1_task2 = task2_IN_drive_straight_on;
+            task2_DW.temporalCounter_i1 = 0U;
+
+            // Entry 'drive_straight_on': '<S24>:3'
+            task2_DW.dir = task2_B.VectorConcatenate2[(int32_T)task2_DW.i - 1];
+            task2_DW.rows = task2_B.VectorConcatenate2[(int32_T)task2_DW.i + 9];
+          } else {
+            // Transition: '<S24>:28'
+            if (task2_B.Switch || task2_B.Switch_f) {
+              // Transition: '<S24>:26'
+              if (task2_B.LogicalOperator) {
+                // Transition: '<S24>:30'
+                // Exit 'turn_left1': '<S24>:14'
+                task2_B.bool_turn_left = false;
+                task2_DW.is_c1_task2 = task2_IN_turn_arround;
+                task2_DW.temporalCounter_i1 = 0U;
+
+                // Entry 'turn_arround': '<S24>:6'
+                task2_B.bool_turn_right = true;
+              } else {
+                // Transition: '<S24>:25'
+                // Exit 'turn_left1': '<S24>:14'
+                task2_B.bool_turn_left = false;
+                task2_DW.is_c1_task2 = task2_IN_drive_in_row;
+
+                // Entry 'drive_in_row': '<S24>:38'
+                task2_B.bool_in_lane = true;
+              }
+            }
+          }
+        }
+        break;
+
+       case task2_IN_turn_right:
+        // During 'turn_right': '<S24>:7'
+        // Transition: '<S24>:34'
+        if (task2_DW.temporalCounter_i1 >= (uint32_T)ceil(3.1415926535897931 /
+             2.0 / 0.62831853071795862 / 0.01 - 1.0E-10)) {
+          // Transition: '<S24>:63'
+          // Exit 'turn_right': '<S24>:7'
+          task2_B.bool_turn_right = false;
+          task2_DW.is_c1_task2 = task2_IN_drive_on_row;
+          task2_DW.temporalCounter_i1 = 0U;
+
+          // Entry 'drive_on_row': '<S24>:11'
+          task2_B.bool_in_lane = true;
+        }
+        break;
+
+       default:
+        task2_turn_right1();
+        break;
+      }
+
+      if (guard1 && (task2_B.Switch && task2_B.Switch_f) && (task2_B.Switch ||
+           task2_B.Switch_f)) {
+        // Transition: '<S24>:22'
+        // Transition: '<S24>:26'
+        if (task2_B.LogicalOperator) {
+          // Transition: '<S24>:30'
+          task2_DW.is_c1_task2 = task2_IN_turn_arround;
+          task2_DW.temporalCounter_i1 = 0U;
+
+          // Entry 'turn_arround': '<S24>:6'
+          task2_B.bool_turn_right = true;
+        } else {
+          // Transition: '<S24>:25'
+          task2_DW.is_c1_task2 = task2_IN_drive_in_row;
+
+          // Entry 'drive_in_row': '<S24>:38'
+          task2_B.bool_in_lane = true;
+        }
+      }
+    }
+
+    // End of Chart: '<S3>/Chart'
+
+    // Outputs for Enabled SubSystem: '<S3>/Calculate cmd_vel parameter for in_lane' incorporates:
+    //   EnablePort: '<S21>/Enable'
+
+    if (task2_B.bool_in_lane) {
+      // Switch: '<S21>/Prevent div 1' incorporates:
+      //   Constant: '<S21>/const2'
+
+      if (rtb_Gain_j >= 5.0) {
+        rtb_Gain_j = rtb_Divide;
+      } else {
+        rtb_Gain_j = (-0.475);
+      }
+
+      // End of Switch: '<S21>/Prevent div 1'
+
+      // Switch: '<S21>/Prevent div 2' incorporates:
+      //   Constant: '<S21>/const3'
+
+      if (rtb_Gain1_k >= 5.0) {
+        rtb_Divide = rtb_Divide2;
+      } else {
+        rtb_Divide = 0.475;
+      }
+
+      // End of Switch: '<S21>/Prevent div 2'
+
+      // Trigonometry: '<S21>/Trigonometric Function2' incorporates:
+      //   Constant: '<S21>/const1'
+      //   Constant: '<S21>/scan_box_height//2'
+      //   Product: '<S21>/Divide'
+      //   Sum: '<S21>/Subtract'
+      //   Sum: '<S21>/Subtract1'
+
+      rtb_Constant2 = rt_atan2d_snf_cordic11(rtb_Divide - (rtb_Divide -
+        rtb_Gain_j) / 2.0, 0.25);
+
+      // Product: '<S21>/Product' incorporates:
+      //   Abs: '<S21>/Abs'
+      //   Constant: '<S21>/Constant'
+      //   Gain: '<S21>/cmd_vel_x_max'
+      //   Gain: '<S21>/gain'
+      //   Gain: '<S21>/secure_slow'
+      //   Sum: '<S21>/Add'
+      //   Sum: '<S21>/Subtract2'
+      //   Trigonometry: '<S21>/Trigonometric Function'
+
+      task2_B.Merge[0] = (1.0 - fabs(rtb_Gain_j + rtb_Divide) * 1.0) * (0.8 *
+        cos(rtb_Constant2) * 0.7);
+
+      // Gain: '<S21>/secure_slow1' incorporates:
+      //   Gain: '<S21>/cmd_vel_yaw_max'
+      //   Trigonometry: '<S21>/Trigonometric Function1'
+
+      task2_B.Merge[1] = 1.570796326794 * sin(rtb_Constant2) * 0.7;
+    }
+
+    // End of Outputs for SubSystem: '<S3>/Calculate cmd_vel parameter for in_lane' 
+
+    // Outputs for Enabled SubSystem: '<S3>/Calculate cmd_vel parameter for turn_left' incorporates:
+    //   EnablePort: '<S22>/Enable'
+
+    if (task2_B.bool_turn_left) {
+      // Constant: '<S22>/Constant'
+      task2_B.Merge[1] = 0.62831853071795862;
+
+      // Constant: '<S22>/Constant1'
+      task2_B.Merge[0] = 0.0;
+    }
+
+    // End of Outputs for SubSystem: '<S3>/Calculate cmd_vel parameter for turn_left' 
+
+    // Outputs for Enabled SubSystem: '<S3>/Calculate cmd_vel parameter for turn_right' incorporates:
+    //   EnablePort: '<S23>/Enable'
+
+    if (task2_B.bool_turn_right) {
+      // Constant: '<S23>/Constant'
+      task2_B.Merge[1] = (-0.62831853071795862);
+
+      // Constant: '<S23>/Constant1'
+      task2_B.Merge[0] = 0.0;
+    }
+
+    // End of Outputs for SubSystem: '<S3>/Calculate cmd_vel parameter for turn_right' 
+  } else {
+    if (task2_DW.task2_MODE) {
+      task2_DW.task2_MODE = false;
+    }
+  }
+
+  // End of Outputs for SubSystem: '<Root>/task2'
+
+  // Switch: '<S2>/Switch'
+  if (task2_B.task_enable > 0.0) {
+    rtb_Divide = task2_B.Merge[0];
+  } else {
+    rtb_Divide = task2_B.cmd_vel_x;
+  }
+
+  // End of Switch: '<S2>/Switch'
+
+  // Switch: '<S11>/Switch' incorporates:
+  //   Constant: '<S11>/Constant3'
+  //   RelationalOperator: '<S11>/Relational Operator'
+
+  if (rtIsNaN(rtb_Divide)) {
+    rtb_RoundingFunction3 = 0.0;
+  } else {
+    rtb_RoundingFunction3 = rtb_Divide;
+  }
+
+  // End of Switch: '<S11>/Switch'
+
+  // Product: '<S7>/Divide1' incorporates:
+  //   Constant: '<S7>/Wheel Radius [m]'
+
+  rtb_Constant2 = rtb_RoundingFunction3 / 0.1075;
+
+  // Switch: '<S2>/Switch1'
+  if (task2_B.task_enable > 0.0) {
+    rtb_Gain_j = task2_B.Merge[1];
+  } else {
+    rtb_Gain_j = task2_B.cmd_vel_yaw;
+  }
+
+  // End of Switch: '<S2>/Switch1'
+
+  // Switch: '<S11>/Switch1' incorporates:
+  //   Constant: '<S11>/Constant3'
+  //   RelationalOperator: '<S11>/Relational Operator1'
+
+  if (rtIsNaN(rtb_Gain_j)) {
+    rtb_RoundingFunction3 = 0.0;
+  } else {
+    rtb_RoundingFunction3 = rtb_Gain_j;
+  }
+
+  // End of Switch: '<S11>/Switch1'
+
+  // Product: '<S7>/Product1'
+  rtb_RoundingFunction14 = task2_ConstB.Divide4 * rtb_RoundingFunction3;
+
+  // DiscreteTransferFcn: '<S8>/Moving average' incorporates:
+  //   Inport: '<Root>/left_encoder'
+
+  rtb_RoundingFunction = task2_U.left_encoder;
+  outCnt = 1;
+  for (i = 0; i < 9; i++) {
+    rtb_RoundingFunction -= task2_ConstP.pooled14[outCnt] *
+      task2_DW.Movingaverage_states[i];
+    outCnt++;
+  }
+
+  rtb_RoundingFunction /= 10.0;
+  rtb_RoundingFunction3 = 1.0 * rtb_RoundingFunction;
+  outCnt = 1;
+  for (i = 0; i < 9; i++) {
+    rtb_RoundingFunction3 += task2_ConstP.pooled13[outCnt] *
+      task2_DW.Movingaverage_states[i];
+    outCnt++;
+  }
+
+  // End of DiscreteTransferFcn: '<S8>/Moving average'
+
+  // Gain: '<S8>/ticks2radian'
+  rtb_RoundingFunction3 *= 0.00015707963267948965;
+
+  // SampleTimeMath: '<S12>/TSamp'
+  //
+  //  About '<S12>/TSamp':
+  //   y = u * K where K = 1 / ( w * Ts )
+
+  rtb_RoundingFunction16 = rtb_RoundingFunction3 * 100.0;
+
+  // Sum: '<S1>/Sum4' incorporates:
+  //   Gain: '<S7>/Gain'
+  //   Sum: '<S12>/Diff'
+  //   Sum: '<S7>/Subtract'
+  //   UnitDelay: '<S12>/UD'
+
+  rtb_RoundingFunction3 = (rtb_Constant2 - rtb_RoundingFunction14) * (-1.0) -
+    (rtb_RoundingFunction16 - task2_DW.UD_DSTATE);
+
+  // Gain: '<S5>/Filter Coefficient' incorporates:
+  //   DiscreteIntegrator: '<S5>/Filter'
+  //   Gain: '<S5>/Derivative Gain'
+  //   Sum: '<S5>/SumD'
+
+  rtb_RoundingFunction1 = (0.0 * rtb_RoundingFunction3 - task2_DW.Filter_DSTATE)
+    * 100.0;
+
+  // Sum: '<S5>/Sum' incorporates:
+  //   DiscreteIntegrator: '<S5>/Integrator'
+  //   Gain: '<S5>/Proportional Gain'
+
+  rtb_RoundingFunction18 = (0.0471858945591187 * rtb_RoundingFunction3 +
+    task2_DW.Integrator_DSTATE) + rtb_RoundingFunction1;
+
+  // Saturate: '<S5>/Saturate'
+  if (rtb_RoundingFunction18 > 1.0) {
+    rtb_RoundingFunction4 = 1.0;
+  } else if (rtb_RoundingFunction18 < (-1.0)) {
+    rtb_RoundingFunction4 = (-1.0);
+  } else {
+    rtb_RoundingFunction4 = rtb_RoundingFunction18;
+  }
+
+  // End of Saturate: '<S5>/Saturate'
+
+  // Switch: '<S10>/Switch' incorporates:
+  //   RelationalOperator: '<S10>/Relational Operator'
+
+  if (rtIsNaN(rtb_RoundingFunction4)) {
+    // Outport: '<Root>/left_power' incorporates:
+    //   Constant: '<S10>/Constant3'
+
+    task2_Y.left_power = 0.0;
+  } else {
+    // Outport: '<Root>/left_power'
+    task2_Y.left_power = rtb_RoundingFunction4;
+  }
+
+  // End of Switch: '<S10>/Switch'
+
+  // DiscreteTransferFcn: '<S9>/Moving average' incorporates:
+  //   Inport: '<Root>/right_encoder'
+
+  rtb_RoundingFunction6 = task2_U.right_encoder;
+  outCnt = 1;
+  for (i = 0; i < 9; i++) {
+    rtb_RoundingFunction6 -= task2_ConstP.pooled14[outCnt] *
+      task2_DW.Movingaverage_states_f[i];
+    outCnt++;
+  }
+
+  rtb_RoundingFunction6 /= 10.0;
+  rtb_RoundingFunction5 = 1.0 * rtb_RoundingFunction6;
+  outCnt = 1;
+  for (i = 0; i < 9; i++) {
+    rtb_RoundingFunction5 += task2_ConstP.pooled13[outCnt] *
+      task2_DW.Movingaverage_states_f[i];
+    outCnt++;
+  }
+
+  // End of DiscreteTransferFcn: '<S9>/Moving average'
+
+  // Gain: '<S9>/ticks2radian'
+  rtb_RoundingFunction5 *= 0.00015707963267948965;
+
+  // SampleTimeMath: '<S13>/TSamp'
+  //
+  //  About '<S13>/TSamp':
+  //   y = u * K where K = 1 / ( w * Ts )
+
+  rtb_RoundingFunction7 = rtb_RoundingFunction5 * 100.0;
+
+  // Sum: '<S1>/Sum3' incorporates:
+  //   Gain: '<S7>/Gain1'
+  //   Sum: '<S13>/Diff'
+  //   Sum: '<S7>/Add'
+  //   UnitDelay: '<S13>/UD'
+
+  rtb_RoundingFunction5 = (rtb_Constant2 + rtb_RoundingFunction14) * (-1.0) -
+    (rtb_RoundingFunction7 - task2_DW.UD_DSTATE_f);
+
+  // Gain: '<S6>/Filter Coefficient' incorporates:
+  //   DiscreteIntegrator: '<S6>/Filter'
+  //   Gain: '<S6>/Derivative Gain'
+  //   Sum: '<S6>/SumD'
+
+  rtb_RoundingFunction12 = (0.0 * rtb_RoundingFunction5 -
+    task2_DW.Filter_DSTATE_p) * 100.0;
+
+  // Sum: '<S6>/Sum' incorporates:
+  //   DiscreteIntegrator: '<S6>/Integrator'
+  //   Gain: '<S6>/Proportional Gain'
+
+  rtb_RoundingFunction14 = (0.0471858945591187 * rtb_RoundingFunction5 +
+    task2_DW.Integrator_DSTATE_e) + rtb_RoundingFunction12;
+
+  // Saturate: '<S6>/Saturate'
+  if (rtb_RoundingFunction14 > 1.0) {
+    rtb_Constant2 = 1.0;
+  } else if (rtb_RoundingFunction14 < (-1.0)) {
+    rtb_Constant2 = (-1.0);
+  } else {
+    rtb_Constant2 = rtb_RoundingFunction14;
+  }
+
+  // End of Saturate: '<S6>/Saturate'
+
+  // Switch: '<S10>/Switch1' incorporates:
+  //   RelationalOperator: '<S10>/Relational Operator1'
+
+  if (rtIsNaN(rtb_Constant2)) {
+    // Outport: '<Root>/right_power' incorporates:
+    //   Constant: '<S10>/Constant3'
+
+    task2_Y.right_power = 0.0;
+  } else {
+    // Outport: '<Root>/right_power'
+    task2_Y.right_power = rtb_Constant2;
+  }
+
+  // End of Switch: '<S10>/Switch1'
+
+  // Outport: '<Root>/cmd_vel_x'
+  task2_Y.cmd_vel_x = rtb_Divide;
+
+  // Outport: '<Root>/cmd_vel_yaw'
+  task2_Y.cmd_vel_yaw = rtb_Gain_j;
+
+  // Update for DiscreteTransferFcn: '<S8>/Moving average'
+  for (i = 0; i < 8; i++) {
+    task2_DW.Movingaverage_states[8 - i] = task2_DW.Movingaverage_states[7 - i];
+  }
+
+  task2_DW.Movingaverage_states[0] = rtb_RoundingFunction;
+
+  // End of Update for DiscreteTransferFcn: '<S8>/Moving average'
+
+  // Update for UnitDelay: '<S12>/UD'
+  task2_DW.UD_DSTATE = rtb_RoundingFunction16;
+
+  // Update for DiscreteIntegrator: '<S5>/Integrator' incorporates:
+  //   Gain: '<S5>/Integral Gain'
+  //   Gain: '<S5>/Kb'
+  //   Sum: '<S5>/SumI1'
+  //   Sum: '<S5>/SumI2'
+
+  task2_DW.Integrator_DSTATE += ((rtb_RoundingFunction4 - rtb_RoundingFunction18)
+    * 1.0 + 0.573088699921198 * rtb_RoundingFunction3) * 0.01;
+
+  // Update for DiscreteIntegrator: '<S5>/Filter'
+  task2_DW.Filter_DSTATE += 0.01 * rtb_RoundingFunction1;
+
+  // Update for DiscreteTransferFcn: '<S9>/Moving average'
+  for (i = 0; i < 8; i++) {
+    task2_DW.Movingaverage_states_f[8 - i] = task2_DW.Movingaverage_states_f[7 -
+      i];
+  }
+
+  task2_DW.Movingaverage_states_f[0] = rtb_RoundingFunction6;
+
+  // End of Update for DiscreteTransferFcn: '<S9>/Moving average'
+
+  // Update for UnitDelay: '<S13>/UD'
+  task2_DW.UD_DSTATE_f = rtb_RoundingFunction7;
+
+  // Update for DiscreteIntegrator: '<S6>/Integrator' incorporates:
+  //   Gain: '<S6>/Integral Gain'
+  //   Gain: '<S6>/Kb'
+  //   Sum: '<S6>/SumI1'
+  //   Sum: '<S6>/SumI2'
+
+  task2_DW.Integrator_DSTATE_e += ((rtb_Constant2 - rtb_RoundingFunction14) *
+    1.0 + 0.573088699921198 * rtb_RoundingFunction5) * 0.01;
+
+  // Update for DiscreteIntegrator: '<S6>/Filter'
+  task2_DW.Filter_DSTATE_p += 0.01 * rtb_RoundingFunction12;
+}
+
+// Model initialize function
+void task2_initialize(void)
+{
+  // Registration code
+
+  // initialize non-finites
+  rt_InitInfAndNaN(sizeof(real_T));
+
+  // initialize error status
+  rtmSetErrorStatus(task2_M, (NULL));
+
+  // block I/O
+  (void) memset(((void *) &task2_B), 0,
+                sizeof(B_task2_T));
+
+  // states (dwork)
+  (void) memset((void *)&task2_DW, 0,
+                sizeof(DW_task2_T));
+
+  // external inputs
+  (void) memset((void *)&task2_U, 0,
+                sizeof(ExtU_task2_T));
+
+  // external outputs
+  (void) memset((void *)&task2_Y, 0,
+                sizeof(ExtY_task2_T));
+
+  // Start for Enabled SubSystem: '<Root>/task2'
+  // Start for Merge: '<S3>/Merge'
+  task2_B.Merge[0] = 0.0;
+  task2_B.Merge[1] = 0.0;
+
+  // End of Start for SubSystem: '<Root>/task2'
+
+  // InitializeConditions for Enabled SubSystem: '<Root>/task2'
+  // InitializeConditions for Chart: '<S3>/Chart'
+  task2_DW.temporalCounter_i1 = 0U;
+  task2_DW.is_active_c1_task2 = 0U;
+  task2_DW.is_c1_task2 = task2_IN_NO_ACTIVE_CHILD;
+
+  // End of InitializeConditions for SubSystem: '<Root>/task2'
+
+  // InitializeConditions for Chart: '<S4>/teleop_chart'
+  task2_DW.is_manual = task2_IN_NO_ACTIVE_CHILD;
+  task2_DW.is_active_c1_floribot_library = 0U;
+  task2_DW.is_c1_floribot_library = task2_IN_NO_ACTIVE_CHILD;
+  task2_B.cmd_vel_x = 0.0;
+  task2_B.cmd_vel_yaw = 0.0;
+
+  // InitializeConditions for Outport: '<Root>/joy_rumble' incorporates:
+  //   InitializeConditions for Chart: '<S4>/teleop_chart'
+
+  task2_Y.joy_rumble = 0.0;
+
+  // InitializeConditions for Outport: '<Root>/joy_leds' incorporates:
+  //   InitializeConditions for Chart: '<S4>/teleop_chart'
+
+  task2_Y.joy_leds[0] = false;
+  task2_Y.joy_leds[1] = false;
+  task2_Y.joy_leds[2] = false;
+  task2_Y.joy_leds[3] = false;
+
+  // InitializeConditions for Chart: '<S4>/teleop_chart'
+  task2_B.task_enable = 0.0;
+}
+
+// Model terminate function
+void task2_terminate(void)
+{
+  // (no terminate code required)
+}
+
+//
+// File trailer for generated code.
+//
+// [EOF]
+//

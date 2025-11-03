@@ -1,0 +1,10 @@
+display('Start Generating task1');
+rtwbuild('task1')
+display('Start Generating task2');
+rtwbuild('task2')
+cd ..;
+display('Finished Generating task1 and task2');
+display('Start Making catkin workspace');
+catkin_make;
+cd simulink;
+display('Finished Making catkin workspace');

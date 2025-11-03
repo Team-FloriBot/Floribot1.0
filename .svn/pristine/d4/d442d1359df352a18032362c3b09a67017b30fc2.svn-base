@@ -1,0 +1,10 @@
+encoder_ticks_per_mm: 280
+laser_position_x: 0.25
+pattern: 1211121201
+pattern2: 1211121201
+robot_diameter: 0.60
+row_width: 0.75
+tick_rate: 100
+voltage_threshold: 8.0
+wheel_diameter: 0.215
+wheel_distance_in_between: 0.440
