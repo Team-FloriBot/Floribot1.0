@@ -1,8 +1,0 @@
-prefix=/home/user/floribot_ws/devel
-
-Name: floribot_robot
-Description: Description of floribot_robot
-Version: 0.0.0
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: roscpp rospy std_msgs geometry_msgs floribot_engines

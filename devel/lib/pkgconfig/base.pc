@@ -1,8 +1,0 @@
-prefix=/home/user/floribot_ws/devel
-
-Name: base
-Description: Description of base
-Version: 1.0.0
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: geometry_msgs nav_msgs roscpp std_msgs

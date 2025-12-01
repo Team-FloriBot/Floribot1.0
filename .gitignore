@@ -1,0 +1,17 @@
+# ROS 1 Standard Ignorier-Liste
+build/
+devel/
+logs/
+.catkin_workspace
+
+# Spezifische Dateitypen ignorieren (basierend auf deiner ls-Liste)
+*.log
+*.stat
+
+# Python Caches
+__pycache__/
+*.pyc
+
+# IDE Einstellungen (optional, aber empfohlen)
+.vscode/
+.idea/

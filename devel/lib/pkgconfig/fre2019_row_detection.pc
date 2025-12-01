@@ -1,8 +1,0 @@
-prefix=/home/user/floribot_ws/devel
-
-Name: fre2019_row_detection
-Description: Description of fre2019_row_detection
-Version: 1.0.0
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: roscpp sensor_msgs std_msgs
